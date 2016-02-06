@@ -26,10 +26,10 @@ RWTexture2D<float4> screen : register(u0);
 void main(uint2 DTid : SV_DispatchThreadID)
 {
 	uint2 image_size;
-	image.GetDimensions(image.x, image.y);
+	image.GetDimensions(image_size.x, image_size.y);
 
 	[branch]
-	if (DTid.x < image_size.x && DTid.y < image.y) {
+	if (DTid.x < image_size.x && DTid.y < image_size.y) {
 		screen[DTid] = image[DTid];
 	} else {
 		screen[DTid] = float4(0, 0, 0, 1);

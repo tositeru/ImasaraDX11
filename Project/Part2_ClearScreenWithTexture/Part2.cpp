@@ -20,6 +20,8 @@
 
 #include "Part2.h"
 
+#include <DirectXTK\Inc\WICTextureLoader.h>
+
 Part2Window::Part2Window(UINT width, UINT height, std::wstring name)
 	: DXSample(width, height, name)
 {
@@ -28,7 +30,7 @@ Part2Window::Part2Window(UINT width, UINT height, std::wstring name)
 void Part2Window::onInit()
 {
 	std::vector<char> byteCode;
-	if (!loadBinaryFile(&byteCode, "ClearScreen.cso")) {
+	if (!loadBinaryFile(&byteCode, "ClearScreenWithTexture.cso")) {
 		throw std::runtime_error("シェーダファイルの読み込みに失敗");
 	}
 
@@ -56,6 +58,19 @@ void Part2Window::onInit()
 			throw std::runtime_error("コンピュータシェーダの出力先用のID3D11Texture2DのUnorderedAccessViewの作成に失敗");
 		}
 	}
+
+	{//画面クリアに使うテクスチャの読み込み
+		Microsoft::WRL::ComPtr<ID3D11Resource> pTex2D;
+		hr = DirectX::CreateWICTextureFromFile(this->mpDevice.Get(), L"image.png", &pTex2D, this->mpImageSRV.GetAddressOf());
+		if (FAILED(hr)) {
+			throw std::runtime_error("画面クリア用の画像の読み込みに失敗");
+		}
+		//this->mpImageSRV = pSRV;
+		hr = pTex2D.Get()->QueryInterface<ID3D11Texture2D>(this->mpImage.GetAddressOf());
+		if (FAILED(hr)) {
+			throw std::runtime_error("ID3D11ResourceからID3D11Texture2Dへの変換に失敗");
+		}
+	}
 }
 
 void Part2Window::onUpdate()
@@ -66,12 +81,12 @@ void Part2Window::onRender()
 {
 	//GPUにClearScreen.hlslの実行するために必要なデータを設定する
 	this->mpImmediateContext->CSSetShader(this->mpCSClearScreen.Get(), nullptr, 0);
-	std::array<ID3D11UnorderedAccessView*, 1> ppUAVs = { {
-		this->mpScreenUAV.Get(),
-	} };
-	std::array<UINT, 1> initCounts = { {
-		0u,
-	} };
+
+	std::array<ID3D11ShaderResourceView*, 1> ppSRVs = { { this->mpImageSRV.Get(), } };
+	this->mpImmediateContext->CSSetShaderResources(0, static_cast<UINT>(ppSRVs.size()), ppSRVs.data());
+
+	std::array<ID3D11UnorderedAccessView*, 1> ppUAVs = { { this->mpScreenUAV.Get(), } };
+	std::array<UINT, 1> initCounts = { { 0u, } };
 	this->mpImmediateContext->CSSetUnorderedAccessViews(0, static_cast<UINT>(ppUAVs.size()), ppUAVs.data(), initCounts.data());
 
 	//ClearScreen.hlslの実行

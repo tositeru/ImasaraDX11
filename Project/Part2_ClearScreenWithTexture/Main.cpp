@@ -18,12 +18,12 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //*********************************************************
 
-#include "Part1.h"
+#include "Part2.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
 	try {
-		Part1Window sample(1280, 720, L"いまさらDirect3D11入門 Part1 ComputeShaderによる画面クリア");
+		Part2Window sample(1280, 720, L"いまさらDirect3D11入門 Part1 ComputeShaderによる画面クリア");
 		return Win32Application::run(&sample, hInstance, nCmdShow);
 	} catch (std::exception& e) {
 		MessageBoxA(NULL, e.what(), "Error", MB_OK | MB_ICONERROR);

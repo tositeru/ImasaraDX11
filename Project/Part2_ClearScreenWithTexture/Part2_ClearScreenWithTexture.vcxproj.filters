@@ -13,5 +13,41 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ソース ファイル\Template">
+      <UniqueIdentifier>{a8e4dfeb-6ecf-4d49-a452-f9fed3de8bd3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Part2.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Template\DXSample.cpp">
+      <Filter>ソース ファイル\Template</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Template\Win32Application.cpp">
+      <Filter>ソース ファイル\Template</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Part2.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Template\Common.h">
+      <Filter>ソース ファイル\Template</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Template\DXSample.h">
+      <Filter>ソース ファイル\Template</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Template\Win32Application.h">
+      <Filter>ソース ファイル\Template</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="ClearScreenWithTexture.hlsl">
+      <Filter>ソース ファイル</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
