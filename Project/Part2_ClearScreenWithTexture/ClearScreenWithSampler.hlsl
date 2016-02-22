@@ -18,15 +18,18 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //*********************************************************
 
-#include "Scene.h"
+Texture2D<float4> image : register(t0);
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
+SamplerState point_sampler : register(s0);
+
+RWTexture2D<float4> screen : register(u0);
+
+[numthreads(1, 1, 1)]
+void main(uint2 DTid : SV_DispatchThreadID)
 {
-	try {
-		Scene sample(1280, 720, L"‚¢‚Ü‚³‚çDirect3D11“ü–å Part1 ComputeShader‚É‚æ‚é‰æ–ÊƒNƒŠƒA");
-		return Win32Application::run(&sample, hInstance, nCmdShow);
-	} catch (std::exception& e) {
-		MessageBoxA(NULL, e.what(), "Error", MB_OK | MB_ICONERROR);
-	}
-	return 1;
+	uint2 screen_size;
+	screen.GetDimensions(screen_size.x, screen_size.y);
+
+	float2 uv = (float2)DTid / (float2)screen_size;
+	screen[DTid] = image.SampleLevel(point_sampler, uv, 0);
 }

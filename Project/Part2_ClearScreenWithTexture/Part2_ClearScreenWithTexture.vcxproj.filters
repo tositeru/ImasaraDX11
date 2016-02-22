@@ -16,12 +16,15 @@
     <Filter Include="ソース ファイル\Template">
       <UniqueIdentifier>{a8e4dfeb-6ecf-4d49-a452-f9fed3de8bd3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Shader">
+      <UniqueIdentifier>{efcdd51f-e3f3-4efe-813c-e9182b45fb58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Image">
+      <UniqueIdentifier>{c083d36a-becd-4833-8508-6313d9988bab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Part2.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="..\Template\DXSample.cpp">
@@ -30,11 +33,11 @@
     <ClCompile Include="..\Template\Win32Application.cpp">
       <Filter>ソース ファイル\Template</Filter>
     </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Part2.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="..\Template\Common.h">
       <Filter>ソース ファイル\Template</Filter>
     </ClInclude>
@@ -44,10 +47,21 @@
     <ClInclude Include="..\Template\Win32Application.h">
       <Filter>ソース ファイル\Template</Filter>
     </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ClearScreenWithTexture.hlsl">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="ClearScreenWithSampler.hlsl">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="image.png">
+      <Filter>ソース ファイル\Image</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

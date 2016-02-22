@@ -22,18 +22,30 @@
 
 #include "Template/DXSample.h"
 
-class Part1Window : public DXSample
+class Scene : public DXSample
 {
 public:
-	Part1Window(UINT width, UINT height, std::wstring name);
+	Scene(UINT width, UINT height, std::wstring name);
 
 	virtual void onInit()override;
 	virtual void onUpdate()override;
 	virtual void onRender()override;
 	virtual void onDestroy()override;
 
+	virtual void onKeyUp(UINT8 key)override;
+
 private:
+	enum SHADER_MODE
+	{
+		eMODE_SOLID,
+		eMODE_WITH_CONSTANT_BUFFER,
+		eMODE_COUNT,
+	} mMode = eMODE_SOLID;
+
 	Microsoft::WRL::ComPtr<ID3D11ComputeShader> mpCSClearScreen;
+	Microsoft::WRL::ComPtr<ID3D11ComputeShader> mpCSClearScreenWithConstantBuffer;
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> mpClearColor;
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> mpScreen;
 	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> mpScreenUAV;

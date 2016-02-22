@@ -18,15 +18,15 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //*********************************************************
 
-#include "Scene.h"
-
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
+cbuffer Param : register(b0)
 {
-	try {
-		Scene sample(1280, 720, L"‚¢‚Ü‚³‚çDirect3D11“ü–å Part1 ComputeShader‚É‚æ‚é‰æ–ÊƒNƒŠƒA");
-		return Win32Application::run(&sample, hInstance, nCmdShow);
-	} catch (std::exception& e) {
-		MessageBoxA(NULL, e.what(), "Error", MB_OK | MB_ICONERROR);
-	}
-	return 1;
+	float4 color;
+};
+
+RWTexture2D<float4> screen : register(u0);
+
+[numthreads(1, 1, 1)]
+void main(uint2 DTid : SV_DispatchThreadID)
+{
+	screen[DTid] = color;
 }
