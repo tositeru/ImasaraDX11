@@ -43,6 +43,7 @@ void Scene::onInit()
 
 		D3D11_BUFFER_DESC desc = {};
 		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
 		desc.ByteWidth = sizeof(SphereInfo);
 		desc.Usage = D3D11_USAGE_DEFAULT;
 
@@ -59,6 +60,74 @@ void Scene::onInit()
 		}
 	}
 
+	{//構造化バッファを使った球体描画の初期化
+		this->compileComputeShader(&this->mpCSRenderSphereByStructured, "RenderSphereByStructuredBuffer.cso");
+
+		D3D11_BUFFER_DESC desc = {};
+		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+		desc.StructureByteStride = sizeof(SphereInfo);
+
+		desc.ByteWidth = sizeof(SphereInfo);
+		desc.Usage = D3D11_USAGE_DEFAULT;
+
+		SphereInfo info;
+		info.pos = DirectX::SimpleMath::Vector3(10, 0, 30.f);
+		info.range = 5.f;
+		info.color = DirectX::SimpleMath::Vector3(0.4f, 1.f, 0.4f);
+		D3D11_SUBRESOURCE_DATA initData;
+		initData.pSysMem = &info;
+		initData.SysMemPitch = sizeof(info);
+		auto hr = this->mpDevice->CreateBuffer(&desc, &initData, this->mpStructuredBuffer.GetAddressOf());
+		if (FAILED(hr)) {
+			throw std::runtime_error("構造化バッファの作成に失敗");
+		}
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
+		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		srvDesc.BufferEx.FirstElement = 0;
+		srvDesc.BufferEx.Flags = 0;
+		srvDesc.BufferEx.NumElements = 1;
+		hr = this->mpDevice->CreateShaderResourceView(this->mpStructuredBuffer.Get(), &srvDesc, this->mpStructuredBufferSRV.GetAddressOf());
+		if (FAILED(hr)) {
+			throw std::runtime_error("構造化バッファのShaderResourceViewの作成に失敗");
+		}
+	}
+
+	{//バイトアドレスバッファを使った球体描画の初期化
+		this->compileComputeShader(&this->mpCSRenderSphereByByteAddress, "RenderSphereByByteAddressBuffer.cso");
+
+		D3D11_BUFFER_DESC desc = {};
+		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_ALLOW_RAW_VIEWS;
+
+		desc.ByteWidth = sizeof(SphereInfo);
+		desc.Usage = D3D11_USAGE_DEFAULT;
+
+		SphereInfo info;
+		info.pos = DirectX::SimpleMath::Vector3(-15, 0, 45.f);
+		info.range = 15.f;
+		info.color = DirectX::SimpleMath::Vector3(0.4f, 0.4f, 1.f);
+		D3D11_SUBRESOURCE_DATA initData;
+		initData.pSysMem = &info;
+		initData.SysMemPitch = sizeof(info);
+		auto hr = this->mpDevice->CreateBuffer(&desc, &initData, this->mpByteAddressBuffer.GetAddressOf());
+		if (FAILED(hr)) {
+			throw std::runtime_error("バイトアドレスバッファの作成に失敗");
+		}
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
+		srvDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+		srvDesc.BufferEx.FirstElement = 0;
+		srvDesc.BufferEx.Flags = D3D11_BUFFEREX_SRV_FLAG_RAW;
+		srvDesc.BufferEx.NumElements = sizeof(SphereInfo) / 4;
+		hr = this->mpDevice->CreateShaderResourceView(this->mpByteAddressBuffer.Get(), &srvDesc, this->mpByteAddressBufferSRV.GetAddressOf());
+		if (FAILED(hr)) {
+			throw std::runtime_error("バイトアドレスバッファのShaderResourceViewの作成に失敗");
+		}
+	}
 
 	{//カメラ関係の定数バッファの作成
 		DirectX::SimpleMath::Matrix invPerspective;
@@ -93,21 +162,44 @@ void Scene::onKeyUp(UINT8 key)
 void Scene::onRender()
 {
 	//GPUに必要なデータを設定する
-	//switch (this->mMode) {
-	//case eMODE_INDEX:	this->mpImmediateContext->CSSetShader(this->mpCSClearScreen.Get(), nullptr, 0); break;
-	//case eMODE_SAMPLER:	this->mpImmediateContext->CSSetShader(this->mpCSClearScreenWithSampler.Get(), nullptr, 0); break;
-	//default:
-	//	assert(false);
-	//}
-	this->mpImmediateContext->CSSetShader(this->mpCSRenderSphereByCB.Get(), nullptr, 0);
-	std::array<ID3D11Buffer*, 2> ppCBs = { { 
-			this->mpCBCamera.Get(),
-			this->mpConstantBuffer.Get(), 
-	} };
-	this->mpImmediateContext->CSSetConstantBuffers(0, static_cast<UINT>(ppCBs.size()), ppCBs.data());
+	switch (this->mMode) {
+	case eMODE_CONSTANT_BUFFER:
+	{
+		this->mpImmediateContext->CSSetShader(this->mpCSRenderSphereByCB.Get(), nullptr, 0);
+		std::array<ID3D11Buffer*, 1> ppCBs = { {
+				this->mpConstantBuffer.Get(),
+			} };
+		this->mpImmediateContext->CSSetConstantBuffers(1, static_cast<UINT>(ppCBs.size()), ppCBs.data());
+	}
+		break;
+	case eMODE_STRUCTURED_BUFFER:
+	{
+		this->mpImmediateContext->CSSetShader(this->mpCSRenderSphereByStructured.Get(), nullptr, 0);
 
-	//std::array<ID3D11ShaderResourceView*, 1> ppSRVs = { { this->mpImageSRV.Get(), } };
-	//this->mpImmediateContext->CSSetShaderResources(0, static_cast<UINT>(ppSRVs.size()), ppSRVs.data());
+		std::array < ID3D11ShaderResourceView*, 1> ppSRVs = { {
+				this->mpStructuredBufferSRV.Get(),
+			} };
+		this->mpImmediateContext->CSSetShaderResources(0, static_cast<UINT>(ppSRVs.size()), ppSRVs.data());
+		break;
+	}
+	case eMODE_BYTE_ADDRESS_BUFFER:
+	{
+		this->mpImmediateContext->CSSetShader(this->mpCSRenderSphereByByteAddress.Get(), nullptr, 0);
+
+		std::array < ID3D11ShaderResourceView*, 1> ppSRVs = { {
+				this->mpByteAddressBufferSRV.Get(),
+			} };
+		this->mpImmediateContext->CSSetShaderResources(0, static_cast<UINT>(ppSRVs.size()), ppSRVs.data());
+		break;
+	}
+	default:
+		assert(false);
+	}
+
+	std::array<ID3D11Buffer*, 1> ppCBs = { {
+			this->mpCBCamera.Get(),
+		} };
+	this->mpImmediateContext->CSSetConstantBuffers(0, static_cast<UINT>(ppCBs.size()), ppCBs.data());
 
 	std::array<ID3D11UnorderedAccessView*, 1> ppUAVs = { { this->mpScreenUAV.Get(), } };
 	std::array<UINT, 1> initCounts = { { 0u, } };

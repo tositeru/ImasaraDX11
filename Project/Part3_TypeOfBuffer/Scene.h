@@ -49,6 +49,13 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ComputeShader> mpCSRenderSphereByCB;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> mpConstantBuffer;
 
+	Microsoft::WRL::ComPtr<ID3D11ComputeShader> mpCSRenderSphereByStructured;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> mpStructuredBuffer;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mpStructuredBufferSRV;
+
+	Microsoft::WRL::ComPtr<ID3D11ComputeShader> mpCSRenderSphereByByteAddress;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> mpByteAddressBuffer;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mpByteAddressBufferSRV;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> mpCBCamera;
 

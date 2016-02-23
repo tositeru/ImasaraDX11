@@ -13,11 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="ソース ファイル\Template">
-      <UniqueIdentifier>{e9a30b48-e8a7-49a4-ae63-ced1ff14e7ff}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Shader">
       <UniqueIdentifier>{c834c751-9cee-4b3e-a048-190b2dda6e31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Template">
+      <UniqueIdentifier>{e9a30b48-e8a7-49a4-ae63-ced1ff14e7ff}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -50,6 +50,12 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\RenderSphereByConstantBuffer.hlsl">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\RenderSphereByStructuredBuffer.hlsl">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\RenderSphereByByteAddressBuffer.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
   </ItemGroup>
