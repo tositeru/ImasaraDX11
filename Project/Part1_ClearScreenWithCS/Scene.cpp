@@ -30,6 +30,7 @@ Scene::Scene(UINT width, UINT height, std::wstring name)
 void Scene::onInit()
 {
 	{
+		//コンパイル済みのシェーダをからID3D11ComputeShaderを作成する
 		std::vector<char> byteCode;
 		if (!loadBinaryFile(&byteCode, "ClearScreen.cso")) {
 			throw std::runtime_error("シェーダファイルの読み込みに失敗");
@@ -41,12 +42,30 @@ void Scene::onInit()
 			throw std::runtime_error("ID3D11ComputerShaderの作成に失敗");
 		}
 
-		if (!loadBinaryFile(&byteCode, "ClearScreenWithConstantBuffer.cso")) {
-			throw std::runtime_error("シェーダファイルの読み込みに失敗");
-		}
-		hr = this->mpDevice->CreateComputeShader(byteCode.data(), static_cast<SIZE_T>(byteCode.size()), nullptr, &this->mpCSClearScreenWithConstantBuffer);
+
+		//実行中にシェーダをコンパイルし、ID3D11ComputeShaderを作成する
+		std::array<D3D_SHADER_MACRO, 2> macros = { {
+			{"DEFINE_MACRO", "float4(0, 1, 1, 1)"},
+			{nullptr, nullptr},
+		} };
+		UINT compileFlag = 0;
+#ifdef _DEBUG
+		compileFlag |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+		const char* entryPoint = "main";
+		const char* profile = "cs_5_0";
+		Microsoft::WRL::ComPtr<ID3DBlob> pShaderBlob, pErrorMsg;
+		hr = D3DCompileFromFile(L"ClearScreenWithConstantBuffer.hlsl", macros.data(), nullptr, entryPoint, profile, compileFlag, 0, pShaderBlob.GetAddressOf(), pErrorMsg.GetAddressOf());
 		if (FAILED(hr)) {
-			throw std::runtime_error("ClearScreenWithConstantBuffer.csoの作成に失敗");
+			if (pErrorMsg) {
+				OutputDebugStringA(static_cast<char*>(pErrorMsg->GetBufferPointer()));
+			}
+			throw std::runtime_error("ClearScreenWithConstantBuffer.hlslのコンパイルに失敗");
+		}
+
+		hr = this->mpDevice->CreateComputeShader(pShaderBlob->GetBufferPointer(), pShaderBlob->GetBufferSize(), nullptr, &this->mpCSClearScreenWithConstantBuffer);
+		if (FAILED(hr)) {
+			throw std::runtime_error("ClearScreenWithConstantBuffer.hlslの作成に失敗");
 		}
 	}
 

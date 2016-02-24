@@ -52,8 +52,10 @@
     <FxCompile Include="ClearScreen.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="ClearScreenWithConstantBuffer.hlsl">
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="ClearScreenWithConstantBuffer.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
-    </FxCompile>
+    </CustomBuild>
   </ItemGroup>
 </Project>
