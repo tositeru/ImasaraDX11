@@ -20,6 +20,8 @@
 
 #include "Scene.h"
 
+#include <random>
+
 Scene::Scene(UINT width, UINT height, std::wstring name)
 	: DXSample(width, height, name)
 {
@@ -314,8 +316,6 @@ void Scene::onRender()
 void Scene::onDestroy()
 {
 }
-
-#include <random>
 
 std::vector<DirectX::SimpleMath::Vector3> Scene::makeInstanceData()const
 {

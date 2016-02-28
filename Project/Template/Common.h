@@ -52,3 +52,86 @@ inline bool loadBinaryFile(std::vector<char>* pOut, const char* filepath)
 	file.read(pOut->data(), fileLength);
 	return true;
 }
+
+template<typename ShaderType>
+void CreateShader(ShaderType** pOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode = nullptr);
+
+template<>
+inline void CreateShader<ID3D11VertexShader>(ID3D11VertexShader** ppOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode)
+{
+	std::vector<char> byteCode;
+	auto* pTarget = pOutByteCode ? pOutByteCode : &byteCode;
+	if (!loadBinaryFile(pTarget, filepath.c_str())) {
+		throw std::runtime_error(filepath + "の読み込みに失敗");
+	}
+
+	HRESULT hr;
+	hr = pDevice->CreateVertexShader(pTarget->data(), static_cast<SIZE_T>(pTarget->size()), nullptr, ppOut);
+	if (FAILED(hr)) {
+		throw std::runtime_error(filepath + "の作成に失敗");
+	}
+}
+
+template<>
+inline void CreateShader<ID3D11PixelShader>(ID3D11PixelShader** ppOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode)
+{
+	std::vector<char> byteCode;
+	auto* pTarget = pOutByteCode ? pOutByteCode : &byteCode;
+	if (!loadBinaryFile(pTarget, filepath.c_str())) {
+		throw std::runtime_error(filepath + "の読み込みに失敗");
+	}
+
+	HRESULT hr;
+	hr = pDevice->CreatePixelShader(pTarget->data(), static_cast<SIZE_T>(pTarget->size()), nullptr, ppOut);
+	if (FAILED(hr)) {
+		throw std::runtime_error(filepath + "の作成に失敗");
+	}
+}
+
+template<typename T>
+inline void CreateIABuffer(ID3D11Buffer** ppOut, ID3D11Device* pDevice, UINT count, const T* pInitData, D3D11_BIND_FLAG bindFlag, D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT cpuAccessFlags = 0u)
+{
+	D3D11_BUFFER_DESC desc = {};
+	desc.BindFlags = bindFlag;
+	desc.ByteWidth = sizeof(T) * count;
+	desc.Usage = usage;
+	desc.CPUAccessFlags = cpuAccessFlags;
+	D3D11_SUBRESOURCE_DATA initData = {};
+	initData.pSysMem = pInitData;
+	initData.SysMemPitch = desc.ByteWidth;
+	auto hr = pDevice->CreateBuffer(&desc, &initData, ppOut);
+	if (FAILED(hr)) {
+		throw std::runtime_error("入力アセンブラステージ用のバッファ作成に失敗");
+	}
+}
+
+template<typename T>
+void CreateStructuredBuffer(ID3D11Buffer** ppOut, ID3D11ShaderResourceView** ppSRV, ID3D11UnorderedAccessView** ppUAV, ID3D11Device* pDevice, UINT count, const T* pInitData)
+{
+	D3D11_BUFFER_DESC desc = {};
+	desc.ByteWidth = sizeof(T)  * count;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
+	desc.StructureByteStride = sizeof(T);
+	desc.MiscFlags = desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	D3D11_SUBRESOURCE_DATA initData = {};
+	initData.pSysMem = pInitData;
+	initData.SysMemPitch = desc.ByteWidth;
+	auto hr = pDevice->CreateBuffer(&desc, &initData, ppOut);
+	if (FAILED(hr)) {
+		throw std::runtime_error("構造化バッファの作成に失敗");
+	}
+
+	if (ppSRV) {
+		hr = pDevice->CreateShaderResourceView(*ppOut, nullptr, ppSRV);
+		if (FAILED(hr)) {
+			throw std::runtime_error("構造化バッファのシェーダリソースビュー作成に失敗");
+		}
+	}
+
+	if (ppUAV) {
+		hr = pDevice->CreateUnorderedAccessView(*ppOut, nullptr, ppUAV);
+		if (FAILED(hr)) {
+			throw std::runtime_error("構造化バッファのアンオーダードアクセスビュー作成に失敗");
+		}
+	}
+}
