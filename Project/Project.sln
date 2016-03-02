@@ -21,6 +21,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part7_ZBufferAndDepthStenci
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part8_RasterizerState", "Part8_RasterizerState\Part8_RasterizerState.vcxproj", "{61607A16-F17E-4622-8C7A-B3B66ED848B1}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part9_GeometryShader", "Part9_GeometryShader\Part9_GeometryShader.vcxproj", "{4BA6CEF6-A74C-401C-8E32-692FA56D6CC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -101,6 +103,14 @@ Global
 		{61607A16-F17E-4622-8C7A-B3B66ED848B1}.Release|x64.Build.0 = Release|x64
 		{61607A16-F17E-4622-8C7A-B3B66ED848B1}.Release|x86.ActiveCfg = Release|Win32
 		{61607A16-F17E-4622-8C7A-B3B66ED848B1}.Release|x86.Build.0 = Release|Win32
+		{4BA6CEF6-A74C-401C-8E32-692FA56D6CC1}.Debug|x64.ActiveCfg = Debug|x64
+		{4BA6CEF6-A74C-401C-8E32-692FA56D6CC1}.Debug|x64.Build.0 = Debug|x64
+		{4BA6CEF6-A74C-401C-8E32-692FA56D6CC1}.Debug|x86.ActiveCfg = Debug|Win32
+		{4BA6CEF6-A74C-401C-8E32-692FA56D6CC1}.Debug|x86.Build.0 = Debug|Win32
+		{4BA6CEF6-A74C-401C-8E32-692FA56D6CC1}.Release|x64.ActiveCfg = Release|x64
+		{4BA6CEF6-A74C-401C-8E32-692FA56D6CC1}.Release|x64.Build.0 = Release|x64
+		{4BA6CEF6-A74C-401C-8E32-692FA56D6CC1}.Release|x86.ActiveCfg = Release|Win32
+		{4BA6CEF6-A74C-401C-8E32-692FA56D6CC1}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
