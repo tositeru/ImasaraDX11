@@ -89,6 +89,38 @@ inline void CreateShader<ID3D11GeometryShader>(ID3D11GeometryShader** ppOut, ID3
 }
 
 template<>
+inline void CreateShader<ID3D11HullShader>(ID3D11HullShader** ppOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode)
+{
+	std::vector<char> byteCode;
+	auto* pTarget = pOutByteCode ? pOutByteCode : &byteCode;
+	if (!loadBinaryFile(pTarget, filepath.c_str())) {
+		throw std::runtime_error(filepath + "ÇÃì«Ç›çûÇ›Ç…é∏îs");
+	}
+
+	HRESULT hr;
+	hr = pDevice->CreateHullShader(pTarget->data(), static_cast<SIZE_T>(pTarget->size()), nullptr, ppOut);
+	if (FAILED(hr)) {
+		throw std::runtime_error(filepath + "ÇÃçÏê¨Ç…é∏îs");
+	}
+}
+
+template<>
+inline void CreateShader<ID3D11DomainShader>(ID3D11DomainShader** ppOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode)
+{
+	std::vector<char> byteCode;
+	auto* pTarget = pOutByteCode ? pOutByteCode : &byteCode;
+	if (!loadBinaryFile(pTarget, filepath.c_str())) {
+		throw std::runtime_error(filepath + "ÇÃì«Ç›çûÇ›Ç…é∏îs");
+	}
+
+	HRESULT hr;
+	hr = pDevice->CreateDomainShader(pTarget->data(), static_cast<SIZE_T>(pTarget->size()), nullptr, ppOut);
+	if (FAILED(hr)) {
+		throw std::runtime_error(filepath + "ÇÃçÏê¨Ç…é∏îs");
+	}
+}
+
+template<>
 inline void CreateShader<ID3D11PixelShader>(ID3D11PixelShader** ppOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode)
 {
 	std::vector<char> byteCode;
