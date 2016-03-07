@@ -31,7 +31,7 @@ void Scene::onInit()
 {
 	{//グラフィックスパイプラインの初期化
 		std::vector<char> byteCode;
-		CreateShader(this->mpVertexShader.GetAddressOf(), this->mpDevice.Get(), "VS.cso", &byteCode);
+		createShader(this->mpVertexShader.GetAddressOf(), this->mpDevice.Get(), "VS.cso", &byteCode);
 
 		//入力レイアウトの作成
 		std::array<D3D11_INPUT_ELEMENT_DESC, 1> elements = { {
@@ -42,23 +42,23 @@ void Scene::onInit()
 			throw std::runtime_error("入力レイアウトの作成に失敗");
 		}
 		//ピクセルシェーダ
-		CreateShader(this->mpPixelShader.GetAddressOf(), this->mpDevice.Get(), "PixelShader.cso", &byteCode);
+		createShader(this->mpPixelShader.GetAddressOf(), this->mpDevice.Get(), "PixelShader.cso", &byteCode);
 
 		//三角形のテッセレーションシェーダ
-		CreateShader(this->mpHSTriangle.GetAddressOf(), this->mpDevice.Get(), "HSTriangle.cso");
-		CreateShader(this->mpDSTriangle.GetAddressOf(), this->mpDevice.Get(), "DSTriangle.cso");
+		createShader(this->mpHSTriangle.GetAddressOf(), this->mpDevice.Get(), "HSTriangle.cso");
+		createShader(this->mpDSTriangle.GetAddressOf(), this->mpDevice.Get(), "DSTriangle.cso");
 
 		//四角形のテッセレーションシェーダ
-		CreateShader(this->mpHSQuad.GetAddressOf(), this->mpDevice.Get(), "HSQuad.cso");
-		CreateShader(this->mpDSQuad.GetAddressOf(), this->mpDevice.Get(), "DSQuad.cso");
+		createShader(this->mpHSQuad.GetAddressOf(), this->mpDevice.Get(), "HSQuad.cso");
+		createShader(this->mpDSQuad.GetAddressOf(), this->mpDevice.Get(), "DSQuad.cso");
 
 		//線分のテッセレーションシェーダ
-		CreateShader(this->mpHSIsoline.GetAddressOf(), this->mpDevice.Get(), "HSIsoline.cso");
-		CreateShader(this->mpDSIsoline.GetAddressOf(), this->mpDevice.Get(), "DSIsoline.cso");
+		createShader(this->mpHSIsoline.GetAddressOf(), this->mpDevice.Get(), "HSIsoline.cso");
+		createShader(this->mpDSIsoline.GetAddressOf(), this->mpDevice.Get(), "DSIsoline.cso");
 
 		//点から三角形を生成するテッセレーションシェーダ
-		CreateShader(this->mpHSPointToTriangle.GetAddressOf(), this->mpDevice.Get(), "HSPointToTriangle.cso");
-		CreateShader(this->mpDSPointToTriangle.GetAddressOf(), this->mpDevice.Get(), "DSPointToTriangle.cso");
+		createShader(this->mpHSPointToTriangle.GetAddressOf(), this->mpDevice.Get(), "HSPointToTriangle.cso");
+		createShader(this->mpDSPointToTriangle.GetAddressOf(), this->mpDevice.Get(), "DSPointToTriangle.cso");
 	}
 	{//
 		std::array<DirectX::SimpleMath::Vector3, 9> data = { {

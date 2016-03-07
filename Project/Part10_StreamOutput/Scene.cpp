@@ -31,7 +31,7 @@ void Scene::onInit()
 {
 	{//グラフィックスパイプラインの初期化
 		std::vector<char> byteCode;
-		CreateShader(this->mpVertexShader.GetAddressOf(), this->mpDevice.Get(), "VertexShader.cso", &byteCode);
+		createShader(this->mpVertexShader.GetAddressOf(), this->mpDevice.Get(), "VertexShader.cso", &byteCode);
 
 		//入力レイアウトの作成
 		std::array<D3D11_INPUT_ELEMENT_DESC, 2> elements = { {
@@ -44,12 +44,12 @@ void Scene::onInit()
 		}
 
 		//ピクセルシェーダ
-		CreateShader(this->mpPixelShader.GetAddressOf(), this->mpDevice.Get(), "PixelShader.cso", &byteCode);
+		createShader(this->mpPixelShader.GetAddressOf(), this->mpDevice.Get(), "PixelShader.cso", &byteCode);
 	}
 	{//ストリームアウトプット用シェーダの作成
 		std::vector<char> byteCode;
 		//頂点シェーダ
-		CreateShader(this->mpVSStreamOutput.GetAddressOf(), this->mpDevice.Get(), "VSStreamOutput.cso", &byteCode);
+		createShader(this->mpVSStreamOutput.GetAddressOf(), this->mpDevice.Get(), "VSStreamOutput.cso", &byteCode);
 
 		//ジオメトリシェーダ
 		if (!loadBinaryFile(&byteCode, "GeometryShader.cso")) {

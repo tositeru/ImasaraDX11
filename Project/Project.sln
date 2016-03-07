@@ -27,6 +27,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part10_StreamOutput", "Part
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part11_Tessellation", "Part11_Tessellation\Part11_Tessellation.vcxproj", "{CA3A9903-4EFB-4D18-9E72-EF0B20F0BEDA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part12_DeferredContext", "Part12_DeferredContext\Part12_DeferredContext.vcxproj", "{541C8B3D-0BB9-40F7-8A5D-762EC40AA365}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -131,6 +133,14 @@ Global
 		{CA3A9903-4EFB-4D18-9E72-EF0B20F0BEDA}.Release|x64.Build.0 = Release|x64
 		{CA3A9903-4EFB-4D18-9E72-EF0B20F0BEDA}.Release|x86.ActiveCfg = Release|Win32
 		{CA3A9903-4EFB-4D18-9E72-EF0B20F0BEDA}.Release|x86.Build.0 = Release|Win32
+		{541C8B3D-0BB9-40F7-8A5D-762EC40AA365}.Debug|x64.ActiveCfg = Debug|x64
+		{541C8B3D-0BB9-40F7-8A5D-762EC40AA365}.Debug|x64.Build.0 = Debug|x64
+		{541C8B3D-0BB9-40F7-8A5D-762EC40AA365}.Debug|x86.ActiveCfg = Debug|Win32
+		{541C8B3D-0BB9-40F7-8A5D-762EC40AA365}.Debug|x86.Build.0 = Debug|Win32
+		{541C8B3D-0BB9-40F7-8A5D-762EC40AA365}.Release|x64.ActiveCfg = Release|x64
+		{541C8B3D-0BB9-40F7-8A5D-762EC40AA365}.Release|x64.Build.0 = Release|x64
+		{541C8B3D-0BB9-40F7-8A5D-762EC40AA365}.Release|x86.ActiveCfg = Release|Win32
+		{541C8B3D-0BB9-40F7-8A5D-762EC40AA365}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

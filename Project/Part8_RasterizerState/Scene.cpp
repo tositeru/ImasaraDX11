@@ -33,7 +33,7 @@ void Scene::onInit()
 
 	{//グラフィックスパイプラインの初期化
 		std::vector<char> byteCode;
-		CreateShader(this->mpVertexShader.GetAddressOf(), this->mpDevice.Get(), "VertexShader.cso", &byteCode);
+		createShader(this->mpVertexShader.GetAddressOf(), this->mpDevice.Get(), "VertexShader.cso", &byteCode);
 
 		//入力レイアウトの作成
 		std::array<D3D11_INPUT_ELEMENT_DESC, 1> elements = { {
@@ -44,7 +44,7 @@ void Scene::onInit()
 			throw std::runtime_error("入力レイアウトの作成に失敗");
 		}
 		//ピクセルシェーダ
-		CreateShader(this->mpPixelShader.GetAddressOf(), this->mpDevice.Get(), "PixelShader.cso", &byteCode);
+		createShader(this->mpPixelShader.GetAddressOf(), this->mpDevice.Get(), "PixelShader.cso", &byteCode);
 	}
 	{//IA用のバッファ作成
 		std::array<Vertex, 6> data = { {

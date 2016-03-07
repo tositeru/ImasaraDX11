@@ -54,10 +54,10 @@ inline bool loadBinaryFile(std::vector<char>* pOut, const char* filepath)
 }
 
 template<typename ShaderType>
-void CreateShader(ShaderType** pOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode = nullptr);
+void createShader(ShaderType** pOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode = nullptr);
 
 template<>
-inline void CreateShader<ID3D11VertexShader>(ID3D11VertexShader** ppOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode)
+inline void createShader<ID3D11VertexShader>(ID3D11VertexShader** ppOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode)
 {
 	std::vector<char> byteCode;
 	auto* pTarget = pOutByteCode ? pOutByteCode : &byteCode;
@@ -73,7 +73,7 @@ inline void CreateShader<ID3D11VertexShader>(ID3D11VertexShader** ppOut, ID3D11D
 }
 
 template<>
-inline void CreateShader<ID3D11GeometryShader>(ID3D11GeometryShader** ppOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode)
+inline void createShader<ID3D11GeometryShader>(ID3D11GeometryShader** ppOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode)
 {
 	std::vector<char> byteCode;
 	auto* pTarget = pOutByteCode ? pOutByteCode : &byteCode;
@@ -89,7 +89,7 @@ inline void CreateShader<ID3D11GeometryShader>(ID3D11GeometryShader** ppOut, ID3
 }
 
 template<>
-inline void CreateShader<ID3D11HullShader>(ID3D11HullShader** ppOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode)
+inline void createShader<ID3D11HullShader>(ID3D11HullShader** ppOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode)
 {
 	std::vector<char> byteCode;
 	auto* pTarget = pOutByteCode ? pOutByteCode : &byteCode;
@@ -105,7 +105,7 @@ inline void CreateShader<ID3D11HullShader>(ID3D11HullShader** ppOut, ID3D11Devic
 }
 
 template<>
-inline void CreateShader<ID3D11DomainShader>(ID3D11DomainShader** ppOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode)
+inline void createShader<ID3D11DomainShader>(ID3D11DomainShader** ppOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode)
 {
 	std::vector<char> byteCode;
 	auto* pTarget = pOutByteCode ? pOutByteCode : &byteCode;
@@ -121,7 +121,7 @@ inline void CreateShader<ID3D11DomainShader>(ID3D11DomainShader** ppOut, ID3D11D
 }
 
 template<>
-inline void CreateShader<ID3D11PixelShader>(ID3D11PixelShader** ppOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode)
+inline void createShader<ID3D11PixelShader>(ID3D11PixelShader** ppOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode)
 {
 	std::vector<char> byteCode;
 	auto* pTarget = pOutByteCode ? pOutByteCode : &byteCode;
