@@ -96,11 +96,18 @@ LRESULT CALLBACK Win32Application::windowProc(HWND hWnd, UINT message, WPARAM wP
 			SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
 		}
 		return 0;
-
+	case WM_SIZE:
+		if (pSample) {
+			pSample->resizeWindow(wParam, static_cast<UINT>(LOWORD(lParam)), static_cast<UINT>(HIWORD(lParam)));
+		}
+		return 0;
 	case WM_KEYDOWN:
 		if (pSample)
 		{
 			pSample->onKeyDown(static_cast<UINT8>(wParam));
+		}
+		if (static_cast<UINT8>(wParam) == VK_ESCAPE) {
+			PostQuitMessage(0);
 		}
 		return 0;
 

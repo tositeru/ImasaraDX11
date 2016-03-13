@@ -34,11 +34,12 @@ public:
 	void update();
 	void render();
 	void destroy();
+	void resizeWindow(WPARAM wParam, UINT width, UINT height);
 
 	// Samples override the event handlers to handle specific messages.
 	virtual void onKeyDown(UINT8 /*key*/)   {}
 	virtual void onKeyUp(UINT8 /*key*/)     {}
-
+	
 	// Accessors.
 	UINT width() const           { return this->mWidth; }
 	UINT height() const          { return this->mHeight; }
@@ -55,6 +56,7 @@ protected:
 	virtual void onUpdate() = 0;
 	virtual void onRender() = 0;
 	virtual void onDestroy() = 0;
+	virtual void onResizeWindow(WPARAM wParam, UINT width, UINT height) {}
 
 	void initD3D11();
 

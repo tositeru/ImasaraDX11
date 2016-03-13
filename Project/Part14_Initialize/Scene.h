@@ -31,8 +31,12 @@ public:
 	virtual void onUpdate()override;
 	virtual void onRender()override;
 	virtual void onDestroy()override;
+	virtual void onResizeWindow(WPARAM wParam, UINT width, UINT height);
 
 	virtual void onKeyUp(UINT8 key)override;
+
+private:
+	void initRenderTargetAndDepthStencil(UINT width, UINT height);
 
 private:
 	enum SHADER_MODE
@@ -41,4 +45,6 @@ private:
 		eMODE_WITH_CONSTANT_BUFFER,
 		eMODE_COUNT,
 	} mMode = eMODE_SOLID;
+
+	Microsoft::WRL::ComPtr<IDXGIAdapter1> mpAdapter;
 };

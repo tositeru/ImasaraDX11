@@ -168,6 +168,11 @@ void DXSample::destroy()
 	this->onDestroy();
 }
 
+void DXSample::resizeWindow(WPARAM wParam, UINT width, UINT height)
+{
+	this->onResizeWindow(wParam, width, height);
+}
+
 // Helper function for setting the window's title text.
 void DXSample::setCustomWindowText(LPCWSTR text)
 {
