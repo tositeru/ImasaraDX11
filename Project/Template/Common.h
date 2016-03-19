@@ -216,9 +216,9 @@ void createConstantBuffer(ID3D11Buffer** ppOut, ID3D11Device* pDevice, const T* 
 		initData.pSysMem = pInitData;
 		initData.SysMemPitch = desc.ByteWidth;
 		initData.SysMemSlicePitch = initData.SysMemPitch;
-		hr = this->mpDevice->CreateBuffer(&desc, &initData, this->mMipmap.mpCSRead.GetAddressOf());
+		hr = pDevice->CreateBuffer(&desc, &initData, ppOut);
 	} else {
-		hr = this->mpDevice->CreateBuffer(&desc, nullptr, this->mMipmap.mpCSRead.GetAddressOf());
+		hr = pDevice->CreateBuffer(&desc, nullptr, ppOut);
 	}
 
 	if (FAILED(hr)) {
@@ -249,7 +249,7 @@ inline UINT calMaxMipLevel(UINT width, UINT height)
 }
 
 
-UINT calDispatchCount(UINT value, UINT threadGroupCount)
+inline UINT calDispatchCount(UINT value, UINT threadGroupCount)
 {
 	auto v = value / threadGroupCount;
 	v += (value % threadGroupCount != 0 || v == 0) ? 1 : 0;
