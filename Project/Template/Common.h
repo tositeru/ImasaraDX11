@@ -136,6 +136,22 @@ inline void createShader<ID3D11PixelShader>(ID3D11PixelShader** ppOut, ID3D11Dev
 	}
 }
 
+template<>
+inline void createShader<ID3D11ComputeShader>(ID3D11ComputeShader** ppOut, ID3D11Device* pDevice, const std::string& filepath, std::vector<char>* pOutByteCode)
+{
+	std::vector<char> byteCode;
+	auto* pTarget = pOutByteCode ? pOutByteCode : &byteCode;
+	if (!loadBinaryFile(pTarget, filepath.c_str())) {
+		throw std::runtime_error(filepath + "の読み込みに失敗");
+	}
+
+	HRESULT hr;
+	hr = pDevice->CreateComputeShader(pTarget->data(), static_cast<SIZE_T>(pTarget->size()), nullptr, ppOut);
+	if (FAILED(hr)) {
+		throw std::runtime_error(filepath + "の作成に失敗");
+	}
+}
+
 template<typename T>
 inline void CreateIABuffer(ID3D11Buffer** ppOut, ID3D11Device* pDevice, UINT count, const T* pInitData, D3D11_BIND_FLAG bindFlag, D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT cpuAccessFlags = 0u)
 {
@@ -182,4 +198,60 @@ void CreateStructuredBuffer(ID3D11Buffer** ppOut, ID3D11ShaderResourceView** ppS
 			throw std::runtime_error("構造化バッファのアンオーダードアクセスビュー作成に失敗");
 		}
 	}
+}
+
+template<typename T>
+void createConstantBuffer(ID3D11Buffer** ppOut, ID3D11Device* pDevice, const T* pInitData, D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT cpuAccessFlags = 0u)
+{
+	static_assert(sizeof(T)%16 == 0, "");
+	D3D11_BUFFER_DESC desc = {};
+	desc.ByteWidth = sizeof(T);
+	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	desc.Usage = usage;
+	desc.CPUAccessFlags = cpuAccessFlags;
+
+	HRESULT hr;
+	if (pInitData) {
+		D3D11_SUBRESOURCE_DATA initData = {};
+		initData.pSysMem = pInitData;
+		initData.SysMemPitch = desc.ByteWidth;
+		initData.SysMemSlicePitch = initData.SysMemPitch;
+		hr = this->mpDevice->CreateBuffer(&desc, &initData, this->mMipmap.mpCSRead.GetAddressOf());
+	} else {
+		hr = this->mpDevice->CreateBuffer(&desc, nullptr, this->mMipmap.mpCSRead.GetAddressOf());
+	}
+
+	if (FAILED(hr)) {
+		throw std::runtime_error("定数バッファの作成に失敗");
+	}
+}
+
+inline D3D11_TEXTURE2D_DESC makeTex2DDesc(UINT width, UINT height, DXGI_FORMAT format)
+{
+	D3D11_TEXTURE2D_DESC desc = {};
+	desc.Width = width;
+	desc.Height = height;
+	desc.Format = format;
+	desc.ArraySize = 1;
+	desc.MipLevels = 1;
+	desc.SampleDesc.Count = 1;
+	return desc;
+}
+
+inline UINT calMaxMipLevel(UINT width, UINT height)
+{
+	int mipLevel = 0;
+	while (1 < width || 1 < height) {
+		width /= 2; height /= 2;
+		mipLevel++;
+	}
+	return mipLevel + 1;
+}
+
+
+UINT calDispatchCount(UINT value, UINT threadGroupCount)
+{
+	auto v = value / threadGroupCount;
+	v += (value % threadGroupCount != 0 || v == 0) ? 1 : 0;
+	return v;
 }
