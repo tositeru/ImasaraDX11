@@ -87,7 +87,6 @@ void Scene::onInit()
 			throw std::runtime_error("シザー矩形用のラスタライザーステートの作成に失敗");
 		}
 	}
-	D3D11_VIEWPORT defaultVP;
 	UINT count = 1;
 	this->mpImmediateContext->RSGetViewports(&count, &this->mDefaultViewport);
 }
@@ -138,8 +137,8 @@ void Scene::onRender()
 	case eMODE_VIEWPORT:
 	{
 		D3D11_VIEWPORT vp;
-		vp.Width = this->width() / 2;
-		vp.Height = this->height() / 2;
+		vp.Width = static_cast<float>(this->width() / 2);
+		vp.Height = static_cast<float>(this->height() / 2);
 		vp.TopLeftX = 0;
 		vp.TopLeftY = 0;
 		vp.MinDepth = 0.f;
@@ -153,10 +152,10 @@ void Scene::onRender()
 		this->mpImmediateContext->RSSetState(this->mpRSScissor.Get());
 		UINT count = 1;
 		D3D11_RECT rect;
-		rect.left = this->width() / 4.f;
-		rect.right= this->width() * 3.f / 4.f;
-		rect.top = this->height() / 4.f;
-		rect.bottom = this->height() * 3.f / 4.f;
+		rect.left = static_cast<LONG>(this->width() / 4.f);
+		rect.right= static_cast<LONG>(this->width() * 3.f / 4.f);
+		rect.top = static_cast<LONG>(this->height() / 4.f);
+		rect.bottom = static_cast<LONG>(this->height() * 3.f / 4.f);
 		this->mpImmediateContext->RSSetScissorRects(count, &rect);
 		break;
 	}

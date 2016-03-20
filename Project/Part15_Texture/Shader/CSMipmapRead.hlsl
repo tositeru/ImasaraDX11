@@ -43,7 +43,7 @@ void main(uint2 DTid : SV_DispatchThreadID)
 	if (cbIsUseSampler) {
 		uint2 screen_size;
 		screen.GetDimensions(screen_size.x, screen_size.y);
-		float2 uv = (float2)DTid / (float2)screen_size;
+		float2 uv = (float2)DTid / (float2)screen_size * 4.f;
 		screen[DTid] = image.SampleLevel(linear_sampler, uv, cbMipLevel);
 	} else {
 		[branch]

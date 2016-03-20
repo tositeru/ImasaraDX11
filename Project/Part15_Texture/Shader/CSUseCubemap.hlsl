@@ -50,7 +50,7 @@ void main( uint3 DTid : SV_DispatchThreadID )
 		float A = dot(rayDir.xyz, rayDir.xyz);
 		float B = dot(rayDir.xyz, spherePos);
 		float C = dot(spherePos, spherePos) - pow(sphereRange, 2);
-		float3 nearIntersectionPos = (B - sqrt(pow(B, 2) - A*C)) / A * rayDir;
+		float3 nearIntersectionPos = (B - sqrt(pow(B, 2) - A*C)) / A * rayDir.xyz;
 		float3 N = normalize(nearIntersectionPos - spherePos);
 		N = mul(N, (float3x3)cbRotaMatrix);
 		float3 reflectDir = reflect(N, rayDir.xyz);

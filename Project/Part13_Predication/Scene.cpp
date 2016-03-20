@@ -245,7 +245,7 @@ void Scene::renderQuery()
 	} while (hr != S_OK);
 
 	//¶¬‚µ‚½OŠpŒ`‚ğ•`‰æ‚·‚é
-	renderTriangles(soStatistics.NumPrimitivesWritten);
+	renderTriangles(static_cast<UINT>(soStatistics.NumPrimitivesWritten));
 }
 
 void Scene::renderPredicate()

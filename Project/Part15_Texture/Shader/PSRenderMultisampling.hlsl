@@ -18,44 +18,13 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //*********************************************************
 
-struct Dummy {};
-
-struct GSOutput
-{
+struct PSInput {
 	float4 pos : SV_POSITION;
 	float4 color : TEXCOORD0;
-	uint arrayIndex : SV_RenderTargetArrayIndex;
+	uint sampleIndex : SV_SampleIndex;
 };
 
-static const float4 gColorTable[6] = {
-	float4(1.0f, 0.7f, 0.7f, 1),
-	float4(0.7f, 1.0f, 0.7f, 1),
-	float4(0.7f, 0.7f, 1.0f, 1),
-	float4(1.0f, 1.0f, 0.7f, 1),
-	float4(1.0f, 0.7f, 1.0f, 1),
-	float4(0.7f, 1.0f, 1.0f, 1),
-};
-
-static const float4 gPosTable[3] = {
-	float4( 0.0f, 0.51f, 0.0f, 1.0f),
-	float4( 0.51f,-0.52f, 0.0f, 1.0f),
-	float4(-0.53f,-0.53f, 0.0f, 1.0f),
-};
-
-[maxvertexcount(3 * 6)]
-void main(
-	point Dummy input[1], 
-	inout TriangleStream< GSOutput > output
-)
+float4 main(PSInput input) : SV_TARGET
 {
-	[unroll] for (uint n = 0; n < 6; ++n) {
-		[unroll] for (uint i = 0; i < 3; i++) {
-			GSOutput element;
-			element.pos = gPosTable[i];
-			element.color = gColorTable[n];
-			element.arrayIndex = n;
-			output.Append(element);
-		}
-		output.RestartStrip();
-	}
+	return input.color;
 }

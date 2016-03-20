@@ -61,9 +61,6 @@
     <FxCompile Include="Shader\CSArrayWrite.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\VSRenderCubemap.hlsl">
-      <Filter>ソース ファイル\Shader</Filter>
-    </FxCompile>
     <FxCompile Include="Shader\GSRenderCubemap.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
@@ -71,6 +68,15 @@
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Shader\CSUseCubemap.hlsl">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\VSDummy.hlsl">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\GSRenderMultisampling.hlsl">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\PSRenderMultisampling.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
   </ItemGroup>

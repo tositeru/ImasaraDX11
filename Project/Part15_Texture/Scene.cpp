@@ -32,21 +32,36 @@ void Scene::onInit()
 	this->initMipmap();
 	this->initArray(6);
 	this->initCubemap();
+	this->initMultisampling(8);
 
-	{//ClearScreenWithSampler.hlslのためのサンプラー作成
+	{//サンプラー作成
 		// 
 		D3D11_SAMPLER_DESC desc = {};
-		desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 		desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		desc.BorderColor[0] = desc.BorderColor[1] = desc.BorderColor[2] = 0.4f;
+		desc.BorderColor[3] = 1.f;
 		desc.MaxLOD = FLT_MAX;
 		desc.MinLOD = FLT_MIN;
 		//desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR; //補間が聞いたサンプリング
-		//todo ミップマップの説明もする？
-		auto hr = this->mpDevice->CreateSamplerState(&desc, this->mpPointSampler.GetAddressOf());
-		if (FAILED(hr)) {
-			throw std::runtime_error("ポイントサンプラーの作成に失敗");
+		std::array<D3D11_TEXTURE_ADDRESS_MODE, 5> address = { {
+			D3D11_TEXTURE_ADDRESS_WRAP,
+			D3D11_TEXTURE_ADDRESS_MIRROR,
+			D3D11_TEXTURE_ADDRESS_CLAMP,
+			D3D11_TEXTURE_ADDRESS_BORDER,
+			D3D11_TEXTURE_ADDRESS_MIRROR_ONCE,
+		} };
+		this->mpSamplers.reserve(address.size());
+		for (auto mode : address) {
+			desc.AddressU = mode;
+			desc.AddressV = mode;
+			desc.AddressW = mode;
+			ID3D11SamplerState *pSampler;
+			auto hr = this->mpDevice->CreateSamplerState(&desc, &pSampler);
+			if (FAILED(hr)) {
+				throw std::runtime_error("サンプラーの作成に失敗");
+			}
+			this->mpSamplers.emplace_back(pSampler);
+			pSampler->Release();
 		}
 	}
 	{//ClearScreen.hlslの出力先の作成
@@ -89,6 +104,9 @@ void Scene::onKeyUp(UINT8 key)
 	if (key == VK_RIGHT) {
 		++this->mReadValue;
 	}
+	if (key == 'C') {
+		this->mSamplerIndex = (this->mSamplerIndex + 1) % this->mpSamplers.size();
+	}
 }
 
 void Scene::onRender()
@@ -99,10 +117,13 @@ void Scene::onRender()
 	case eMODE_MIPMAP: this->runMipmap(); break;
 	case eMODE_ARRAY: this->runArray(); break;
 	case eMODE_CUBEMAP: this->runCubemap(); break;
+	case eMODE_MULTISAMPLING: this->runMultisampling(); break;
 	}
 
-	//シェーダの結果をバックバッファーにコピーする
-	this->mpImmediateContext->CopySubresourceRegion(this->mpBackBuffer.Get(), 0, 0, 0, 0, this->mpScreen.Get(), 0, nullptr);
+	if (this->mMode != eMODE_MULTISAMPLING) {
+		//シェーダの結果をバックバッファーにコピーする
+		this->mpImmediateContext->CopySubresourceRegion(this->mpBackBuffer.Get(), 0, 0, 0, 0, this->mpScreen.Get(), 0, nullptr);
+	}
 }
 
 void Scene::initMipmap()
@@ -160,10 +181,10 @@ void Scene::initMipmap()
 	std::array<DirectX::SimpleMath::Vector4, 6> colorTable = { {
 			DirectX::SimpleMath::Vector4(1.0f, 0.7f, 0.7f, 1),
 			DirectX::SimpleMath::Vector4(0.7f, 1.0f, 0.7f, 1),
-		DirectX::SimpleMath::Vector4(0.7f, 0.7f, 1.0f, 1),
-		DirectX::SimpleMath::Vector4(1.0f, 1.0f, 0.7f, 1),
-		DirectX::SimpleMath::Vector4(1.0f, 0.7f, 1.0f, 1),
-		DirectX::SimpleMath::Vector4(0.7f, 1.0f, 1.0f, 1),
+			DirectX::SimpleMath::Vector4(0.7f, 0.7f, 1.0f, 1),
+			DirectX::SimpleMath::Vector4(1.0f, 1.0f, 0.7f, 1),
+			DirectX::SimpleMath::Vector4(1.0f, 0.7f, 1.0f, 1),
+			DirectX::SimpleMath::Vector4(0.7f, 1.0f, 1.0f, 1),
 		} };
 	for (UINT mipLevel = 0; mipLevel < desc.MipLevels; ++mipLevel) {
 		//定数バッファの設定
@@ -178,8 +199,8 @@ void Scene::initMipmap()
 		std::array<UINT, 1> initCounts = { { 0u, } };
 		this->mpImmediateContext->CSSetUnorderedAccessViews(0, static_cast<UINT>(ppUAVs.size()), ppUAVs.data(), initCounts.data());
 
-		const auto dx = calDispatchCount(this->width(), 8);
-		const auto dy = calDispatchCount(this->height(), 8);
+		const auto dx = calDispatchCount(this->width() / (mipLevel + 1), 8);
+		const auto dy = calDispatchCount(this->height() / (mipLevel + 1), 8);
 		this->mpImmediateContext->Dispatch(dx, dy, 1);
 	}
 	std::array<ID3D11UnorderedAccessView*, 1> ppUAVs = { { nullptr } };
@@ -189,6 +210,40 @@ void Scene::initMipmap()
 
 void Scene::runMipmap()
 {
+	{
+		this->mpImmediateContext->CSSetShader(this->mMipmap.mpCSWrite.Get(), nullptr, 0);
+		std::array<DirectX::SimpleMath::Vector4, 6> colorTable = { {
+				DirectX::SimpleMath::Vector4(1.0f, 0.7f, 0.7f, 1),
+				DirectX::SimpleMath::Vector4(0.7f, 1.0f, 0.7f, 1),
+				DirectX::SimpleMath::Vector4(0.7f, 0.7f, 1.0f, 1),
+				DirectX::SimpleMath::Vector4(1.0f, 1.0f, 0.7f, 1),
+				DirectX::SimpleMath::Vector4(1.0f, 0.7f, 1.0f, 1),
+				DirectX::SimpleMath::Vector4(0.7f, 1.0f, 1.0f, 1),
+			} };
+		D3D11_TEXTURE2D_DESC desc;
+		this->mMipmap.mpResource->GetDesc(&desc);
+		for (UINT mipLevel = 0; mipLevel < desc.MipLevels; ++mipLevel) {
+			//定数バッファの設定
+			MipmapWriteParam writeParam;
+			writeParam.baseColor = colorTable[mipLevel % colorTable.size()];
+			this->mpImmediateContext->UpdateSubresource(this->mMipmap.mpCSWriteParam.Get(), 0, nullptr, &writeParam, sizeof(writeParam), sizeof(writeParam));
+
+			std::array<ID3D11Buffer*, 1> ppCBs = { { this->mMipmap.mpCSWriteParam.Get(), } };
+			this->mpImmediateContext->CSSetConstantBuffers(0, static_cast<UINT>(ppCBs.size()), ppCBs.data());
+
+			std::array<ID3D11UnorderedAccessView*, 1> ppUAVs = { { this->mMipmap.mpUAVs[mipLevel].Get(), } };
+			std::array<UINT, 1> initCounts = { { 0u, } };
+			this->mpImmediateContext->CSSetUnorderedAccessViews(0, static_cast<UINT>(ppUAVs.size()), ppUAVs.data(), initCounts.data());
+
+			const auto dx = calDispatchCount(this->width()/ (mipLevel + 1), 8);
+			const auto dy = calDispatchCount(this->height()/ (mipLevel + 1), 8);
+			this->mpImmediateContext->Dispatch(dx, dy, 1);
+		}
+		std::array<ID3D11UnorderedAccessView*, 1> ppUAVs = { { nullptr } };
+		std::array<UINT, 1> initCounts = { { 0u, } };
+		this->mpImmediateContext->CSSetUnorderedAccessViews(0, static_cast<UINT>(ppUAVs.size()), ppUAVs.data(), initCounts.data());
+	}
+
 	this->mpImmediateContext->CSSetShader(this->mMipmap.mpCSRead.Get(), nullptr, 0);
 
 	MipmapReadParam param;
@@ -201,7 +256,7 @@ void Scene::runMipmap()
 	std::array<ID3D11ShaderResourceView*, 1> ppSRVs = { { this->mMipmap.mpSRV.Get(), } };
 	this->mpImmediateContext->CSSetShaderResources(0, static_cast<UINT>(ppSRVs.size()), ppSRVs.data());
 
-	std::array<ID3D11SamplerState*, 1> ppSamplers = { { this->mpPointSampler.Get(), } };
+	std::array<ID3D11SamplerState*, 1> ppSamplers = { { this->mpSamplers[this->mSamplerIndex].Get(), } };
 	this->mpImmediateContext->CSSetSamplers(0, static_cast<UINT>(ppSamplers.size()), ppSamplers.data());
 
 	std::array<ID3D11UnorderedAccessView*, 1> ppUAVs = { { this->mpScreenUAV.Get(), } };
@@ -315,7 +370,7 @@ void Scene::runArray()
 	std::array<ID3D11ShaderResourceView*, 1> ppSRVs = { { this->mArray.mpSRV.Get(), } };
 	this->mpImmediateContext->CSSetShaderResources(0, static_cast<UINT>(ppSRVs.size()), ppSRVs.data());
 
-	std::array<ID3D11SamplerState*, 1> ppSamplers = { { this->mpPointSampler.Get(), } };
+	std::array<ID3D11SamplerState*, 1> ppSamplers = { { this->mpSamplers[this->mSamplerIndex].Get(), } };
 	this->mpImmediateContext->CSSetSamplers(0, static_cast<UINT>(ppSamplers.size()), ppSamplers.data());
 
 	std::array<ID3D11UnorderedAccessView*, 1> ppUAVs = { { this->mpScreenUAV.Get(), } };
@@ -368,7 +423,7 @@ void Scene::initCubemap()
 		}
 
 		//キューブマップに適当なものを描画する
-		createShader(this->mCubemap.mpVSRenderCubemap.GetAddressOf(), this->mpDevice.Get(), "VSRenderCubemap.cso", nullptr);
+		createShader(this->mCubemap.mpVSRenderCubemap.GetAddressOf(), this->mpDevice.Get(), "VSDummy.cso", nullptr);
 		createShader(this->mCubemap.mpGSRenderCubemap.GetAddressOf(), this->mpDevice.Get(), "GSRenderCubemap.cso", nullptr);
 		createShader(this->mCubemap.mpPSRenderCubemap.GetAddressOf(), this->mpDevice.Get(), "PSRenderCubemap.cso", nullptr);
 
@@ -411,7 +466,7 @@ void Scene::runCubemap()
 	std::array<ID3D11ShaderResourceView*, 1> ppSRVs = { { this->mCubemap.mpSRV.Get(), } };
 	this->mpImmediateContext->CSSetShaderResources(0, static_cast<UINT>(ppSRVs.size()), ppSRVs.data());
 
-	std::array<ID3D11SamplerState*, 1> ppSamplers = { { this->mpPointSampler.Get(), } };
+	std::array<ID3D11SamplerState*, 1> ppSamplers = { { this->mpSamplers[this->mSamplerIndex].Get(), } };
 	this->mpImmediateContext->CSSetSamplers(0, static_cast<UINT>(ppSamplers.size()), ppSamplers.data());
 
 	std::array<ID3D11UnorderedAccessView*, 1> ppUAVs = { { this->mpScreenUAV.Get(), } };
@@ -426,6 +481,74 @@ void Scene::runCubemap()
 	this->mpImmediateContext->CSSetShaderResources(0, static_cast<UINT>(ppSRVs.size()), ppSRVs.data());
 	ppUAVs[0] = nullptr;
 	this->mpImmediateContext->CSSetUnorderedAccessViews(0, static_cast<UINT>(ppUAVs.size()), ppUAVs.data(), initCounts.data());
+}
+
+void Scene::initMultisampling(UINT samplingCount)
+{
+	{
+		auto desc = makeTex2DDesc(this->width(), this->height(), DXGI_FORMAT_R8G8B8A8_UNORM);
+		desc.BindFlags = D3D11_BIND_RENDER_TARGET;
+		desc.SampleDesc.Count = samplingCount;
+		this->mpDevice->CheckMultisampleQualityLevels(desc.Format, desc.SampleDesc.Count, &desc.SampleDesc.Quality);
+		if (0 == desc.SampleDesc.Quality) {
+			throw std::runtime_error("指定したフォーマットとサンプリング数はデバイスが対応していません");
+		}
+		desc.SampleDesc.Quality -= 1;
+		auto hr = this->mpDevice->CreateTexture2D(&desc, nullptr, this->mMultiSampling.mpResource.GetAddressOf());
+		if (FAILED(hr)) {
+			throw std::runtime_error("マルチサンプリング生成に失敗");
+		}
+
+		D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+		rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DMS;
+		rtvDesc.Format = desc.Format;
+		hr = this->mpDevice->CreateRenderTargetView(this->mMultiSampling.mpResource.Get(), &rtvDesc, this->mMultiSampling.mpRTV.GetAddressOf());
+		if (FAILED(hr)) {
+			throw std::runtime_error("マルチサンプリング用のレンダーターゲットビュー作成に失敗");
+		}
+	}
+	{//効果があるのかわからなかった
+		D3D11_RASTERIZER_DESC desc = {};
+		desc.FillMode = D3D11_FILL_SOLID;
+		desc.CullMode = D3D11_CULL_NONE;
+		desc.MultisampleEnable = true;
+		auto hr = this->mpDevice->CreateRasterizerState(&desc, this->mMultiSampling.mpRasterizerState.GetAddressOf());
+		if (FAILED(hr)) {
+			throw std::runtime_error("マルチサンプリング用のラスタライザーステートの失敗");
+		}
+	}
+	{//描画用のシェーダ作成
+		createShader(this->mMultiSampling.mpVSRenderCubemap.GetAddressOf(), this->mpDevice.Get(), "VSDummy.cso", nullptr);
+		createShader(this->mMultiSampling.mpGSRenderCubemap.GetAddressOf(), this->mpDevice.Get(), "GSRenderMultisampling.cso", nullptr);
+		createShader(this->mMultiSampling.mpPSRenderCubemap.GetAddressOf(), this->mpDevice.Get(), "PSRenderMultisampling.cso", nullptr);
+	}
+}
+
+void Scene::runMultisampling()
+{
+	float clearColor[] = { 0, 0.1f, 0.125f, 1 };
+	this->mpImmediateContext->ClearRenderTargetView(this->mMultiSampling.mpRTV.Get(), clearColor);
+
+	std::array<ID3D11RenderTargetView*, 1> ppRTVs = { {
+			this->mIsUseSampler ? this->mMultiSampling.mpRTV.Get() : this->mpBackBufferRTV.Get()
+		} };
+	this->mpImmediateContext->OMSetRenderTargets(static_cast<UINT>(ppRTVs.size()), ppRTVs.data(), nullptr);
+	this->mpImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	this->mpImmediateContext->VSSetShader(this->mCubemap.mpVSRenderCubemap.Get(), nullptr, 0);
+	this->mpImmediateContext->GSSetShader(this->mCubemap.mpGSRenderCubemap.Get(), nullptr, 0);
+	this->mpImmediateContext->PSSetShader(this->mCubemap.mpPSRenderCubemap.Get(), nullptr, 0);
+	this->mpImmediateContext->Draw(1, 0);
+
+	ppRTVs[0] = nullptr;
+	this->mpImmediateContext->OMSetRenderTargets(static_cast<UINT>(ppRTVs.size()), ppRTVs.data(), nullptr);
+	this->mpImmediateContext->RSSetState(nullptr);
+
+	//シェーダの結果をバックバッファーにコピーする
+	if (this->mIsUseSampler) {
+		D3D11_TEXTURE2D_DESC desc;
+		this->mMultiSampling.mpResource->GetDesc(&desc);
+		this->mpImmediateContext->ResolveSubresource(this->mpBackBuffer.Get(), 0, this->mMultiSampling.mpResource.Get(), 0, desc.Format);
+	}
 }
 
 void Scene::onDestroy()

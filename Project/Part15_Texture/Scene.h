@@ -89,6 +89,17 @@ private:
 		DirectX::SimpleMath::Vector3 mRotaParam;
 	};
 
+	struct MultiSampling {
+		Microsoft::WRL::ComPtr<ID3D11VertexShader>		mpVSRenderCubemap;
+		Microsoft::WRL::ComPtr<ID3D11GeometryShader>	mpGSRenderCubemap;
+		Microsoft::WRL::ComPtr<ID3D11PixelShader>		mpPSRenderCubemap;
+
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> mpResource;
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> mpRTV;
+
+		Microsoft::WRL::ComPtr<ID3D11RasterizerState> mpRasterizerState;
+	};
+
 private:
 	void initMipmap();
 	void runMipmap();
@@ -99,11 +110,15 @@ private:
 	void initCubemap();
 	void runCubemap();
 
+	void initMultisampling(UINT samplingCount);
+	void runMultisampling();
+
 private:
 	enum SHADER_MODE {
 		eMODE_MIPMAP,
 		eMODE_ARRAY,
 		eMODE_CUBEMAP,
+		eMODE_MULTISAMPLING,
 		eMODE_COUNT,
 	} mMode = eMODE_MIPMAP;
 
@@ -115,13 +130,13 @@ private:
 	Texture2D mMipmap;
 	Texture2D mArray;
 	Cubemap mCubemap;
+	MultiSampling mMultiSampling;
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> mpImage;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mpImageSRV;
 
-
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> mpPointSampler;
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> mpLinearSampler;
+	UINT mSamplerIndex = 0;
+	std::vector<Microsoft::WRL::ComPtr<ID3D11SamplerState>> mpSamplers;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> mpWriteParam;
 
