@@ -52,7 +52,7 @@ void main(uint2 DTid : SV_DispatchThreadID)
 }
 
 //以下のコードは http://c5h12.hatenablog.com/entry/2014/07/06/084125 を参考した
-static const int hashSeed[256 * 2] = {
+static const uint hashSeed[256 * 2] = {
  36, 102, 45, 194, 188, 241, 32, 141, 115, 97, 117, 82, 143, 209, 1, 112, 158, 169,
  213, 77, 223, 253, 43, 133, 238, 76, 40, 90, 222, 177, 139, 95, 83, 219, 55, 191, 144, 26,
  203, 37, 232, 221, 0, 17, 100, 59, 138, 11, 204, 134, 38, 71, 207, 84, 114, 235, 210, 23,
@@ -82,7 +82,7 @@ static const int hashSeed[256 * 2] = {
  18, 206, 168, 128, 231, 247, 111, 13, 110, 180, 73, 109, 162, 193, 199, 98, 184, 195, 237,
  20, 239, 159,
 };
-int hash(int x, int y) {
+uint hash(uint x, uint y) {
     x &= 0xff;
     y &= 0xff;
     return hashSeed[x + hashSeed[y]]; // Pで同じものを繰り返しておくとここが簡潔になる
@@ -107,15 +107,15 @@ static const float2 G[4] = {
     float2( 1.0, -1.0)
 };
 
-float gradient(int ix, int iy, float x, float y) {
+float gradient(uint ix, uint iy, float x, float y) {
 	float2 v = float2(x - ix, y - iy);
 	return dot(G[ hash(ix, iy) % 4 ], v); // 内積をとる
 }
 
 float noise_(float x, float y)
 {
-	int ix = floor(x); // 整数部を取り出す
-	int iy = floor(y);
+	uint ix = floor(x); // 整数部を取り出す
+	uint iy = floor(y);
 	
 	// 注目する点を囲む格子の頂点の値
     float v00 = gradient(ix    , iy    , x, y);
