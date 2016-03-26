@@ -36,7 +36,7 @@ void Scene::onInit()
 		createShader(this->mpVertexShader.GetAddressOf(), this->mpDevice.Get(), "VertexShader.cso", &byteCode);
 
 		//入力レイアウトの作成
-		std::array<D3D11_INPUT_ELEMENT_DESC, 2> elements = { {
+		std::array<D3D11_INPUT_ELEMENT_DESC, 1> elements = { {
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		} };
 		auto hr = this->mpDevice->CreateInputLayout(elements.data(), static_cast<UINT>(elements.size()), byteCode.data(), byteCode.size(), this->mpInputLayout.GetAddressOf());
