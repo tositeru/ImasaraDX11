@@ -35,6 +35,9 @@ public:
 	virtual void onKeyUp(UINT8 key)override;
 
 private:
+	void updateTitle();
+
+private:
 	enum SHADER_MODE
 	{
 		eMODE_SOLID,

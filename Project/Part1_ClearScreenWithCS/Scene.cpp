@@ -29,6 +29,8 @@ Scene::Scene(UINT width, UINT height, std::wstring name)
 
 void Scene::onInit()
 {
+	this->updateTitle();
+
 	{
 		//コンパイル済みのシェーダをからID3D11ComputeShaderを作成する
 		std::vector<char> byteCode;
@@ -53,9 +55,9 @@ void Scene::onInit()
 		compileFlag |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
 		const char* entryPoint = "main";
-		const char* profile = "cs_5_0";
+		const char* shaderTarget = "cs_5_0";
 		Microsoft::WRL::ComPtr<ID3DBlob> pShaderBlob, pErrorMsg;
-		hr = D3DCompileFromFile(L"ClearScreenWithConstantBuffer.hlsl", macros.data(), nullptr, entryPoint, profile, compileFlag, 0, pShaderBlob.GetAddressOf(), pErrorMsg.GetAddressOf());
+		hr = D3DCompileFromFile(L"ClearScreenWithConstantBuffer.hlsl", macros.data(), nullptr, entryPoint, shaderTarget, compileFlag, 0, pShaderBlob.GetAddressOf(), pErrorMsg.GetAddressOf());
 		if (FAILED(hr)) {
 			if (pErrorMsg) {
 				OutputDebugStringA(static_cast<char*>(pErrorMsg->GetBufferPointer()));
@@ -115,6 +117,7 @@ void Scene::onKeyUp(UINT8 key)
 {
 	if (key == 'Z') {
 		this->mMode = static_cast<decltype(this->mMode)>((this->mMode + 1) % eMODE_COUNT);
+		this->updateTitle();
 	}
 }
 
@@ -139,6 +142,9 @@ void Scene::onRender()
 	//ClearScreen.hlslの実行
 	this->mpImmediateContext->Dispatch(this->mWidth, this->mHeight, 1);
 
+	//シェーダを使わず画面をクリアーするコード
+	//float value[4] = {1, 0.7f, 1, 1};//左から赤、緑、青、アルファ
+	//this->mpImmediateContext->ClearUnorderedAccessViewFloat(this->mpScreenUAV.Get(), value);
 
 	//シェーダの結果をバックバッファーにコピーする
 	this->mpImmediateContext->CopySubresourceRegion(this->mpBackBuffer.Get(), 0, 0, 0, 0, this->mpScreen.Get(), 0, nullptr);
@@ -148,3 +154,12 @@ void Scene::onDestroy()
 {
 }
 
+void Scene::updateTitle()
+{
+	std::wstring title;
+	switch (this->mMode) {
+	case eMODE_SOLID: title += L"eMODE_SOLID"; break;
+	case eMODE_WITH_CONSTANT_BUFFER: title += L"eMODE_WITH_CONSTANT_BUFFER"; break;
+	}
+	this->setCustomWindowText(title.c_str());
+}
