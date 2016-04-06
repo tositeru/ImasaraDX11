@@ -1,0 +1,16 @@
+---
+layout: post
+title:  "テストです"
+date:   2016-04-05 22:27:56 +0900
+categories: jekyll update
+---
+
+
+このページはテストです。
+どのようなレイアウトで記事を書いていこうか考え中
+
+{% highlight hlsl %}
+float4 getColor() {
+  return float4(1, 1, 0, 1);
+}
+{% endhighlight %}
