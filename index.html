@@ -1,23 +1,36 @@
 ---
-layout: default
+layout: top_page
 ---
-
-<div class="home">
-
-  <h1 class="page-heading">Posts</h1>
-
-  <ul class="post-list">
+<section>
+  <p>
+    このページは初めてグラフィックスAPIを触る人に向けて、Direct3D11の各機能について説明することを目的にしたものになります。<br>
+    また、Direct3D12を触る前の予備知識になるものを目指しています。
+  </p>
+  <p>
+    ここではDirect3D11に関係することのみを説明し、3Dグラフィックスにつきものの数学やアルゴリズム、モデルファイル等には極力触れません。
+  </p>
+</section>
+<section>
+  <h1 class="under-bar">サンプルの実行環境</h1>
+  <p>各ページには対応するサンプルコードがありGithub上で公開しています。</p>
+  <p>各サンプルは簡単なC++(クラス、列挙型、ラムダ関数、例外など)のコードを読めることを想定して書いてます。</p>
+  <p>
+    想定している実行環境は以下のものです。
+    <ul>
+      <li>OS:Windows10</li>
+      <li>IDE:Visual Studio 2015</li>
+      <li>GPU:Direct3D11対応のGPU</li>
+      <li>最新のWindows 10 SDK</li>
+    </ul>
+    コンパイルできない場合は各プロジェクトのプロパティを開き、<br>
+    (全般) -> (ターゲットプラットホーム)の項目をインストールしたWindows 10 SDKに合わせてください。
+  </p>
+</section>
+<section>
+  <h1 class="under-bar">目次</h1>
+  <ol>
     {% for post in site.posts %}
-      <li>
-        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
-
-        <h2>
-          <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-        </h2>
-      </li>
+    <li>{{ post.title }}</li>
     {% endfor %}
-  </ul>
-
-  <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
-
-</div>
+  </ol>
+</section>

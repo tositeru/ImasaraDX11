@@ -10,10 +10,12 @@ title: いまさらDirect3D11入門
 email: your-email@domain.com
 description: > # this means to ignore newlines until "baseurl:"
   初めてグラフィックスAPIを触る人に向けて、Direct3D11の各種機能を説明するサイト
-twitter_username: 
+twitter_username:
 github_username:  tositeru
 
 repository: tositeru/ImasaraDX11
+permalink: /:title
+url: 
 
 layout: post
 # Build settings

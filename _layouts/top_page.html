@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+  {% include head.html %}
+
+  <body>
+    <div class="container">
+      <div class="top-pages-header">
+        <div class="row">
+          <div class="col-xs-12">
+            <a id="forkme_banner" href="{{site.github.repository_url}}">View on GitHub</a>
+            <h1 class="text-center">{{ site.title }}</h1>
+            <p class="text-right">初めてグラフィックスAPIを触る人に向けて</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="main">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-10">
+            {{ content }}
+          </div>
+          {% include list.html %}
+        </div>
+      </div>
+    </div>
+    {% include footer.html %}
+  </body>
+
+</html>
