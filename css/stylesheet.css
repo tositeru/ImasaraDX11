@@ -2,21 +2,35 @@
   font-family: Meiryo;
 }
 
-#forkme_banner {
-  display: block;
-  position: absolute;
-  top:0;
-  right: 10px;
-  z-index: 10;
-  padding: 10px 50px 10px 10px;
-  color: #fff;
-  background: url('../assets/blacktocat.png') #0090ff no-repeat 95% 50%;
-  font-weight: 700;
-  box-shadow: 0 0 10px rgba(0,0,0,.5);
-  border-bottom-left-radius: 2px;
-  border-bottom-right-radius: 2px;
+@media (min-width: 1200px) {
+  #forkme_banner {
+    display: block;
+    position: absolute;
+    top:0;
+    right: 10px;
+    z-index: 10;
+    padding: 10px 50px 10px 10px;
+    color: #fff;
+    background: url('../assets/blacktocat.png') #0090ff no-repeat 95% 50%;
+    font-weight: 700;
+    box-shadow: 0 0 10px rgba(0,0,0,.5);
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+  }
 }
-
+@media (max-width: 1200px) {
+  #forkme_banner {
+    display: block;
+    z-index: 10;
+    padding: 10px 50px 10px 10px;
+    color: #fff;
+    background: url('../assets/blacktocat.png') #0090ff no-repeat 95% 50%;
+    font-weight: 700;
+    box-shadow: 0 0 10px rgba(0,0,0,.5);
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+  }
+}
 /*トップページ用*/
 .top-pages-header {
   text-align: center;
@@ -35,6 +49,17 @@
 /*　フッター用 */
 .footer {
   margin-top: 50px;
+}
+
+/* リスト用 */
+@media (min-width: 768px) {
+  .list {
+  }
+}
+@media (max-width: 767px) {
+  .list {
+    visibility: hidden ;
+  }
 }
 
 /* 記事全般*/
