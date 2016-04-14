@@ -7,9 +7,14 @@
 
     {% include header.html %}
 
-    <div id="main_content_wrap" class="outer">
-      <div section id="main_content" class="inner">
-        {{ content }}
+    <div class="main">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-10 col-xs-12">
+            {{ content }}
+          </div>
+          {% include list.html %}
+        </div>
       </div>
     </div>
 

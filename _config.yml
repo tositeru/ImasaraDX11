@@ -15,8 +15,13 @@ github_username:  tositeru
 
 repository: tositeru/ImasaraDX11
 permalink: /:title
-url: 
+url:
 
 layout: post
 # Build settings
 markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+highlighter: rouge

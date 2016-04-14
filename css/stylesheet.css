@@ -90,3 +90,13 @@
 .under-bar {
   border-bottom: 1px solid #eee;
 }
+
+/* 各ページの概要*/
+.overview {
+  border: solid #eee 1px;
+  background-color: #fefefe;
+}
+
+.highlight {
+  margin-bottom: -10px;
+}
