@@ -83,6 +83,10 @@
   color: #fff;
 }
 
+.main p {
+  line-height: 180%;
+}
+
 .main ol {
   margin-left: -20px;
 }
@@ -93,8 +97,9 @@
 
 /* 各ページの概要*/
 .overview {
-  border: solid #eee 1px;
-  background-color: #fefefe;
+  border: solid #ded 1px;
+  background-color: #fafefa;
+  border-radius: 5px 5px 5px 5px
 }
 
 .highlight {

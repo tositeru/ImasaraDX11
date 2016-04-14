@@ -237,13 +237,13 @@ void main( uint2 DTid : SV_DispatchThreadID )
 [numthreads(1,1,1)]
     {% endhighlight %}
     も、DTidの値に影響があり、コンピュートシェーダを使う上で非常に重要な意味を持つのですが、今回は説明しません。
-    詳しく知りたいという方は、MSDNのドキュメントをご覧ください。
+    詳しく知りたいという方は、MSDNのドキュメントをご覧ください。<br>
     <a href="https://msdn.microsoft.com/ja-jp/library/ee419587(v=vs.85).aspx">https://msdn.microsoft.com/ja-jp/library/ee419587(v=vs.85).aspx</a>
   </p>
   <p>
     ここまでシェーダの実行の仕方について見てきました。コンピュートシェーダではDispatch関数を使うことでシェーダを実行します。
     C++の関数呼び出しと比べるとかなり特殊な性質をもっていますが、これはGPUの大量のスレッドを同時に実行可能という特徴を生かすためこうなってます。
-    サンプルではClearScreen.hlslとは別にfor文を使ったC++で画面クリアをする場合と同じコードになるよう書いたシェーダを用意していますので、一度目を通してみてください。
+    サンプルではClearScreen.hlslにはmain関数とは別にclearByOneThread関数というfor文を使ったC++で画面クリアをする場合と同じコードになるよう書いたものも用意していますので、一度目を通してみてください。
     このシェーダとClearScreen.hlslは同じことをしていますが、処理速度はGPUの性質を生かしているClearScreen.hlslの方が速くなります。
   </p>
   <p>
@@ -331,11 +331,14 @@ RWTexture2D<float4> screen : register(u0);
     第4引数は今回は意味を持たないので、省略します。
   </p>
   <p>
+    <br>
     ところで、ここまで度々出てきたmpImmediateContextについて触れていませんでした。
     mpImmediateContextはID3D11DeviceContext*になります。
     ID3D11DeviceContextはGPUにシェーダやリソースの設定を行ったり、シェーダの実行、リソースのコピーなどを行うときに使用するものです。
     DX11ではID3D11DeviceContextと後々出てくるID3D11Deviceの2つを使って処理を行っていきますので、
     この2つを理解できればDX11を理解したといってもいいくらい重要なものになります。
+    <br>
+    <br>
   </p>
   <p>
     シェーダの実行の仕方については以上になります。
@@ -408,6 +411,7 @@ RWTexture2D<float4> screen : register(u0);
     シェーダモデル5.1はDirect3D11.3とDirect3D12に対応したGPU上で実行できるシェーダのバージョンになります。
   </p>
   <p>
+    <br>
     GPUは世代によってハードウェアの構造が異なるため、
     DX11以降ではそれに対応するために機能レベル(英訳:Feature Levels)を使って使用できる機能を区別しています。
     シェーダモデル5.1は機能レベル12_0以降が対応しており、部分的に11_1と11_0が対応しています。
@@ -415,6 +419,8 @@ RWTexture2D<float4> screen : register(u0);
     下のリンクは機能レベルのドキュメントになります。日本語訳は少し情報が古いので、英語の方も参考にしてください。<br>
     <a href="https://msdn.microsoft.com/ja-jp/library/ee422086(v=vs.85).aspx">https://msdn.microsoft.com/ja-jp/library/ee422086(v=vs.85).aspx(日本語)</a><br>
     <a href="https://msdn.microsoft.com/en-us/library/ff476876(v=vs.85).aspx">https://msdn.microsoft.com/en-us/library/ff476876(v=vs.85).aspx(英語)</a>
+    <br>
+    <br>
   </p>
   <p>
     話がそれましたが、D3DCompileFromFile関数の第5引数にはシェーダターゲットを表す文字列を渡します。
@@ -542,18 +548,20 @@ fxc /T cs_5_0 /Fo binary.cso ClearScreen.hlsl
   <p>かなり長くなりましたが、DX11でのシェーダの使い方の説明は以上になります。</p>
   <p>
     今回の内容を踏まえたシェーダを実行したいときの流れは
-    <ol>
-    	<li>実行したいシェーダを作る</li>
-    	<li>
-        シェーダを実行するのに必要なものID3D11Deviceを使って作る<br>
-        <ul>
-      		<li>シェーダをコンパイルして(またはオフラインコンパイルしたものを読み込んで)ID3D11ComputeShaderを作成する</li>
-      		<li>シェーダで使うリソースを作る</li>
-        </ul>
-      </li>
-    	<li>ID3D11DeviceContextを使ってGPUにシェーダとリソースを設定する</li>
-      <li>シェーダの実行</li>
-    </ol>
+    <div class="overview">
+      <ol>
+      	<li>実行したいシェーダを作る</li>
+      	<li>
+          シェーダを実行するのに必要なものID3D11Deviceを使って作る<br>
+          <ul>
+        		<li>シェーダをコンパイルして(またはオフラインコンパイルしたものを読み込んで)ID3D11ComputeShaderを作成する</li>
+        		<li>シェーダで使うリソースを作る</li>
+          </ul>
+        </li>
+      	<li>ID3D11DeviceContextを使ってGPUにシェーダとリソースを設定する</li>
+        <li>シェーダの実行</li>
+      </ol>
+    </div>
     になります。
     今回説明した内容は以降のパートで共通して使うものなので、一度に覚えようとせずDX11を使ったいろいろなシェーダやソースを見て慣れていけばいいでしょう。
   </p>
@@ -581,7 +589,7 @@ this->mpImmediateContext->ClearUnorderedAccessViewFloat(this->mpScreenUAV.Get(),
   	また、RWと名の付くものはすべてこの制限を持ちます。
   	この制限はTyped Unordered Access View (UAV) LoadsとしてDX12とDX11.3以降ではなくなっています。
   	DX11.2以前のGPUを使うときは注意してください。<br>
-  	<a href="https://msdn.microsoft.com/ja-jp/library/windows/desktop/dn903947(v=vs.85).aspx">https://msdn.microsoft.com/ja-jp/library/windows/desktop/dn903947(v=vs.85).aspx</a>
+  	<a href="https://msdn.microsoft.com/ja-jp/library/windows/desktop/dn903947(v=vs.85).aspx">https://msdn.microsoft.com/ja-jp/library/windows/desktop/dn903947(v=vs.85).aspx</a><br>
 
   	データをuint型に変換するなど回避策はありますが、
   	直接リソースから読み込むことはできないので、DX11.2以前のGPUを使うときは注意してください。
