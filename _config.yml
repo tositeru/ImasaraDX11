@@ -14,7 +14,7 @@ twitter_username:
 github_username:  tositeru
 
 repository: tositeru/ImasaraDX11
-permalink: /:title
+permalink: ImasaraDX11/:title
 url:
 
 layout: post
