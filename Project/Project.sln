@@ -37,6 +37,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part15_Texture", "Part15_Te
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part16_TiledResource", "Part16_TiledResource\Part16_TiledResource.vcxproj", "{FAE2DCE2-4DEF-4D9B-A75F-9A2128EA154D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part01_ClearScreen", "Part01_ClearScreen\Part01_ClearScreen.vcxproj", "{25DC3178-EB08-4153-8190-0861A82AD7D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -181,6 +183,14 @@ Global
 		{FAE2DCE2-4DEF-4D9B-A75F-9A2128EA154D}.Release|x64.Build.0 = Release|x64
 		{FAE2DCE2-4DEF-4D9B-A75F-9A2128EA154D}.Release|x86.ActiveCfg = Release|Win32
 		{FAE2DCE2-4DEF-4D9B-A75F-9A2128EA154D}.Release|x86.Build.0 = Release|Win32
+		{25DC3178-EB08-4153-8190-0861A82AD7D9}.Debug|x64.ActiveCfg = Debug|x64
+		{25DC3178-EB08-4153-8190-0861A82AD7D9}.Debug|x64.Build.0 = Debug|x64
+		{25DC3178-EB08-4153-8190-0861A82AD7D9}.Debug|x86.ActiveCfg = Debug|Win32
+		{25DC3178-EB08-4153-8190-0861A82AD7D9}.Debug|x86.Build.0 = Debug|Win32
+		{25DC3178-EB08-4153-8190-0861A82AD7D9}.Release|x64.ActiveCfg = Release|x64
+		{25DC3178-EB08-4153-8190-0861A82AD7D9}.Release|x64.Build.0 = Release|x64
+		{25DC3178-EB08-4153-8190-0861A82AD7D9}.Release|x86.ActiveCfg = Release|Win32
+		{25DC3178-EB08-4153-8190-0861A82AD7D9}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
