@@ -14,14 +14,15 @@ twitter_username:
 github_username:  tositeru
 
 repository: tositeru/ImasaraDX11
-permalink: ImasaraDX11/:title
-url:
 
 layout: post
+
 # Build settings
-markdown: kramdown
+github:
+  name: tositeru
 kramdown:
   input: GFM
-  syntax_highlighter: rouge
-
-highlighter: rouge
+  hard_wrap: false
+gems:
+  - jekyll-coffeescript
+  - jekyll-paginate
