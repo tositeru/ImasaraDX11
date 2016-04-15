@@ -4,7 +4,7 @@
     <li>目次
       <ol>
         {% for post in site.posts %}
-        <li><a href="{{ post.url }}">{{ post.title }}</a></li>
+        <li><a href="{{ post.url | site.github.url }}">{{ post.title }}</a></li>
         {% endfor %}
       </ol>
     </li>

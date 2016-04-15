@@ -5,9 +5,9 @@
 
   <title>{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}</title>
 
-  <link rel="stylesheet" type="text/css" media="screen" href="{{"/assets/bootstrap/css/bootstrap.min.css" | prepend: site.github.url | site.url}}">
-  <link rel="stylesheet" type="text/css" media="screen" href="{{"/css/stylesheet.css" | prepend: site.github.url | site.url}}">
-  <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
+  <link rel="stylesheet" type="text/css" media="screen" href="{{"/assets/bootstrap/css/bootstrap.min.css" | prepend: site.url | site.github.url}}">
+  <link rel="stylesheet" type="text/css" media="screen" href="{{"/css/stylesheet.css" | prepend: site.url | site.github.url}}">
+  <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url | site.github.url }}">
   <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ "/feed.xml" | prepend: site.baseurl | prepend: site.url }}">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: "シェーダを使った画面クリア"
+categories: part
 ---
 <section>
   <h3 class="under-bar">前書き</h3>
