@@ -2,6 +2,7 @@
 layout: default
 title: "シェーダを使った画面クリア"
 categories: part
+description: "まず初めに画面全体をGPUを使って単色で塗りつぶす単純なプログラムを作ることを題材に、DX11を使う上で最も重要なシェーダとその使い方について説明していきます。"
 ---
 <section>
   <h3 class="under-bar">前書き</h3>
