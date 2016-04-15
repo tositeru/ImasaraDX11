@@ -12,6 +12,7 @@ description: > # this means to ignore newlines until "baseurl:"
   初めてグラフィックスAPIを触る人に向けて、Direct3D11の各種機能を説明するサイト
 twitter_username:
 github_username:  tositeru
+permalink: ImasaraDX11/:categories/:title
 
 repository: tositeru/ImasaraDX11
 
@@ -20,6 +21,8 @@ layout: post
 # Build settings
 github:
   name: tositeru
+  url: null
+  repository_name: ImasaraDX11
 kramdown:
   input: GFM
   hard_wrap: false
