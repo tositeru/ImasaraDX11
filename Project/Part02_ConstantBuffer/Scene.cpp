@@ -124,7 +124,7 @@ void Scene::onUpdate()
 			p->clearColor = DirectX::SimpleMath::Vector4(abs(sin(t*2.f)), (cos(t)), (sin(t)), 1.f);
 			p->screenSize.x = static_cast<float>(this->width());
 			p->screenSize.y = static_cast<float>(this->height());
-			//this->mpImmediateContext->Unmap(this->mpCBMappable.Get(), subresourceIndex);
+			this->mpImmediateContext->Unmap(this->mpCBMappable.Get(), subresourceIndex);
 		}
 	}
 }
