@@ -190,7 +190,7 @@ this->mpImmediateContext->Dispatch(this->mWidth, this->mHeight, 1);
   {% endhighlight %}
   <h3 class="under-bar">実行命令</h3>
   <p>
-    DX11を使ったコードは長くなりがちですが、肝となる部分はそう長くはありません。<br>
+    DX11を使ったコードは長くなりがちですが、行っていることは難しくありません。<br>
     上のコードの
     {% highlight c++ %}
 //Scene::onRender()の一部
@@ -199,22 +199,14 @@ this->mpImmediateContext->Dispatch(this->mWidth, this->mHeight, 1);
     でシェーダを実行しています。
   </p>
   <p>
-    Dispatch関数の引数は、上にあるClearScreen.hlslの
+    Dispatch関数の引数は、上にあるClearScreen.hlslのDTid引数とmain関数の呼び出し回数に影響を与えます。
     {% highlight c++ %}
 //ClearScreen.hlsl
 void main( uint2 DTid : SV_DispatchThreadID )
     {% endhighlight %}
-    DTid引数に影響を与えます。
   </p>
   <p>
-    Dispatch関数の引数は、上にあるClearScreen.hlslのmain関数の
-    {% highlight c++ %}
-//ClearScreen.hlsl
-void main( uint2 DTid : SV_DispatchThreadID )
-    {% endhighlight %}
-    DTid引数に影響を与えます。
-  </p>
-  <p>
+    <br>
     Dispatch(2,2,1)にすると、ClearScreen.hlslのmain関数が2x2x1=4回呼び出され、
     DTidにはそれぞれuint2(0, 0), uint2(0, 1), uint2(1, 0), uint2(1, 1)の値が渡されます。
   </p>
@@ -247,6 +239,22 @@ void main( uint2 DTid : SV_DispatchThreadID )
     C++の関数呼び出しと比べるとかなり特殊な性質をもっていますが、これはGPUの大量のスレッドを同時に実行可能という特徴を生かすためこうなってます。
     サンプルではClearScreen.hlslにはmain関数とは別にclearByOneThread関数というfor文を使ったC++で画面クリアをする場合と同じコードになるよう書いたものも用意していますので、一度目を通してみてください。
     このシェーダとClearScreen.hlslは同じことをしていますが、処理速度はGPUの性質を生かしているClearScreen.hlslの方が速くなります。
+    {% highlight hlsl %}
+//ClearScreen.hlslのclearByOneThread関数を簡略したもの。
+[numthreads(1, 1, 1)]
+void clearByOneThread(uint2 DTid : SV_DispatchThreadID)
+{
+  //screenのサイズを取得している
+  uint2 size;
+  screen.GetDimensions(size.x, size.y);
+  //全ピクセルクリアー
+  for (uint y = 0; y < size.y; ++y) {
+    for (uint x = 0; x < size.x; ++x) {
+      screen[uint2(x, y)] = float4(0.3f, 1, 0.3f, 1);
+    }
+  }
+}
+    {% endhighlight %}
   </p>
   <p>
     あと、単にDispatch関数だけを呼び出すだけではGPUから見ると実行するには情報不足です。
@@ -460,6 +468,13 @@ hr = this->mpDevice->CreateComputeShader(
     {% endhighlight %}
     CreateComputeShader関数には単純にコンパイルされたシェーダと作成したいID3D11ComputeShaderを渡すだけです。
     第3引数のnullptrは動的シェーダリンクに関係するものなので無視します。
+  </p>
+  <p>
+    <br>
+    ID3D11Deviceはシェーダやリソース、そのほかGPUに関係するものの作成や使っているGPUの機能レベルや対応している機能の取得などができます。
+    DX11ではID3D11Deviceが作成したものを使ってGPUを操作するので最も重要なものと言えるでしょう。
+    当然、一番最初に作成しなければいけませんが、そのやり方は別パートで説明します。
+    <br><br>
   </p>
   <p>
     実行時のシェーダのコンパイルで最低限必要となる引数とGPUに設定するために必要になるID3D11ComputeShaderの生成方法についてはこれで以上になります。

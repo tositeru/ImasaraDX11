@@ -3,8 +3,8 @@
     <li><a href="{{ site.baseurl }}">トップ</a></li>
     <li>目次
       <ol>
-        {% for post in site.posts %}
-        <li><a href="{% if site.github.url %}{{ /post.url | prepend: site.github.url }}{% else %}{{ post.url }}{% endif %}">{{ post.title }}</a></li>
+        {% for post in site.posts reversed %}
+        <li><a href="{% if site.github.url %}{{ post.url | prepend: site.github.url }}{% else %}{{ post.url }}{% endif %}">{{ post.title }}</a></li>
         {% endfor %}
       </ol>
     </li>
