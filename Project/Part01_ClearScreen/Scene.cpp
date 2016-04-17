@@ -34,9 +34,9 @@ void Scene::onInit()
 	{
 		//実行中にシェーダをコンパイルし、ID3D11ComputeShaderを作成する
 		std::array<D3D_SHADER_MACRO, 2> macros = { {
-			{"DEFINE_MACRO", "float4(0, 1, 1, 1)"},
-			{nullptr, nullptr},
-		} };
+			{ "DEFINE_MACRO", "float4(0, 1, 1, 1)" },
+			{ nullptr, nullptr },
+			} };
 		UINT compileFlag = 0;
 #ifdef _DEBUG
 		compileFlag |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
@@ -85,7 +85,7 @@ void Scene::onInit()
 	}
 
 	{//シェーダの出力先の作成
-		D3D11_TEXTURE2D_DESC desc = { };
+		D3D11_TEXTURE2D_DESC desc = {};
 		desc.Width = this->mWidth;
 		desc.Height = this->mHeight;
 		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
