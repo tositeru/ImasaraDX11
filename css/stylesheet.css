@@ -105,3 +105,24 @@
 .highlight {
   margin-bottom: -10px;
 }
+
+.topic {
+  border: solid #eee 1px;
+  background-color: #f8f8fe;
+  padding: 10px;
+  border-left: solid 5px #1B809E
+}
+
+.supplemental {
+  border: solid #eee 1px;
+  background-color: #fefaf6;
+  padding: 10px;
+  border-left: solid 5px #ECC893
+}
+
+.summary {
+  border: solid #eee 1px;
+  background-color: #f8fef8;
+  padding: 10px;
+  border-left: solid 5px #AFE0A8
+}

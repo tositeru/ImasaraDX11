@@ -39,7 +39,7 @@ void clearRed(uint2 DTid : SV_DispatchThreadID, float4 clearColor/*<- コンパ�
 
 <h1 class="under-bar">定数バッファ</h1>
 DX11ではシェーダ実行時に自由に使うことができる値として、定数バッファ(英訳:ConstantBuffer)というものが用意されています。
-今パートと対応しているサンプルプロジェクトはPart02_ConstantBufferになります。
+<br>今パートに対応しているサンプルプロジェクトはPart02_ConstantBufferになります。
 
 <h4>概要</h4>
 <div class="overview">
