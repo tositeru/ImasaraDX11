@@ -175,6 +175,9 @@ float4 b = float4(a, 4);//bはfloat4(1, 2, 3, 4)になる。
 
 <section>
   <h1 class="under-bar">2.シェーダの実行</h1>
+  <p>
+    シェーダを実行するコードは以下になります。
+  </p>
   {% highlight c++ %}
 //Scene::onRender()の一部
 //実行するシェーダをGPUに設定する
@@ -265,7 +268,7 @@ void clearByOneThread(uint2 DTid : SV_DispatchThreadID)
     {% endhighlight %}
   </p>
   <p>
-    あと、単にDispatch関数だけを呼び出すだけではGPUから見ると実行するには情報不足です。
+    さて、単にDispatch関数だけを呼び出すだけではGPUから見ると実行するには情報不足です。
     次は上のコードの残りの部分である、GPUがどのシェーダをどのようなリソースを使って実行するかその設定方法を説明していきます。
   </p>
   <h3 class="under-bar">実行させるのに必要な設定</h3>
@@ -409,7 +412,7 @@ RWTexture2D<float4> screen : register(u0);
     &this->mpCSClearScreenWithConstantBuffer);
   {% endhighlight %}
   <p>
-    上のコードのD3DCompileFromFile関数でシェーダのコンパイルを行っています。
+    上のコードの<b>D3DCompileFromFile関数</b>でシェーダのコンパイルを行っています。
     引数がたくさんありますが、必ず必要となるものは以下のものになります。
     <br>ドキュメント：
     <a href="https://msdn.microsoft.com/ja-jp/library/windows/desktop/hh446872(v=vs.85).aspx">D3DCompileFromFile(英語)</a><br>
@@ -444,9 +447,7 @@ const char* shaderTarget = "cs_5_0";
           現在シェーダモデル5.1が一番新しいものになります。(2016年度ぐらいには6.0が出てきそうですが)
           シェーダモデル5.1はDirect3D11.3とDirect3D12に対応したGPU上で実行できるシェーダのバージョンになります。
           シェーダモデルの詳細はMSDNの方を参照してください。
-          ただ、シェーダターゲットの文字列を確認したい程度なら日本語翻訳されたもので十分なのですが、
-          翻訳されたサイトは情報が古いのと、リニューアル後のMSDN(英語)の方が内容が充実していますので、出来るならリニューアル後の方を参考にした方がいいです。<br>
-          ドキュメント：
+          <br>ドキュメント：
           <a href="https://msdn.microsoft.com/ja-jp/library/ee418332(v=vs.85).aspx">シェーダー モデルとシェーダー プロファイル(日本語)</a>
           <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/jj215820(v=vs.85).aspx">Specifying Compiler Targets(英語)</a>
         </p>
@@ -477,8 +478,8 @@ const char* shaderTarget = "cs_5_0";
   </div>
   <p>
   <br>
-    さて先に、GPUにシェーダを設定するときに使用したCSSetShader関数に渡す<b>ID3D11ComputeShaderの作り方</b>を見ていきます。
-    といっても簡単で、ID3D11Deviceとコンパイルしたシェーダバイナリを用意するだけでできます。
+    さてまだ説明していない<b>D3DCompileFromFile関数</b>の引数がありますが、先にGPUにシェーダを設定するときに使用したCSSetShader関数に渡す<b>ID3D11ComputeShaderの作り方</b>を見ていきます。
+    といっても簡単で、<b>ID3D11Device</b>とコンパイルしたシェーダバイナリを用意するだけでできます。
   </p>
   {% highlight c++ %}
 //Scene::onInit()の一部
@@ -489,28 +490,28 @@ hr = this->mpDevice->CreateComputeShader(
   &this->mpCSClearScreenWithConstantBuffer);
   {% endhighlight %}
   <p>
-    <b>ID3D11Device::CreateComputeShader関数</b>には単純にコンパイルされたシェーダと作成したいID3D11ComputeShaderを渡すだけです。
+    <b>ID3D11Device::CreateComputeShader関数</b>には単純にコンパイルされたシェーダと作成したい<b>ID3D11ComputeShader</b>を渡すだけです。
     第3引数のnullptrは動的シェーダリンクに関係するものなので無視します。
   </p>
   <div class="topic">
     <h4>ID3D11Device</h4>
     <p>
-      ID3D11Deviceはシェーダやリソース、そのほかGPUに関係するものの作成や使っているGPUの機能レベルや対応している機能の取得などができます。
+      ID3D11Deviceは<b>シェーダやリソース、そのほかGPUに関係するものの作成</b>や<b>使っているGPUの機能レベルや対応している機能の取得</b>などができます。
       DX11では<b>ID3D11Deviceが作成したものを使ってGPUを操作する</b>ので最も重要なものと言えるでしょう。 当然、DX11を使う際は一番最初に作成しなければいけませんが、そのやり方は別パートで説明します。
     </p>
   </div>
   <p>
     <br>
-    実行時のシェーダのコンパイルで最低限必要となる引数とGPUに設定するために必要になるID3D11ComputeShaderの生成方法についてはこれで以上になります。
-    この後はD3DCompileFromFileの残りの引数について説明していきます。
+    実行時のシェーダのコンパイルで最低限必要となる引数とGPUに設定する際に使う<b>ID3D11ComputeShader</b>の生成方法についてはこれで以上になります。
+    この後は<b>D3DCompileFromFile</b>の残りの引数について説明していきます。
   </p>
   <p>
     <ul>
       <li>
-        第9引数:エラーメッセージを受け取るID3DBlob
+        第9引数:エラーメッセージを受け取る<b>ID3DBlob</b>
         <p>
-          これはコンパイルエラーが発生した時のエラーメッセージを受け取るID3DBlobになります。
-          コンパイルエラーが発生したときは第9引数に渡したID3DBlobには、文字列が設定されます。
+          これは<b>コンパイルエラーが発生した時のエラーメッセージを受け取るID3DBlob</b>になります。
+          コンパイルエラーが発生したときは第9引数に渡した<b>ID3DBlob</b>には、文字列が設定されます。
           使い方は、以下のコードになります。
         {% highlight c++ %}
 HRESULT hr = D3DCompileFromFile(
@@ -550,7 +551,7 @@ if (FAILED(hr)) {//コンパイルエラー起きたかチェック
         第2引数：マクロの定義
         <p>
           C言語と同じようにシェーダも<b>マクロに対応</b>しており、使い方も同じです。
-          D3DCompileFromFile関数に渡す際は<b>D3D_SHADER_MACROの配列として渡し</b>、
+          <b>D3DCompileFromFile関数</b>に渡す際は<b>D3D_SHADER_MACROの配列として渡し</b>、
           <b>末尾にはメンバをnullptrで埋めたものを設定します。</b>
           {% highlight c++ %}
 std::array<D3D_SHADER_MACRO, 2> macros = { {
@@ -573,18 +574,18 @@ hr = D3DCompileFromFile(
       <li>
         第3引数：#includeキーワードが行う処理を定義した<b>ID3DIncludeの派生クラス</b>
         <p>
-          これはシェーダ内に#includeキーワードがあったときのファイルを検索する方法や読み込みを制御するためのものです。
-          D3DCompileFromFileを使ってHLSLをコンパイルする際は<b>自前でファイルを読み込む処理を作る必要があります。</b>
-          引数にはID3DIncludeを継承したクラスを渡します。
+          これはシェーダ内に#includeキーワードがあったとき、ファイルを検索する方法や読み込みを制御するためのものです。
+          <b>D3DCompileFromFile</b>を使ってHLSLをコンパイルする際は<b>自前でファイルを読み込む処理を作る必要があります。</b>
+          引数には<b>ID3DInclude</b>を継承したクラスを渡します。
           <b>この引数がnullptrだと、シェーダ内で#includeを使うとエラー</b>になってしまいますので注意してください。
-          詳細は以下のサイトを参照してください。使っているのはID3D10Includeですが使い方は同じです。<br>
+          詳細は以下のサイトを参照してください。使っているのは<b>ID3D10Include</b>ですが使い方は同じです。<br>
           <a href="http://wlog.flatlib.jp/?blogid=1&query=preprocess">http://wlog.flatlib.jp/?blogid=1&query=preprocess</a><br>
         </p>
       </li>
     </ul>
   </p>
   <p>
-    D3DCompileFromFile関数については以上になります。
+    <b>D3DCompileFromFile関数</b>については以上になります。
     この関数に似たものとして<b>D3DCompile関数</b>がありますがそちらはシェーダを表す文字列からコンパイルする関数になります。
     コンパイルエラーが起きたときの識別用の文字列を指定する以外は引数は同じになります。
     <br>ドキュメント:<br>
@@ -594,19 +595,19 @@ hr = D3DCompileFromFile(
   <h3 class="under-bar">オフラインでのコンパイル</h3>
   <p>
     DX11のシェーダ言語であるHLSLではMicrosoftが用意している<b>fxc.exeで事前にコンパイルすることが可能</b>です。
-    fxc.exeの場所は<b>"Program Files (x86)\Windows Kits\10\bin\"以下のフォルダー</b>にあります。
+    <b>fxc.exe</b>の場所は<b>"Program Files (x86)\Windows Kits\10\bin\"以下のフォルダー</b>にあります。
     <b>VisualStudioの開発者用コマンドプロンプト</b>を使用すれば環境変数などの設定をしなくとも使用できますし、
     サンプルプロジェクトにsetupFXCPath.batを用意しているので、コマンドプロンプトからそれを起動していただければ使えるようになります。
   </p>
   <p>
-    fxc.exe自体はD3DCompileFromFile関数と同じように使え、#includeキーワードにも対応しています。
+    <b>fxc.exe</b>自体は<b>D3DCompileFromFile関数</b>と同じように使え、#includeキーワードにも対応しています。
     コンパイルフラグはオプションで指定しますが、他のコマンドとは異なり"-"ではなく"/"を前につけて指定します。(Windows的にはこちらがデフォルト？)
     ヘルプを見てもらえれば使い方はわかりますが、ヘルプの見方は"fxc /?"または"fxc /help"になっていますので、混乱しないよう注意してください。
     {% highlight bat %}
 @rem 例
 fxc /T cs_5_0 /Fo binary.cso ClearScreen.hlsl
     {% endhighlight %}
-    後は実行時に出力ファイルを読み込んで、CreateComputeShader関数に渡せばID3D11ComputeShaderが作成できます。
+    後は実行時に出力ファイルを読み込んで、<b>ID3D11Device::CreateComputeShader関数</b>に渡せば<b>ID3D11ComputeShader</b>が作成できます。
   </p>
   <p>
     ちなみにサンプルのClearScreen.hlslは<b>プロジェクトのビルド時にコンパイルを行うようプロパティから設定</b>しています。
