@@ -68,6 +68,7 @@
   color: #000;
   padding-top: 20px;
   padding-bottom: 50px;
+  word-wrap: break-word;
 }
 
 .main a:link {
@@ -104,6 +105,16 @@
 
 .highlight {
   margin-bottom: -10px;
+}
+
+.keyward {
+  font-style: oblique;
+  <!--font-weight: bolder;-->
+}
+
+.important {
+  font-weight: bolder;
+  text-decoration:underline;
 }
 
 .topic {
