@@ -63,6 +63,13 @@ DX11ではシェーダ実行時に自由に使うことができる値として�
         </li>
       </ul>
     </li>
+    <li>まとめ</li>
+    <li>補足
+      <ul>
+        <li>定数バッファのパッキング</li>
+        <li>GPUメモリのコピー</li>
+      </ul>
+    </li>
   </ol>
 </div>
 
@@ -274,9 +281,9 @@ this->mpImmediateContext->UpdateSubresource(this->mpCB.Get(), 0, nullptr, &param
     直ちに<span class="keyward">ID3D11Buffer</span>の内容(GPU上のメモリ)が変更されているとは考えない方がいいでしょう。
   </p>
   <p>
-    また非同期的にデータの更新を行っているため、<span class="keyward">ID3D11DeviceContext：：UpdateSubresource関数</span>に渡したソースデータは一度、
+    また非同期的にデータの更新を行っているため、<span class="keyward">ID3D11DeviceContext::UpdateSubresource関数</span>に渡したソースデータは一度、
     <span class="important">コマンドバッファへコピーされます。</span>
-    <span class="keyward">ID3D11DeviceContext：：UpdateSubresource関数</span>は<span class="important">コピーが2回起きる重たい処理</span>となりますので、パフォーマンスが必要な場合は注意してください。
+    <span class="keyward">ID3D11DeviceContext::UpdateSubresource関数</span>は<span class="important">コピーが2回起きる重たい処理</span>となりますので、パフォーマンスが必要な場合は注意してください。
   </p>
 </div>
 
@@ -329,7 +336,7 @@ if (SUCCEEDED(hr)) {
   </li>
   <li>第5引数：<span class="keyward">D3D11_MAPPED_SUBRESOURCE</span>
     <p>
-      マップに成功した場合、渡した<span class="keyward">D3D11_MAPPED_SUBRESOURCE</span>にマップしたデータの先頭ポインタとデータの長さ、アライメント情報が入ります。
+      マップに成功した場合、渡した<span class="keyward">D3D11_MAPPED_SUBRESOURCE</span>にマップしたデータの先頭ポインタとデータの長さ等の情報が入ります。
       <br>ドキュメント:
       <a href="https://msdn.microsoft.com/ja-jp/library/ee416246(v=vs.85).aspx">D3D11_MAPPED_SUBRESOURCE(日本語)</a>
       <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476182(v=vs.85).aspx">D3D11_MAPPED_SUBRESOURCE(英語)</a>
@@ -408,6 +415,7 @@ cbuffer Param1 {
   <h4>GPUメモリのコピー</h4>
   <p><span class="keyward">ID3D11DeviceContext</span>にはGPU内でのメモリコピーを行うための関数が用意されています。</p>
   <p>
+    ドキュメント<br>
     <span class="keyward">ID3D11DeviceContext::CopyResource関数</span>
     <a href="https://msdn.microsoft.com/ja-jp/library/ee419574(v=vs.85).aspx">日本語</a>
     <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476392(v=vs.85).aspx">英語</a>
@@ -418,7 +426,7 @@ cbuffer Param1 {
   </p>
   <p>
     サンプルではScene::onRender関数の最後でシェーダの実行結果をバックバッファへコピーするために使用しています。
-    バックバッファについては別パートで説明しますが、DX11での最終出力先でバックバッファの内容が画面に表示されます。
+    バックバッファについては別パートで説明しますが、DX11での最終出力先みたいなものでバックバッファの内容が画面に表示されます。
   </p>
 </div>
 

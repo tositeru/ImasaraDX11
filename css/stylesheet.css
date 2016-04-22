@@ -121,19 +121,31 @@
   border: solid #eee 1px;
   background-color: #f8f8fe;
   padding: 10px;
-  border-left: solid 5px #1B809E
+  border-left: solid 5px #1B809E;
+  margin-bottom: 20px;
 }
 
 .supplemental {
   border: solid #eee 1px;
   background-color: #fefaf6;
   padding: 10px;
-  border-left: solid 5px #ECC893
+  border-left: solid 5px #ECC893;
+  margin-bottom: 20px;
 }
 
 .summary {
   border: solid #eee 1px;
   background-color: #f8fef8;
   padding: 10px;
-  border-left: solid 5px #AFE0A8
+  border-left: solid 5px #AFE0A8;
+  margin-bottom: 20px;
+}
+
+#main {
+  position: relative;
+}
+
+#list {
+  position: absolute;
+  top: 20px;
 }

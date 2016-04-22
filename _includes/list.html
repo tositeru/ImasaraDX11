@@ -1,12 +1,14 @@
-<div class="col-sm-2 list">
-  <ul>
-    <li><a href="{{ site.baseurl }}">トップ</a></li>
-    <li>目次
-      <ol>
-        {% for post in site.posts reversed %}
-        <li><a href="{% if site.github.url %}{{ post.url | prepend: site.github.url }}{% else %}{{ post.url }}{% endif %}">{{ post.title }}</a></li>
-        {% endfor %}
-      </ol>
-    </li>
-  </ul>
+<div id="list-box" class="col-sm-2 list">
+  <nav id="list" role="complementary">
+    <ul>
+      <li><a href="{{ site.url }}">トップ</a></li>
+      <li>目次
+        <ol>
+          {% for post in site.posts reversed %}
+          <li><a href="{% if site.github.url %}{{ post.url | prepend: site.github.url }}{% else %}{{ post.url }}{% endif %}">{{ post.title }}</a></li>
+          {% endfor %}
+        </ol>
+      </li>
+    </ul>
+  </nav>
 </div>
