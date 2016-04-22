@@ -22,7 +22,7 @@ layout: default
 # Build settings
 github:
   name: tositeru
-  #url: https://tositeru.github.io/ImasaraDX11/
+  url: https://tositeru.github.io/ImasaraDX11/
   repository_name: ImasaraDX11
 kramdown:
   input: GFM
