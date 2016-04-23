@@ -433,9 +433,9 @@ cbuffer Param1 {
 <table class="table table-condensed">
   <tbody>
     <tr>
-      <td class="left"><a href="{{ "/part/clear-screen" | prepend: site.url }}">＜前</a></td>
-      <td class="center"><a href="{{ site.url }}">トップ</a></td>
-      <td class="right"><a href="{{ "/part/constant-buffer" | prepend: site.url }}">次＞</a></td>
+      <td class="left"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ site.url }}{% endif %}/part/clear-screen">＜前</a></td>
+      <td class="center"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ site.url }}{% endif %}">トップ</a></td>
+      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ site.url }}{% endif %}/part/constant-buffer">次＞</a></td>
     </tr>
   </tbody>
 </table>
