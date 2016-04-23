@@ -10,8 +10,7 @@ title: いまさらDirect3D11入門
 email: your-email@domain.com
 description: > # this means to ignore newlines until "baseurl:"
   初めてグラフィックスAPIを触る人に向けて、Direct3D11の各種機能を説明するサイト
-#url: http://127.0.0.1:4000
-url: https://tositeru.github.io/ImasaraDX11
+url: http://127.0.0.1:4000
 twitter_username:
 github_username:  tositeru
 permalink: /:categories/:title
