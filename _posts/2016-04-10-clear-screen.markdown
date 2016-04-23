@@ -678,9 +678,9 @@ this->mpImmediateContext->ClearUnorderedAccessViewFloat(this->mpScreenUAV.Get(),
 <table class="table table-condensed">
   <tbody>
     <tr>
-      <td class="left"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ site.url }}{% endif %}">＜前</a></td>
-      <td class="center"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ site.url }}{% endif %}">トップ</a></td>
-      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ site.url }}{% endif %}/part/constant-buffer">次＞</a></td>
+      <td class="left"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}">＜前</a></td>
+      <td class="center"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}">トップ</a></td>
+      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/constant-buffer">次＞</a></td>
     </tr>
   </tbody>
 </table>

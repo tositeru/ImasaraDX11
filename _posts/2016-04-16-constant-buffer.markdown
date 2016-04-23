@@ -2,7 +2,7 @@
 layout: default
 title: "定数バッファ"
 categories: part
-description: "まず初めに画面全体をGPUを使って単色で塗りつぶす単純なプログラムを作ることを題材に、DX11を使う上で最も重要なシェーダとその使い方について説明していきます。"
+description: "DX11ではシェーダ実行時に自由に使うことができる値として、定数バッファ(英訳:ConstantBuffer)というものが用意されています。"
 ---
 <h3 class="under-bar">前書き</h3>
 
@@ -433,9 +433,9 @@ cbuffer Param1 {
 <table class="table table-condensed">
   <tbody>
     <tr>
-      <td class="left"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ site.url }}{% endif %}/part/clear-screen">＜前</a></td>
-      <td class="center"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ site.url }}{% endif %}">トップ</a></td>
-      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ site.url }}{% endif %}/part/constant-buffer">次＞</a></td>
+      <td class="left"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/clear-screen">＜前</a></td>
+      <td class="center"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}">トップ</a></td>
+      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/constant-buffer">次＞</a></td>
     </tr>
   </tbody>
 </table>
