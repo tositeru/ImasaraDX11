@@ -141,6 +141,29 @@
   margin-bottom: 20px;
 }
 
+/*前後のページとトップページへのリンク用*/
+.left {
+  text-align: left;
+}
+
+.center {
+  text-align: center;
+}
+
+.right {
+  text-align: right;
+}
+
+.table {
+  background-color: #FFF;
+  border-color: #FEFEFE;
+}
+
+.table tbody tr td {
+  border-top: 0px;
+}
+
+/*ページリストを画面上部に固定するためのもの*/
 #main {
   position: relative;
 }

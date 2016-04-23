@@ -5,13 +5,13 @@
 
   <title>{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}</title>
 
-  <link rel="stylesheet" type="text/css" media="screen" href="{{"/assets/bootstrap/css/bootstrap.min.css" | prepend: site.github.url | site.url}}">
-  <link rel="stylesheet" type="text/css" media="screen" href="{{"/css/stylesheet.css" | prepend: site.github.url | site.url}}">
-  <link rel="stylesheet" type="text/css" media="screen" href="{{"/css/main.css" | prepend: site.github.url | site.url}}">
-  <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.github.url | site.url}}">
-  <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ "/feed.xml" | prepend: site.github.url | site.baseurl | prepend: site.url }}">
+  <link rel="stylesheet" type="text/css" media="screen" href="{{"/assets/bootstrap/css/bootstrap.min.css" | prepend: site.url}}">
+  <link rel="stylesheet" type="text/css" media="screen" href="{{"/css/stylesheet.css" | prepend: site.url}}">
+  <link rel="stylesheet" type="text/css" media="screen" href="{{"/css/main.css" | prepend: site.url}}">
+  <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.url}}">
+  <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ "/feed.xml" | prepend: site.url }}">
 <!--  <script type="text/javascript" src="{{"/assets/bootstrap/js/bootstrap.min.js" | prepend: site.github.url | site.url}}"></script> -->
-  <script type="text/javascript" src="{{"/js/jquery-2.2.3.min.js" | prepend: site.github.url | site.url}}"></script>
+  <script type="text/javascript" src="{{"/js/jquery-2.2.3.min.js" | prepend: site.url}}"></script>
   <script>
     $(function(){
       var list = $("#list");

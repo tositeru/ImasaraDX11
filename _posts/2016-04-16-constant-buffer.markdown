@@ -167,8 +167,8 @@ if (FAILED(hr)) {
 <span class="keyward">ID3D11Device::CreateBuffer関数</span>の引数は次のものになります。
 <br>ドキュメント: [ID3D11Device::CreateBuffer(日本語)][MSDN_CREATE_BUFFER_JP] [ID3D11Device::CreateBuffer(英語)][MSDN_CREATE_BUFFER_EN]
 
-[MSDN_BUFFER_DESC_JP]: https://msdn.microsoft.com/ja-jp/library/ee416048(v=vs.85).aspx
-[MSDN_BUFFER_DESC_EN]: https://msdn.microsoft.com/en-us/library/ff476092(v=vs.85).aspx
+[MSDN_CREATE_BUFFER_JP]: https://msdn.microsoft.com/ja-jp/library/ee419781(v=vs.85).aspx
+[MSDN_CREATE_BUFFER_EN]: https://msdn.microsoft.com/en-us/library/ff476501(v=vs.85).aspx
 
 <ol>
   <li>第1引数：<span class="keyward">D3D11_BUFFER_DESC</span>
@@ -430,5 +430,12 @@ cbuffer Param1 {
   </p>
 </div>
 
-[MSDN_CREATE_BUFFER_JP]: https://msdn.microsoft.com/ja-jp/library/ee419781(v=vs.85).aspx
-[MSDN_CREATE_BUFFER_EN]: https://msdn.microsoft.com/en-us/library/ff476501(v=vs.85).aspx
+<table class="table table-condensed">
+  <tbody>
+    <tr>
+      <td class="left"><a href="{{ "/part/clear-screen" | prepend: site.url }}">＜前</a></td>
+      <td class="center"><a href="{{ site.url }}">トップ</a></td>
+      <td class="right"><a href="{{ "/part/constant-buffer" | prepend: site.url }}">次＞</a></td>
+    </tr>
+  </tbody>
+</table>

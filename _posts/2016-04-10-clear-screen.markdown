@@ -674,3 +674,13 @@ this->mpImmediateContext->ClearUnorderedAccessViewFloat(this->mpScreenUAV.Get(),
     </p>
   </div>
 </section>
+
+<table class="table table-condensed">
+  <tbody>
+    <tr>
+      <td class="left"><a href="{{ site.url }}">＜前</a></td>
+      <td class="center"><a href="{{ site.url }}">トップ</a></td>
+      <td class="right"><a href="{{ "/part/constant-buffer" | prepend: site.url }}">次＞</a></td>
+    </tr>
+  </tbody>
+</table>
