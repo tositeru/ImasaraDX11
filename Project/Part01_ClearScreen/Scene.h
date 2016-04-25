@@ -35,9 +35,6 @@ public:
 	virtual void onKeyUp(UINT8 key)override;
 
 private:
-	void updateTitle();
-
-private:
 	Microsoft::WRL::ComPtr<ID3D11ComputeShader> mpCSClearScreen;
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> mpScreen;

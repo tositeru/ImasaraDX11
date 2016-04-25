@@ -18,15 +18,20 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //*********************************************************
 
-#include "Scene.h"
+Texture2D<float4> image : register(t0);
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
+RWTexture2D<float4> screen : register(u0);
+
+[numthreads(1, 1, 1)]
+void main(uint2 DTid : SV_DispatchThreadID)
 {
-	try {
-		Scene sample(1280, 720, L"いまさらDirect3D11入門 Part01 シェーダを使った画面クリア");
-		return Win32Application::run(&sample, hInstance, nCmdShow);
-	} catch (std::exception& e) {
-		MessageBoxA(NULL, e.what(), "Error", MB_OK | MB_ICONERROR);
+	uint2 image_size;
+	image.GetDimensions(image_size.x, image_size.y);
+
+	[branch]
+	if (DTid.x < image_size.x && DTid.y < image_size.y) {
+		screen[DTid] = image[DTid];
+	} else {
+		screen[DTid] = float4(0, 0, 0, 1);
 	}
-	return 1;
 }

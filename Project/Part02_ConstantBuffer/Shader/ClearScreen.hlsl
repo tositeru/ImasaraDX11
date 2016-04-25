@@ -29,7 +29,6 @@ RWTexture2D<float4> screen : register(u0);
 [numthreads(1, 1, 1)]
 void main( uint2 DTid : SV_DispatchThreadID )
 {
-	[branch]
 	if(DTid.x < screenSize.x && DTid.y < screenSize.y) {
 		screen[DTid] = clearColor;
 	}

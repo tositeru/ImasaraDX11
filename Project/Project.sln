@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part02_ClearScreenWithTexture", "Part2_ClearScreenWithTexture\Part2_ClearScreenWithTexture.vcxproj", "{92E3AED4-8312-41B8-B92B-6F5C037DC5B4}"
 EndProject
@@ -38,6 +38,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part01_ClearScreen", "Part01_ClearScreen\Part01_ClearScreen.vcxproj", "{25DC3178-EB08-4153-8190-0861A82AD7D9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part02_ConstantBuffer", "Part02_ConstantBuffer\Part02_ConstantBuffer.vcxproj", "{37BBDF78-0545-4610-A6B2-693DE7DE8E0B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part03_Texture", "Part03_Texture\Part03_Texture.vcxproj", "{2FFC03FE-6B20-4682-8049-D1F1E04FAF53}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -191,6 +193,14 @@ Global
 		{37BBDF78-0545-4610-A6B2-693DE7DE8E0B}.Release|x64.Build.0 = Release|x64
 		{37BBDF78-0545-4610-A6B2-693DE7DE8E0B}.Release|x86.ActiveCfg = Release|Win32
 		{37BBDF78-0545-4610-A6B2-693DE7DE8E0B}.Release|x86.Build.0 = Release|Win32
+		{2FFC03FE-6B20-4682-8049-D1F1E04FAF53}.Debug|x64.ActiveCfg = Debug|x64
+		{2FFC03FE-6B20-4682-8049-D1F1E04FAF53}.Debug|x64.Build.0 = Debug|x64
+		{2FFC03FE-6B20-4682-8049-D1F1E04FAF53}.Debug|x86.ActiveCfg = Debug|Win32
+		{2FFC03FE-6B20-4682-8049-D1F1E04FAF53}.Debug|x86.Build.0 = Debug|Win32
+		{2FFC03FE-6B20-4682-8049-D1F1E04FAF53}.Release|x64.ActiveCfg = Release|x64
+		{2FFC03FE-6B20-4682-8049-D1F1E04FAF53}.Release|x64.Build.0 = Release|x64
+		{2FFC03FE-6B20-4682-8049-D1F1E04FAF53}.Release|x86.ActiveCfg = Release|Win32
+		{2FFC03FE-6B20-4682-8049-D1F1E04FAF53}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

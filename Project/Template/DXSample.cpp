@@ -176,7 +176,7 @@ void DXSample::resizeWindow(WPARAM wParam, UINT width, UINT height)
 // Helper function for setting the window's title text.
 void DXSample::setCustomWindowText(LPCWSTR text)
 {
-	std::wstring windowText = this->mTitle + L": " + text;
+	std::wstring windowText = this->mTitle + L" : " + text;
 	SetWindowText(Win32Application::hwnd(), windowText.c_str());
 }
 

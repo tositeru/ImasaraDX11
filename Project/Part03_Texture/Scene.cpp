@@ -22,6 +22,8 @@
 
 #include <DirectXTK\Inc\WICTextureLoader.h>
 
+#include "Template/Common.h"
+
 Scene::Scene(UINT width, UINT height, std::wstring name)
 	: DXSample(width, height, name)
 {
@@ -29,28 +31,81 @@ Scene::Scene(UINT width, UINT height, std::wstring name)
 
 void Scene::onInit()
 {
+	this->updateTitle();
+
 	{
-		std::vector<char> byteCode;
-		if (!loadBinaryFile(&byteCode, "ClearScreenWithTexture.cso")) {
-			throw std::runtime_error("シェーダファイルの読み込みに失敗");
+		createShader(this->mpCSClearScreen.GetAddressOf(), this->mpDevice.Get(), "ClearScreenWithTexture.cso");
+
+		createShader(this->mpCSClearScreenWithSampler.GetAddressOf(), this->mpDevice.Get(), "ClearScreenWithSampler.cso");
+	}
+	{//プログラム上でデータを用意してテクスチャを作成する
+		D3D11_TEXTURE2D_DESC desc = {};
+		desc.Width = 256;
+		desc.Height = 128;
+		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.SampleDesc.Count = 1;
+
+		std::vector<uint32_t> rawData;
+		rawData.resize(desc.Width * desc.Height);
+		for (auto y = 0u; y < desc.Height; ++y) {
+			for (auto x = 0u; x < desc.Width; ++x) {
+				auto index = y * desc.Width + x;
+				if (index % 52 < 10) {
+					rawData[index] = 0xff55ffff;
+				} else {
+					rawData[index] = 0xffff5555;
+				}
+			}
+		}
+		D3D11_SUBRESOURCE_DATA initData;
+		initData.pSysMem = rawData.data();
+		initData.SysMemPitch = sizeof(rawData[0]) * desc.Width;//1行当たりのデータ長
+		initData.SysMemSlicePitch = sizeof(rawData[0]) * desc.Width * desc.Height;//ここでは全体のサイズ
+		auto hr = this->mpDevice->CreateTexture2D(&desc, &initData, this->mpTex2D.GetAddressOf());
+		if (FAILED(hr)) {
+			throw std::runtime_error("ID3D11Textureの作成に失敗");
 		}
 
-		HRESULT hr;
-		hr = this->mpDevice->CreateComputeShader(byteCode.data(), static_cast<SIZE_T>(byteCode.size()), nullptr, &this->mpCSClearScreen);
+		D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc = {};
+		viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		viewDesc.Format = desc.Format;
+		viewDesc.Texture2D.MipLevels = desc.MipLevels;
+		viewDesc.Texture2D.MostDetailedMip = 0;
+		hr = this->mpDevice->CreateShaderResourceView(this->mpTex2D.Get(), &viewDesc, this->mpTex2DSRV.GetAddressOf());
 		if (FAILED(hr)) {
-			throw std::runtime_error("ClearScreenWithTexture.hlslの作成に失敗");
-		}
-		
-		if (!loadBinaryFile(&byteCode, "ClearScreenWithSampler.cso")) {
-			throw std::runtime_error("シェーダファイルの読み込みに失敗");
-		}
-		hr = this->mpDevice->CreateComputeShader(byteCode.data(), static_cast<SIZE_T>(byteCode.size()), nullptr, &this->mpCSClearScreenWithSampler);
-		if (FAILED(hr)) {
-			throw std::runtime_error("ClearScreenWithSampler.hlslの作成に失敗");
+			throw std::runtime_error("ID3D11ShaderResourceViewの作成に失敗");
 		}
 	}
 
-	{//ClearScreen.hlslの出力先の作成
+	{//DirectXTKを使った画像に読み込み
+		Microsoft::WRL::ComPtr<ID3D11Resource> pTex2D;
+		auto hr = DirectX::CreateWICTextureFromFile(this->mpDevice.Get(), L"image.png", &pTex2D, this->mpImageSRV.GetAddressOf());
+		if (FAILED(hr)) {
+			throw std::runtime_error("画面クリア用の画像の読み込みに失敗");
+		}
+		hr = pTex2D.Get()->QueryInterface<ID3D11Texture2D>(this->mpImage.GetAddressOf());
+		if (FAILED(hr)) {
+			throw std::runtime_error("ID3D11ResourceからID3D11Texture2Dへの変換に失敗");
+		}
+	}
+	{//サンプラー作成
+		D3D11_SAMPLER_DESC desc = {};
+		desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+		//desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR; //補間が聞いたサンプリング
+		//todo ミップマップの説明もする？
+		auto hr = this->mpDevice->CreateSamplerState(&desc, this->mpSampler.GetAddressOf());
+		if (FAILED(hr)) {
+			throw std::runtime_error("ポイントサンプラーの作成に失敗");
+		}
+	}
+
+	{//出力先の作成
 		D3D11_TEXTURE2D_DESC desc = { 0 };
 		desc.Width = this->mWidth;
 		desc.Height = this->mHeight;
@@ -68,33 +123,6 @@ void Scene::onInit()
 			throw std::runtime_error("コンピュータシェーダの出力先用のID3D11Texture2DのUnorderedAccessViewの作成に失敗");
 		}
 	}
-
-	{//画面クリアに使うテクスチャの読み込み
-		Microsoft::WRL::ComPtr<ID3D11Resource> pTex2D;
-		auto hr = DirectX::CreateWICTextureFromFile(this->mpDevice.Get(), L"image.png", &pTex2D, this->mpImageSRV.GetAddressOf());
-		if (FAILED(hr)) {
-			throw std::runtime_error("画面クリア用の画像の読み込みに失敗");
-		}
-		//this->mpImageSRV = pSRV;
-		hr = pTex2D.Get()->QueryInterface<ID3D11Texture2D>(this->mpImage.GetAddressOf());
-		if (FAILED(hr)) {
-			throw std::runtime_error("ID3D11ResourceからID3D11Texture2Dへの変換に失敗");
-		}
-	}
-	{//ClearScreenWithSampler.hlslのためのサンプラー作成
-		// 
-		D3D11_SAMPLER_DESC desc = {};
-		desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-		//desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR; //補間が聞いたサンプリング
-		//todo ミップマップの説明もする？
-		auto hr = this->mpDevice->CreateSamplerState(&desc, this->mpSampler.GetAddressOf());
-		if (FAILED(hr)) {
-			throw std::runtime_error("ポイントサンプラーの作成に失敗");
-		}
-	}
 }
 
 void Scene::onUpdate()
@@ -105,6 +133,7 @@ void Scene::onKeyUp(UINT8 key)
 {
 	if (key == 'Z') {
 		this->mMode = static_cast<decltype(this->mMode)>((this->mMode + 1) % eMODE_COUNT);
+		this->updateTitle();
 	}
 }
 
@@ -118,7 +147,7 @@ void Scene::onRender()
 		assert(false);
 	}
 
-	std::array<ID3D11ShaderResourceView*, 1> ppSRVs = { { this->mpImageSRV.Get(), } };
+	std::array<ID3D11ShaderResourceView*, 1> ppSRVs = { { this->mpTex2DSRV.Get(), } };
 	this->mpImmediateContext->CSSetShaderResources(0, static_cast<UINT>(ppSRVs.size()), ppSRVs.data());
 
 	std::array<ID3D11SamplerState*, 1> ppSamplers = { { this->mpSampler.Get(), } };
@@ -140,3 +169,12 @@ void Scene::onDestroy()
 {
 }
 
+void Scene::updateTitle()
+{
+	std::wstring suffix;
+	switch (this->mMode) {
+	case eMODE_INDEX: suffix = L"添え字アクセス"; break;
+	case eMODE_SAMPLER: suffix = L"サンプラアクセス"; break;
+	}
+	this->setCustomWindowText(suffix.c_str());
+}

@@ -18,15 +18,41 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //*********************************************************
 
-#include "Scene.h"
+#pragma once
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
+#include "Template/DXSample.h"
+
+class Scene : public DXSample
 {
-	try {
-		Scene sample(1280, 720, L"いまさらDirect3D11入門 Part01 シェーダを使った画面クリア");
-		return Win32Application::run(&sample, hInstance, nCmdShow);
-	} catch (std::exception& e) {
-		MessageBoxA(NULL, e.what(), "Error", MB_OK | MB_ICONERROR);
-	}
-	return 1;
-}
+public:
+	Scene(UINT width, UINT height, std::wstring name);
+
+	virtual void onInit()override;
+	virtual void onUpdate()override;
+	virtual void onRender()override;
+	virtual void onDestroy()override;
+
+	virtual void onKeyUp(UINT8 key)override;
+
+private:
+	void updateTitle();
+
+private:
+	enum SHADER_MODE {
+		eMODE_INDEX,
+		eMODE_SAMPLER,
+		eMODE_COUNT,
+	} mMode = eMODE_INDEX;
+
+	Microsoft::WRL::ComPtr<ID3D11ComputeShader> mpCSClearScreen;
+	Microsoft::WRL::ComPtr<ID3D11ComputeShader> mpCSClearScreenWithSampler;
+
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> mpTex2D;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mpTex2DSRV;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> mpImage;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mpImageSRV;
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> mpSampler;
+
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> mpScreen;
+	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> mpScreenUAV;
+};

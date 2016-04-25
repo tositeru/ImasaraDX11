@@ -35,6 +35,9 @@ public:
 	virtual void onKeyUp(UINT8 key)override;
 
 private:
+	void updateTitle();
+
+private:
 	enum SHADER_MODE {
 		eMODE_INDEX,
 		eMODE_SAMPLER,
@@ -46,8 +49,7 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> mpImage;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mpImageSRV;
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> mpPointSampler;
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> mpLinearSampler;
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> mpSampler;
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> mpScreen;
 	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> mpScreenUAV;

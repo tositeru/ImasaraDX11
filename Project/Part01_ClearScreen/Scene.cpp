@@ -29,8 +29,6 @@ Scene::Scene(UINT width, UINT height, std::wstring name)
 
 void Scene::onInit()
 {
-	this->updateTitle();
-
 	{
 		//実行中にシェーダをコンパイルし、ID3D11ComputeShaderを作成する
 		std::array<D3D_SHADER_MACRO, 2> macros = { {
@@ -138,6 +136,3 @@ void Scene::onDestroy()
 {
 }
 
-void Scene::updateTitle()
-{
-}
