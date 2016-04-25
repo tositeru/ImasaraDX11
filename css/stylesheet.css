@@ -141,6 +141,13 @@
   margin-bottom: 20px;
 }
 
+.argument {
+  border: solid #eee 1px;
+  background-color: #fef8f8;
+  padding: 10px;
+  border-left: solid 5px #E0AFA8;
+  margin-bottom: 20px;
+}
 /*前後のページとトップページへのリンク用*/
 .left {
   text-align: left;

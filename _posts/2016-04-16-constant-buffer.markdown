@@ -4,7 +4,7 @@ title: "定数バッファ"
 categories: part
 description: "DX11ではシェーダ実行時に自由に使うことができる値として、定数バッファ(英訳:ConstantBuffer)というものが用意されています。"
 ---
-<h3 class="under-bar">前書き</h3>
+<h1 class="under-bar">定数バッファ</h1>
 
 前のパートではシェーダを使った画面クリアを行いました。
 が、あのままだとクリアする色を変えたくなったとき、その色に合わせて同じようなシェーダを作る必要が出てきます。
@@ -37,12 +37,11 @@ void clearRed(uint2 DTid : SV_DispatchThreadID, float4 clearColor/*<- コンパ�
 ですが、代わりとなる方法がシェーダでは用意されています。
 このパートではそれについて説明していきます。
 
-<h1 class="under-bar">定数バッファ</h1>
+<h1>概要</h1>
 DX11ではシェーダ実行時に自由に使うことができる値として、<span class="important">定数バッファ(英訳:ConstantBuffer)</span>というものが用意されています。
 今パートに対応しているサンプルプロジェクトは<span class="important">Part02_ConstantBuffer</span>になります。
 
 <div class="summary">
-  <h4>概要</h4>
   <ol>
     <li>
       <a href="#USE_IN_SHADER">シェーダ内での使い方</a>
@@ -435,7 +434,7 @@ cbuffer Param1 {
     <tr>
       <td class="left"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/clear-screen">＜前</a></td>
       <td class="center"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}">トップ</a></td>
-      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/constant-buffer">次＞</a></td>
+      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/texture">次＞</a></td>
     </tr>
   </tbody>
 </table>

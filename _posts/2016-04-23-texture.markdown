@@ -1,0 +1,576 @@
+---
+layout: default
+title: "テクスチャ"
+categories: part
+description: ""
+---
+<h1 class="under-bar">テクスチャ</h1>
+
+前2つのパートで何度か名前だけ出てきたテクスチャですが、このパートで簡単に見ていきます。
+"簡単に"というのはテクスチャは<span class="keyward">ID3D11Buffer</span>とは違い特殊な機能があるのですが、すべて見ていくと長くなるので後で別パートと分けて見ていきたいと思います。
+
+ここでは2次元配列のようなものである<span class="important">2次元テクスチャ(英訳:Texture2D)</span>を使って、
+ファイルからのデータの読み込みや、シェーダ内でのアクセス方法について説明していきます。
+
+<h1>概要</h1>
+このパートでは<span class="keyward">テクスチャ(英訳:Texture)</span>を使って画面をクリアする方法について見ていきます。
+対応するプロジェクトは<span class="important">Part03_ClearScreenWithTexture</span>になります。
+
+<div class="summary">
+  <ol>
+    <li>
+      <a href="#USE_IN_SHADER">シェーダ内での使い方</a>
+      <ul><li><span class="keyward">Texture2D</span>キーワード</li></ul>
+      <ul><li><span class="keyward">SamperState</span>キーワード</li></ul>
+    </li>
+    <li><a href="#CONFIG">GPUへの設定</a></li>
+    <li>
+      <a href="#DX11_Texture">ID3D11Texture2D</a>
+      <br><span class="keyward">ID3D11Device::CreateTexture2D関数</span>
+    </li>
+    <li>
+      <a href="#DX11_Sampler">ID3D11SamplerState</a>
+      <br><span class="keyward">ID3D11Device::CreateDevice関数</span>
+    </li>
+    <li><a href="#SUMMARY">まとめ</a></li>
+    <li><a href="#SUPPLEMENTAL">補足</a>
+      <ul>
+        <li>DirectXTKを使ったテクスチャの読み込み</li>
+        <li>テクスチャの種類</li>
+        <li>DXGI_FORMAT</li>
+        <li>シェーダ内での分岐命令</li>
+      </ul>
+    </li>
+  </ol>
+</div>
+
+<h1 class="under-bar">シェーダ内での使い方</h1>
+<a name="USE_IN_SHADER"></a>
+
+<h3><span class="keyward">Texture2D</span>キーワード</h3>
+{% highlight hlsl %}
+//ClearScreenWithTexture.hlsl
+Texture2D<float4> image : register(t0);
+RWTexture2D<float4> screen : register(u0);
+[numthreads(1, 1, 1)]
+void main(uint2 DTid : SV_DispatchThreadID) {
+  uint2 image_size;
+  image.GetDimensions(image_size.x, image_size.y);
+  [branch]
+  if (DTid.x < image_size.x && DTid.y < image_size.y) {
+    screen[DTid] = image[DTid];
+  } else {
+    //imageの範囲外をクリアするときは黒で埋める
+    screen[DTid] = float4(0, 0, 0, 1);
+  }
+}
+{% endhighlight %}
+
+<span class="keyward">Texture2D</span>は今まで出てきた<span class="keyward">RWTexture2D</span>とかなり似ています。
+<span class="important">違いはデータの読み込みだけが可能なことと、読み込みのためにいくつかの関数が用意されていることです。</span>
+もちろん、上のコードのように添え字アクセス可能です。
+
+ちなみにテクスチャの要素のことを<span class="keyward">テクセル(英訳:texel)</span>と呼ばれたりしています。
+
+読み込み関数には<span class="keyward">サンプラステート(英訳:SamplerState)</span>と呼ばれるものを使うものがあります。
+サンプラステートについては次の項目で見ていきます。
+
+ドキュメント:
+[テクスチャー オブジェクト(日本語)][TEXTURE_OBJECT_JP]
+[Texture2D(日本語)][TEXTURE2D_JP]
+[Texture2D(英語)][TEXTURE2D_EN]
+
+[TEXTURE_OBJECT_JP]: https://msdn.microsoft.com/ja-jp/library/ee418522(v=vs.85).aspx
+[TEXTURE2D_JP]: https://msdn.microsoft.com/ja-jp/library/ee422395(v=vs.85).aspx
+[TEXTURE2D_EN]: https://msdn.microsoft.com/en-us/library/windows/desktop/ff471525(v=vs.85).aspx
+
+<h3><span class="keyward">SamperState</span>キーワード</h3>
+{% highlight hlsl %}
+//ClearScreenWithSampler.hlsl
+Texture2D<float4> image : register(t0);
+SamplerState point_sampler : register(s0);
+RWTexture2D<float4> screen : register(u0);
+[numthreads(1, 1, 1)]
+void main(uint2 DTid : SV_DispatchThreadID)　{
+  uint2 screen_size;
+  screen.GetDimensions(screen_size.x, screen_size.y);
+  float2 uv = (float2)DTid / (float2)screen_size;
+  screen[DTid] = image.SampleLevel(point_sampler, uv, 0);
+}
+{% endhighlight %}
+
+<span class="keyward">サンプラステート</span>はテクスチャ読み込みの時に使うものになります。
+上のサンプルの次の部分で実際に読み込んでいます。
+
+{% highlight hlsl %}
+//ClearScreenWithSampler.hlslの一部
+float2 uv = (float2)DTid / (float2)screen_size;
+screen[DTid] = image.SampleLevel(point_sampler, uv, 0);
+{% endhighlight %}
+
+<span class="keyward">Texture2D::SampleLevel関数</span>でテクセルを読み込んでいます。
+<br>ドキュメント：
+[SampleLeve(日本語)][SAMPLE_LEVEL_JP]
+[Texture2D::SampleLevel(英語)][SAMPLE_LEVEL_EN]
+
+[SAMPLE_LEVEL_JP]: https://msdn.microsoft.com/ja-jp/library/ee418521(v=vs.85).aspx
+[SAMPLE_LEVEL_EN]: https://msdn.microsoft.com/en-us/library/windows/desktop/dn367016(v=vs.85).aspx
+
+<ul>
+  <li>第1引数:使用する<span class="keyward">サンプラステート</span></li>
+  <li>第2引数:サンプリングする場所を表すUV値</li>
+  <li>第3引数:サンプリングする<span class="keyward">ミップマップ</span>のレベル
+    <p><span class="keyward">ミップマップ</span>についてはあとのパートで説明します。</p>
+  </li>
+</ul>
+
+<span class="keyward">サンプラステート</span>を使ってテクスチャの要素を読み込むときは<span class="important">UV座標</span>と呼ばれる座標系を使って読み込みます。
+<span class="important">UV座標系はテクスチャのサイズを0~1の範囲で表したものになります。</span>
+
+例えば、横幅が200で縦幅が100のテクスチャの中央にあるテクセル(100,50)にアクセスしたい場合、
+UV座標系では(0.5, 0.5)と表します。
+
+{% highlight hlsl %}
+//UV座標の計算の一例
+//この例ではuvの値は{0.5f, 0.5f}になる
+float2 textureSize = {200.f, 100.f};
+float2 texel = {100.f, 50.f};
+float2 uv = texel / textureSize;
+{% endhighlight %}
+
+UV座標系を使う際の利点はテクスチャのサイズが変わっても同じUVで同じテクセルの場所を指定できる点でしょうか。
+これは<span class="keyward">Texture2D</span>キーワードのコードと上のコードを比較してもらえばお分かりいただけるかと思います。
+
+<span class="keyward">Texture2D</span>キーワードのコードの場合はテクスチャの範囲外にアクセスしないように条件分岐しています。
+<span class="important">シェーダでは条件分岐はコストがCPUと比べてコストが高い処理になります。</span>
+現在ではそこまで問題にはなりませんが、昔だとシェーダ内では条件分岐自体が出来ないことが当たり前でした。
+また、特に工夫をしない限り画面に合うようにテクスチャでクリアすることはできません。
+工夫をしたとしてもUV座標の計算と同じ処理を書くことになり、テクスチャのサイズが小さければドットが目立ってしまいます。
+この問題も隣接するテクセルを補間することで対応できますが、<span class="important">サンプラを使えばGPUのハードウェア機能を利用して隣接するテクセルを補間することが出来ます。</span>
+ただ、サンプラを使った場合はコストが添え字アクセスよりもかかりますので、添え字アクセスで十分な場合は添え字を使うなど場合によって使い分けてください。
+
+<span class="important">また、UVの値が0～1の範囲を超えてしまった場合の動作はサンプラの作成時に決めることが可能です。</span>
+サンプルのデフォルトでは0～1範囲を超えてしまったらまた0~1の範囲で繰り返すようにサンプリングします。
+これは実際に見てもらった方がわかりやすいと思いますので、サンプルコードを書き換えてみてください。
+
+後、<span class="keyward">Texture2D</span>と<span class="keyward">SamplerState</span>のスロットの設定は定数バッファ、アンオーダードアクセスビューと同じです。
+<span class="keyward">Texture2D</span>では"register(t0)"と"t"を使い、
+<span class="keyward">SamplerState</span>では"register(s0)"と"s"を使ってください。
+
+シェーダ側でのテクスチャの使い方は以上になります。
+テクスチャを使うときはサンプラも一緒に使うことが多いで、セットで覚えていきましょう。
+
+次はCPU側でのテクスチャとサンプラの設定の仕方を見ていきます。
+
+<h1 class="under-bar">GPUへの設定</h1>
+<a name="CONFIG"></a>
+
+{% highlight c++ %}
+//Scene::onRender関数の一部
+//テクスチャの設定
+std::array<ID3D11ShaderResourceView*, 1> ppSRVs = { { this->mpImageSRV.Get(), } };
+this->mpImmediateContext->CSSetShaderResources(0, static_cast<UINT>(ppSRVs.size()), ppSRVs.data());
+//サンプラの設定
+std::array<ID3D11SamplerState*, 1> ppSamplers = { { this->mpSampler.Get(), } };
+this->mpImmediateContext->CSSetSamplers(0, static_cast<UINT>(ppSamplers.size()), ppSamplers.data());
+{% endhighlight %}
+
+<span class="important">シェーダ内で<span class="keyward">Texture2D</span>を使うときは<span class="keyward">ID3D11ShaderResourceView</span>として扱い、
+<span class="important"><span class="keyward">SamplerState</span>の場合は<span class="keyward">ID3D11SamplerState</span>として扱います。</span>
+
+<span class="important">GPUへの設定の仕方も今まで出てきた定数バッファやアンオーダードアクセスビューと同じです。</span>
+設定するものが<span class="keyward">ID3D11ShaderResourceView</span>や<span class="keyward">ID3D11SamplerState</span>になっただけです。
+
+ドキュメント：<br>
+[ID3D11DeviceContext::CSSetShaderResources(日本語)][CSSETSHADERRESOURCE_JP]
+[ID3D11DeviceContext::CSSetShaderResources(英語)][CSSETSHADERRESOURCE_EN]<br>
+[ID3D11DeviceContext::CSSetSamplers(日本語)][CSSETSAPLER_JP]
+[ID3D11DeviceContext::CSSetSamplers(英語)][CSSETSAPLER_EN]
+
+[CSSETSHADERRESOURCE_JP]: https://msdn.microsoft.com/ja-jp/library/ee419585(v=vs.85).aspx
+[CSSETSHADERRESOURCE_EN]: https://msdn.microsoft.com/en-us/library/windows/desktop/ff476403(v=vs.85).aspx
+[CSSETSAPLER_JP]: https://msdn.microsoft.com/ja-jp/library/ee419583(v=vs.85).aspx
+[CSSETSAPLER_EN]: https://msdn.microsoft.com/en-us/library/windows/desktop/ff476401(v=vs.85).aspx
+
+<div class="topic">
+  <h4>シェーダへ設定できるものまとめ</h4>
+  <span class="important">シェーダへ設定できるものは今回出たもので一通り出てきました。</span>
+  <p>
+    <ul>
+      <li><span class="keyward">定数バッファ (<span class="keyward">ID3D11Buffer</span>)</span></li>
+      <li><span class="keyward">シェーダリソースビュー (<span class="keyward">ID3D11ShaderResourceView</span>)</span></li>
+      <li><span class="keyward">サンプラステート (<span class="keyward">ID3D11SamplerState</span>)</span></li>
+      <li><span class="keyward">アンオーダードアクセスビュー (<span class="keyward">ID3D11UnorderedAccessView</span>)</span></li>
+    </ul>
+
+    この内、シェーダリソースビューとアンオーダードアクセスビューを表す<span class="keyward">ID3D11ShaderResourceView</span>と<span class="keyward">ID3D11UnorderedAccessView</span>は
+    <span class="keyward">ID3D11View</span>という<span class="keyward">ビュー</span>を表す派生したものになります。
+    <span class="important">DX11ではリソースをGPUで使う場合、ビューと呼ばれるGPUがリソースにどのようにアクセスするかを表しているものを介して設定します。</span>
+    <span class="important">1つのリソースに複数のビューを作ることが可能で、例えばあるシェーダでデータを書き込んで別のシェーダでそのデータを使いたいといった場合は
+    ID3D11ShaderResourceViewとID3D11UnorderedAccessViewを作る必要があります。</span>
+    あるリソースがどのビューを作ることが出来るかは作成時に<span class="keyward">D3D11_BIND_FLAG</span>を使って指定します。
+    <span class="important">リソースの作り方によっては同時に作ることが出来ないビューも出てきます。</span>
+    その時は作成に失敗しますのでエラーメッセージを読んで対応してください。
+  </p>
+  <p>
+    GPUに設定できるもので残っているものはグラフィックスパイプライン関連の設定やクエリ関連のものになりますので随時説明していきます。
+  </p>
+</div>
+
+
+<h1 class="under-bar">ID3D11Texture2D</h1>
+<a name="DX11_Texture"></a>
+<span class="keyward">Texture2D</span>を表す<span class="keyward">ID3D11Texture2D</span>と<span class="keyward">ID3D11ShaderResourceView</span>の作成は以下のコードになります。
+{% highlight c++ %}
+//生成するID3D11Texture2Dの情報
+D3D11_TEXTURE2D_DESC desc = {};
+desc.Width = 256;
+desc.Height = 128;
+desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+desc.MipLevels = 1;
+desc.ArraySize = 1;
+desc.SampleDesc.Count = 1;
+//画像データを適当に生成
+//設定する値はdesc.Formatに合ったものにすること
+std::vector<uint32_t> rawData;
+rawData.resize(desc.Width * desc.Height);
+for (auto y = 0; y < desc.Height; ++y) {
+  for (auto x = 0; x < desc.Width; ++x) {
+    auto index = y * desc.Width + x;
+    if (index % 52 < 10) {
+      rawData[index] = 0xff55ffff;
+    } else {
+      rawData[index] = 0xffff5555;
+    }
+  }
+}
+D3D11_SUBRESOURCE_DATA initData;
+initData.pSysMem = rawData.data();
+initData.SysMemPitch = sizeof(rawData[0]) * desc.Width;//1行当たりのデータ長
+initData.SysMemSlicePitch = sizeof(rawData[0]) * desc.Width * desc.Height;//ここでは全体のサイズ
+//テクスチャを表すID3D11Texture2Dの作成
+auto hr = this->mpDevice->CreateTexture2D(&desc, &initData, this->mpTex2D.GetAddressOf());
+if (FAILED(hr)) {
+  throw std::runtime_error("ID3D11Textureの作成に失敗");
+}
+//シェーダで使うためのビュー作成
+D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc = {};
+viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+viewDesc.Format = desc.Format;
+viewDesc.Texture2D.MipLevels = desc.MipLevels;
+viewDesc.Texture2D.MostDetailedMip = 0;
+hr = this->mpDevice->CreateShaderResourceView(this->mpTex2D.Get(), &viewDesc, this->mpTex2DSRV.GetAddressOf());
+if (FAILED(hr)) {
+  throw std::runtime_error("ID3D11ShaderResourceViewの作成に失敗");
+}
+{% endhighlight %}
+
+コードは長くなっていますが、<span class="keyward">ID3D11Buffer</span>の作成と似ていますので理解はしやすいと思います。
+
+まず、<span class="keyward">ID3D11Texture2D</span>は<span class="keyward">ID3D11Device::CreateTexture2D関数</span>で作成しています。
+{% highlight C++%}
+auto hr = this->mpDevice->CreateTexture2D(&desc, &initData, this->mpTex2D.GetAddressOf());
+{% endhighlight %}
+ドキュメント:
+[ID3D11Device::CreateTexture2D(日本語)][CreateTexture2D_JP]
+[ID3D11Device::CreateTexture2D(英語)][CreateTexture2D_EN]
+
+[CreateTexture2D_JP]:https://msdn.microsoft.com/ja-jp/library/ee419804(v=vs.85).aspx
+[CreateTexture2D_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476521(v=vs.85).aspx
+
+<div class="argument">
+  <ul>
+    <li>第1引数:<span class="keyward">D3D11_TEXTURE2D_DESC</span>
+      <p>
+        作成するID3D11Texture2Dの情報を表す<span class="keyward">D3D11_TEXTURE2D_DESC</span>を渡します。
+        上のコードで設定しているメンバが最低限ひつようとなるものです。
+        <br>ドキュメント:
+        <a href="https://msdn.microsoft.com/ja-jp/library/ee416341(v=vs.85).aspx">D3D11_TEXTURE2D_DESC(日本語)</a>
+        <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476253(v=vs.85).aspx">D3D11_TEXTURE2D_DESC(英語)</a>
+        <ul>
+          <li><span class="keyward">Width</span>
+            <p>
+              作成するテクスチャの横幅
+            </p>
+          </li>
+          <li><span class="keyward">Height</span>
+            <p>
+              作成するテクスチャの縦幅
+            </p>
+          </li>
+          <li><span class="keyward">BindFlags</span>
+            <p>
+              作成したいビューの指定。ここでは読み取りだけ行いたいので<span class="keyward">D3D11_BIND_SHADER_RESOURCE</span>を指定しています。
+              <br>ドキュメント:
+              <a href="https://msdn.microsoft.com/ja-jp/library/ee416041(v=vs.85).aspx">D3D11_BIND_FLAG(日本語)</a>
+              <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476085(v=vs.85).aspx">D3D11_BIND_FLAG(英語)</a>
+            </p>
+          </li>
+          <li><span class="keyward">Format</span>
+            <p>
+              テクセルあたりのデータ形式。ここでは赤、緑、青、透明度を8bitで表す<span class="keyward">DXGI_FORMAT_R8G8B8A8_UNORM</span>を指定しています。
+              末尾のUNORMについては補足を参照してください。
+              <br>ドキュメント:
+              <a href="https://msdn.microsoft.com/ja-jp/library/ee418116(v=vs.85).aspx">DXGI_FORMAT(日本語)</a>
+              <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/bb173059(v=vs.85).aspx">DXGI_FORMAT(日本語)</a>
+            </p>
+          </li>
+          <li><span class="keyward">MipLevels</span>
+            <p>
+              テクスチャの専用機能のうちの一つであるミップマップの数を指定します。
+              <span class="important">ミップマップが必要なくとも必ず、1以上を指定してください。</span>
+              ミップマップについては別パートで説明します。
+            </p>
+          </li>
+          <li><span class="keyward">ArraySize</span>
+            <p>
+              テクスチャの専用機能のうちの一つである配列の数を指定します。
+              <span class="important">配列にしない場合は1を指定してください</span>
+            </p>
+          </li>
+          <li><span class="keyward">SampleDesc.Count</span>
+            <p>
+              テクスチャの専用機能のうちの一つであるマルチサンプリングを使う際の1テクセル当たりのサブピクセル数を指定します。
+              <span class="important">マルチサンプリングを使わない場合は1を指定してください</span>
+              マルチサンプリングについては別パートで説明します。          
+            </p>
+          </li>
+        </ul>
+      </p>
+    </li>
+    <li>第2引数:D3D11_SUBRESOURCE_DATA
+      <p>
+        初期データを表すものです。
+        定数バッファとの違いは1行当たりのデータ長を<span class="keyward">SysMemPitch</span>に設定しているところと、
+        テクスチャ全体のデータ長を<span class="keyward">SysMemSlicePitch</span>に設定している所です。
+      </p>
+    </li>
+    <li>第3引数:<span class="keyward">ID3D11Texture2D</span>
+      <p>作成した<span class="keyward">ID3D11Texture2D</span>を受け取る変数</p>
+    </li>
+  </ul>
+</div>
+
+<span class="keyward">ID3D11Texture2D</span>を作成した後はシェーダから読み込むために<span class="keyward">ID3D11ShaderResourceView</span>を作成します。
+
+{% highlight c++ %}
+hr = this->mpDevice->CreateShaderResourceView(this->mpTex2D.Get(), &viewDesc, this->mpTex2DSRV.GetAddressOf());
+{% endhighlight %}
+
+ドキュメント：
+[ID3D11Device::CreateShaderResourceView(日本語)][CREATE_SRV_JP]
+[ID3D11Device::CreateShaderResourceView(英語)][CREATE_SRV_EN]
+
+[CREATE_SRV_JP]:https://msdn.microsoft.com/ja-jp/library/ee419802(v=vs.85).aspx
+[CREATE_SRV_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476519(v=vs.85).aspx
+
+<div class="argument">
+  <ul>
+    <li>第1引数:<span class="keyward">ID3D11Resource</span>
+      <p>
+        ビューを作成したい<span class="keyward">ID3D11Resource</span>を渡します。
+        <span class="keyward">ID3D11Resource</span>はID3D11Texture2DやID3D11Bufferの親クラスになりますので、直接ID3D11Texture2Dを渡すことが出来ます。
+      </p>
+    </li>
+    <li>第2引数:<span class="keyward">D3D11_SHADER_RESOURCE_VIEW_DESC</span>
+      <p>
+        作成するビューの情報を設定した<span class="keyward">D3D11_SHADER_RESOURCE_VIEW_DESC</span>を渡します。
+        設定できる項目はリソースによって変わりますので、ここでは共通部分だけ説明します。
+        <br>ドキュメント：
+        <a href="https://msdn.microsoft.com/ja-jp/library/ee416275(v=vs.85).aspx">D3D11_SHADER_RESOURCE_VIEW_DESC(日本語)</a>
+        <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476211(v=vs.85).aspx">D3D11_SHADER_RESOURCE_VIEW_DESC(英語)</a>      
+        <ol>
+          <li>Format: GPU上のデータのフォーマット
+            <p>
+              基本的には作成したリソースと同じ<span class="keyward">DXGI_FORMAT</span>を設定します。
+              いくつかの<span class="keyward">DXGI_FORMAT</span>は互換性を持っているのでその時は使いたいフォーマットをここで設定します。
+            </p>
+          </li>
+          <li>ViewDimension：　リソースタイプの指定
+            <p>
+              ここで設定したタイプによって設定する項目が変わります。
+              サンプルではD3D11_SRV_DIMENSION_TEXTURE2Dを指定しているので<span class="keyward">Texture2D</span>メンバを設定しています。
+            </p>
+          </li>
+        </ol>
+      </p>
+    </li>
+    <li>第3引数:<span class="keyward">ID3D11ShaderResourceView</span>
+      <p>作成した<span class="keyward">ID3D11ShaderResourceView</span>を受け取る変数</p>
+    </li>
+  </ul>
+</div>
+
+以上、長くなりましたが<span class="keyward">ID3D11Texture2D</span>と<span class="keyward">ID3D11ShaderResourceView</span>の作成は以上になります。
+設定する項目が多いだけで行っていることは簡単ですので、すぐ慣れることでしょう。
+
+<h1 class="under-bar">ID3D11SamplerState</h1>
+<a name="DX11_Sampler"></a>
+<span class="keyward">SamplerState</span>を表すID3D11SamplerStateの作成は以下のコードになります。
+
+{% highlight c++ %}
+//サンプラステートの作成
+D3D11_SAMPLER_DESC desc = {};
+desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+auto hr = this->mpDevice->CreateSamplerState(&desc, this->mpSampler.GetAddressOf());
+if (FAILED(hr)) {
+  throw std::runtime_error("ポイントサンプラーの作成に失敗");
+}
+{% endhighlight %}
+
+上のコードの<span class="keyward">ID3D11Device::CreateSamplerState関数</span>でID3D11SamplerStateを作成しています。
+
+ドキュメント：
+[ID3D11Device::CreateSamplerState(日本語)][CREATE_SAMPLER_JP]
+[ID3D11Device::CreateSamplerState(英語)][CREATE_SAMPLER_EN]
+
+[CREATE_SAMPLER_JP]:https://msdn.microsoft.com/ja-jp/library/ee419801(v=vs.85).aspx
+[CREATE_SAMPLER_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476518(v=vs.85).aspx
+
+<div class="argument">
+  <ul>
+    <li>第1引数：<span class="keyward">D3D11_SAMPLER_DESC</span>
+      <p>
+        作成する<span class="keyward">ID3D11SamplerState</span>の情報を表す<span class="keyward">D3D11_SAMPLER_DESC</span>を渡します。
+        重要となるのは上のコードで使っているメンバになります。
+        <br>ドキュメント：
+        <a href="https://msdn.microsoft.com/ja-jp/library/ee416271(v=vs.85).aspx">D3D11_SAMPLER_DESC(日本語)</a>
+        <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476207(v=vs.85).aspx">D3D11_SAMPLER_DESC(英語)</a>
+        <ol>
+          <li>Filter: <span class="keyward">D3D11_FILTER</span>
+            <p>
+              サンプリングするときの補間の仕方を決めるためのものです。
+              <span class="important">テクスチャを拡大か縮小するときとミップマップをサンプリングするときの3パターンの補間のやり方を指定します。</span>
+            </p>
+          </li>
+          <li>AddressU, AddressV, AddressW: <span class="keyward">D3D11_TEXTURE_ADDRESS_MODE</span>
+            <p>
+              サンプリングの時UVの値が0~1の範囲外だった時どうするかを指定するためのものです。
+              Uは横、Vは縦、Wは奥行きに対応しています。
+              <span class="important">画像の横方向は繰り返すけど、縦方向は範囲外になったら指定した色で塗りつぶすといった設定が可能です。</span>
+            </p>
+          </li>
+        </ol>
+      </p>
+    </li>
+    <li>第2引数：<span class="keyward">ID3D11SamplerState</span>
+      <p>作成した<span class="keyward">ID3D11SamplerState</span>を受け取る変数</p>
+    </li>
+  </ul>
+</div>
+
+以上でサンプラステートの作成を終わります。
+
+<h1 class="under-bar">まとめ</h1>
+<a name="SUMMARY"></a>
+
+このパートではテクスチャとそれからデータを読み取るためのサンプラについて見てきました。
+
+この3パートでDX11で使う主要なものは大体触ってきました。
+<span class="important">C++でいう関数的な役割のシェーダと変数である<span class="keyward">ID3D11Buffer</span>とテクスチャの使い方がわかればDX11を使う上でもう悩むこともないでしょう。</span>
+
+あとここまでのパートでいくつかのリソースなどを作成してきましたが、大まかにパターンが決まっているのに気づきましたか？
+<span class="important">DX11では何か作るときは<span class="keyward">D3D11_XXX_DESC</span>みたいな構造体を使うことが多いです。</span>
+その構造体について調べれば何ができるかが大体わかりますので是非ドキュメントを読んでいってください。
+
+<h1 class="under-bar">補足</h1>
+<a name="SUPPLEMENTAL"></a>
+
+<div class="supplemental">
+  <h4>DirectXTKを使ったテクスチャの読み込み</h4>
+  <p>
+    上では<span class="keyward">ID3D11Texture2D</span>をプログラム上で直接生成していましたが、ペイントなど他のツール上で生成した画像ファイルから読み込むことが多いです。
+    <span class="important">DX11だけだとファイルから画像データを読み込むといった関数は用意されていませんが、Microsoftが提供しているDirectXTKを使用することで読み込むことが出来ます。</span>
+  </p>
+    {% highlight c++ %}
+Microsoft::WRL::ComPtr<ID3D11Resource> pTex2D;
+auto hr = DirectX::CreateWICTextureFromFile(this->mpDevice.Get(), L"image.png", &pTex2D, this->mpImageSRV.GetAddressOf());
+if (FAILED(hr)) {
+  throw std::runtime_error("画面クリア用の画像の読み込みに失敗");
+}
+hr = pTex2D.Get()->QueryInterface<ID3D11Texture2D>(this->mpImage.GetAddressOf());
+if (FAILED(hr)) {
+  throw std::runtime_error("ID3D11ResourceからID3D11Texture2Dへの変換に失敗");
+}
+    {% endhighlight %}
+  <p>
+    <span class="keyward">DirectX::CreateWICTextureFromFile関数</span>はpngなど様々な画像ファイルを読み込み<span class="keyward">ID3D11Resource</span>と<span class="keyward">ID3D11ShaderResourceView</span>を生成してくれます。
+    <span class="keyward">ID3D11Resource</span>は<span class="keyward">ID3D11Texture2D</span>の親クラスになります。
+    <span class="keyward">ID3D11Resource</span>から<span class="keyward">ID3D11Texture2D</span>に変換するには上のコードのように<span class="keyward">QueryInterface関数</span>を使用してください。
+  </p>
+</div>
+
+<div class="supplemental">
+  <h4>テクスチャの種類</h4>
+  <p>
+    今回は<span class="keyward">ID3D11Texture2D</span>を使いましたが、
+    テクスチャには他に<span class="keyward">ID3D11Texture1D</span>と<span class="keyward">ID3D11Texture3D</span>があります。
+    簡単に言うと1次元配列と3次元配列みたいなものです。
+    これらもテクスチャなので<span class="keyward">ID3D11Texture2D</span>と同じことができます。
+    <br>ドキュメント:<br>
+    <span class="keyward">ID3D11Texture1D</span>
+    <a href="https://msdn.microsoft.com/ja-jp/library/ee420036(v=vs.85).aspx">(日本語)</a>
+    <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476633(v=vs.85).aspx">(英語)</a>
+    <br><span class="keyward">ID3D11Texture3D</span>
+    <a href="https://msdn.microsoft.com/ja-jp/library/ee420040(v=vs.85).aspx">(日本語)</a>
+    <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476637(v=vs.85).aspx">(英語)</a>
+  </p>
+</div>
+
+<div class="supplemental">
+  <h4>DXGI_FORMAT</h4>
+  <p>
+    <span class="keyward">ID3D11Texture2D</span>を作成するときフォーマットを指定する必要がありました。
+    DX11では<span class="keyward">DXGI_FORMAT</span>を使ってフォーマットを指定します。
+    <span class="important">種類がたくさんありますが、1要素の成分数とそのビット幅をR,G,B,Aとその隣の数値で表し、末尾に型を指定します。</span>
+    末尾の型には<span class="keyward">FLOAT</span>,<span class="keyward">UINT</span>,<span class="keyward">INT</span>がありシェーダ内では文字通り<span class="keyward">float</span>,<span class="keyward">uint</span>,<span class="keyward">int</span>を表します。
+    <span class="keyward">TYPELESS</span>はビット幅だけを指定するものになり、その際<span class="keyward">ビュー</span>で改めて型を指定します。当然互換性のあるフォーマットしか指定できません。
+    <span class="keyward">SNORM</span>と<span class="keyward">UNORM</span>はそれぞれ符号付と符号なしの整数を表し、シェーダ内で使うときは数値は-1～1と0～1に正規化されます。
+  </p>
+    {% highlight c++ %}
+//例)8ビットの成分を4つ持つ符号なし正規化整数
+// データに0x80ff00ffを渡すとシェーダ内ではfloat4(1, 0, 1, 約0.5)になる
+DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
+uint32_t data = 0xffffffff;
+    {% endhighlight %}
+  <p>
+    その他、圧縮形式を表すものがあります。
+    圧縮形式については<a href="http://www.webtech.co.jp/blog/optpix_labs/format/6993/">こちら</a>を参考にしてください。
+    <br>ドキュメント
+    <a href="https://msdn.microsoft.com/ja-jp/library/bb173059(v=vs.85).aspx">DXGI_FORMAT(日本語)</a>
+    <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/bb173059(v=vs.85).aspx">DXGI_FORMAT(英語)</a>
+  </p>
+</div>
+
+<div class="supplemental">
+  <h4>シェーダ内での分岐命令</h4>
+  <p>
+    シェーダ内でif文を使う際、ifキーワードの前にいくつかの属性を設定できます。
+    今パートでは<span class="keyward">branch</span>属性を使いました。<span class="important">この属性はif文に渡された条件に応じて片方のコードしか実行しないように指定するものです。</span>
+    詳しくはドキュメントを読んでください。
+    <br>ドキュメント：
+    <a href="https://msdn.microsoft.com/ja-jp/library/bb509610(v=vs.85).aspx">if ステートメント(日本語)</a>
+    <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/bb509610(v=vs.85).aspx">if Statement(英語)</a>
+  </p>
+  <p>
+    <span class="important">また同じようにforやwhileも属性を指定できます。</span>
+    こちらも詳細はドキュメントをご覧ください
+    <br>ドキュメント：
+    <a href="https://msdn.microsoft.com/ja-jp/library/bb509600(v=vs.85).aspx">フロー制御（日本語）</a>
+    <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/bb509600(v=vs.85).aspx">Flow Control(英語)</a>
+  </p>
+</div>
+
+<table class="table table-condensed">
+  <tbody>
+    <tr>
+      <td class="left"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/constant-buffer">＜前</a></td>
+      <td class="center"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}">トップ</a></td>
+      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/texture">次＞</a></td>
+    </tr>
+  </tbody>
+</table>

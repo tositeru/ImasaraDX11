@@ -5,7 +5,7 @@ categories: part
 description: "まず初めに画面全体をGPUを使って単色で塗りつぶす単純なプログラムを作ることを題材に、DX11を使う上で最も重要なシェーダとその使い方について説明していきます。"
 ---
 <section>
-  <h3 class="under-bar">前書き</h3>
+  <h1 class="under-bar">{{page.title}}</h1>
   <p>まず初めにDirect3D11(以下、DX11と省略)とはなにか？と聞かれたら、私はGPUを扱うためのAPIですと答えます。</p>
   <P>
     GPUについてはご存知でしょうか？
@@ -30,14 +30,14 @@ description: "まず初めに画面全体をGPUを使って単色で塗りつぶ
   </p>
 </section>
 <section>
-  <h1 class="under-bar">{{page.title}}</h1>
+  <h1 class="under-bar">概要</h1>
   <p>
     まず初めに画面全体をGPUを使って単色で塗りつぶす単純なプログラムを作ることを題材に、
     DX11を使う上で最も重要なシェーダとその使い方について説明していきます。
     <br>今パートに対応しているサンプルプロジェクトは<span class="important">Part01_ClearScreen</span>になります。
   </p>
   <div class="summary">
-    <h4>概要</h4>
+
     <ol>
       <li>
         シェーダの作成
