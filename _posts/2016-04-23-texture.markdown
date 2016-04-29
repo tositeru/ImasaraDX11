@@ -2,7 +2,7 @@
 layout: default
 title: "テクスチャ"
 categories: part
-description: ""
+description: "このパートではテクスチャ(英訳:Texture)を使って画面をクリアする方法について見ていきます。"
 ---
 <h1 class="under-bar">テクスチャ</h1>
 
@@ -125,7 +125,7 @@ screen[DTid] = image.SampleLevel(point_sampler, uv, 0);
 </ul>
 
 <span class="keyward">サンプラステート</span>を使ってテクスチャの要素を読み込むときは<span class="important">UV座標</span>と呼ばれる座標系を使って読み込みます。
-<span class="important">UV座標系はテクスチャのサイズを0~1の範囲で表したものになります。</span>
+<span class="important">UV座標系はテクスチャのサイズを0～1の範囲で表したものになります。</span>
 
 例えば、横幅が200で縦幅が100のテクスチャの中央にあるテクセル(100,50)にアクセスしたい場合、
 UV座標系では(0.5, 0.5)と表します。
@@ -150,7 +150,7 @@ UV座標系を使う際の利点はテクスチャのサイズが変わっても
 ただ、サンプラを使った場合はコストが添え字アクセスよりもかかりますので、添え字アクセスで十分な場合は添え字を使うなど場合によって使い分けてください。
 
 <span class="important">また、UVの値が0～1の範囲を超えてしまった場合の動作はサンプラの作成時に決めることが可能です。</span>
-サンプルのデフォルトでは0～1範囲を超えてしまったらまた0~1の範囲で繰り返すようにサンプリングします。
+サンプルのデフォルトでは0～1範囲を超えてしまったらまた0～1の範囲で繰り返すようにサンプリングします。
 これは実際に見てもらった方がわかりやすいと思いますので、サンプルコードを書き換えてみてください。
 
 後、<span class="keyward">Texture2D</span>と<span class="keyward">SamplerState</span>のスロットの設定は定数バッファ、アンオーダードアクセスビューと同じです。
@@ -211,6 +211,10 @@ this->mpImmediateContext->CSSetSamplers(0, static_cast<UINT>(ppSamplers.size()),
     あるリソースがどのビューを作ることが出来るかは作成時に<span class="keyward">D3D11_BIND_FLAG</span>を使って指定します。
     <span class="important">リソースの作り方によっては同時に作ることが出来ないビューも出てきます。</span>
     その時は作成に失敗しますのでエラーメッセージを読んで対応してください。
+  </p>
+  <p>
+    定数バッファはビューを使わずに設定できますが、<span class="keyward">Direct3D12</span>ではビューを持つように変わっています。
+    <span class="keyward">サンプラステート</span>もリソースではないのでビューは必要ないです。
   </p>
   <p>
     GPUに設定できるもので残っているものはグラフィックスパイプライン関連の設定やクエリ関連のものになりますので随時説明していきます。
@@ -449,7 +453,7 @@ if (FAILED(hr)) {
           </li>
           <li>AddressU, AddressV, AddressW: <span class="keyward">D3D11_TEXTURE_ADDRESS_MODE</span>
             <p>
-              サンプリングの時UVの値が0~1の範囲外だった時どうするかを指定するためのものです。
+              サンプリングの時UVの値が0～1の範囲外だった時どうするかを指定するためのものです。
               Uは横、Vは縦、Wは奥行きに対応しています。
               <span class="important">画像の横方向は繰り返すけど、縦方向は範囲外になったら指定した色で塗りつぶすといった設定が可能です。</span>
             </p>
@@ -570,7 +574,7 @@ uint32_t data = 0xffffffff;
     <tr>
       <td class="left"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/constant-buffer">＜前</a></td>
       <td class="center"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}">トップ</a></td>
-      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/texture">次＞</a></td>
+      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/type-of-buffer">次＞</a></td>
     </tr>
   </tbody>
 </table>
