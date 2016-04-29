@@ -21,6 +21,7 @@
 #include "Scene.h"
 
 #include <DirectXTK\Inc\SimpleMath.h>
+#include <sstream>
 
 Scene::Scene(UINT width, UINT height, std::wstring name)
 	: DXSample(width, height, name)
@@ -30,6 +31,7 @@ Scene::Scene(UINT width, UINT height, std::wstring name)
 void Scene::onInit()
 {
 	this->createScreenTexture();
+	this->updateTitle();
 
 	struct SphereInfo {
 		DirectX::SimpleMath::Vector3 pos;
@@ -39,7 +41,7 @@ void Scene::onInit()
 	};
 
 	{//定数バッファを使った球体描画の初期化
-		this->compileComputeShader(&this->mpCSRenderSphereByCB, "RenderSphereByConstantBuffer.cso");
+		createShader(this->mpCSRenderSphereByCB.GetAddressOf(), this->mpDevice.Get(), "RenderSphereByConstantBuffer.cso");
 
 		D3D11_BUFFER_DESC desc = {};
 		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -60,8 +62,8 @@ void Scene::onInit()
 		}
 	}
 
-	{//構造化バッファを使った球体描画の初期化
-		this->compileComputeShader(&this->mpCSRenderSphereByStructured, "RenderSphereByStructuredBuffer.cso");
+	{//StructuredBufferを使った球体描画の初期化
+		createShader(this->mpCSRenderSphereByStructured.GetAddressOf(), this->mpDevice.Get(), "RenderSphereByStructuredBuffer.cso");
 
 		D3D11_BUFFER_DESC desc = {};
 		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
@@ -84,11 +86,19 @@ void Scene::onInit()
 		}
 
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
 		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-		srvDesc.BufferEx.FirstElement = 0;
-		srvDesc.BufferEx.Flags = 0;
-		srvDesc.BufferEx.NumElements = 1;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+		srvDesc.Buffer.FirstElement = 0;
+		srvDesc.Buffer.NumElements = 1;
+		// 次のコードでも設定出来る
+		//srvDesc.Buffer.ElementOffset = 0;
+		//srvDesc.Buffer.ElementWidth = 1;
+		// ViewDimensionをD3D11_SRV_DIMENSION_BUFFEREXに指定もOK
+		//srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
+		//srvDesc.BufferEx.FirstElement = 0;
+		//srvDesc.BufferEx.Flags = 0;
+		//srvDesc.BufferEx.NumElements = 1;
+
 		hr = this->mpDevice->CreateShaderResourceView(this->mpStructuredBuffer.Get(), &srvDesc, this->mpStructuredBufferSRV.GetAddressOf());
 		if (FAILED(hr)) {
 			throw std::runtime_error("構造化バッファのShaderResourceViewの作成に失敗");
@@ -96,7 +106,7 @@ void Scene::onInit()
 	}
 
 	{//バイトアドレスバッファを使った球体描画の初期化
-		this->compileComputeShader(&this->mpCSRenderSphereByByteAddress, "RenderSphereByByteAddressBuffer.cso");
+		createShader(this->mpCSRenderSphereByByteAddress.GetAddressOf(), this->mpDevice.Get(), "RenderSphereByByteAddressBuffer.cso");
 
 		D3D11_BUFFER_DESC desc = {};
 		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
@@ -146,6 +156,8 @@ void Scene::onInit()
 			throw std::runtime_error("カメラ用定数バッファの作成に失敗");
 		}
 	}
+
+	this->runStackBuffer();
 }
 
 void Scene::onUpdate()
@@ -156,6 +168,7 @@ void Scene::onKeyUp(UINT8 key)
 {
 	if (key == 'Z') {
 		this->mMode = static_cast<decltype(this->mMode)>((this->mMode + 1) % eMODE_COUNT);
+		this->updateTitle();
 	}
 }
 
@@ -217,21 +230,145 @@ void Scene::onDestroy()
 {
 }
 
-
-
-void Scene::compileComputeShader(Microsoft::WRL::ComPtr<ID3D11ComputeShader>* pOut, const std::string& filepath)
+void Scene::runStackBuffer()
 {
-	std::vector<char> byteCode;
-	if (!loadBinaryFile(&byteCode, filepath.c_str())) {
-		throw std::runtime_error(filepath + "の読み込みに失敗");
+	Microsoft::WRL::ComPtr<ID3D11ComputeShader> pCSPushStack;
+	Microsoft::WRL::ComPtr<ID3D11ComputeShader> pCSPopStack;
+	//スタック操作を行うバッファとビュー
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pStackBuffer;
+	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pStackBufferUAV;
+	//スタック操作を行うバッファからデータを受け取るバッファとビュー
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pRWBuffer;
+	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pRWBufferUAV;
+	//GPUからCPUにデータを転送するために使うバッファ
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pReadBuffer;
+
+	createShader(pCSPushStack.GetAddressOf(), this->mpDevice.Get(), "PushStack.cso");
+	createShader(pCSPopStack.GetAddressOf(), this->mpDevice.Get(), "PopStack.cso");
+
+	struct Data {
+		DirectX::SimpleMath::Vector4 color;
+	};
+	const UINT count = 10;
+	{//スタック操作を行うバッファ作成
+		//AppendStructuredBufferとConsumeStructuredBufferはStructuredBufferと同じ設定でバッファを作成する
+		D3D11_BUFFER_DESC desc = {};
+		desc.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
+		desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+		desc.ByteWidth = sizeof(Data) * count;//スタックの上限を決めている
+		desc.StructureByteStride = sizeof(Data);
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		auto hr = this->mpDevice->CreateBuffer(&desc, nullptr, pStackBuffer.GetAddressOf());
+		if (FAILED(hr)) {
+			throw std::runtime_error("スタック操作用のバッファ作成に失敗");
+		}
+
+		D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+		uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+		uavDesc.Format = DXGI_FORMAT_UNKNOWN;
+		uavDesc.Buffer.FirstElement = 0;
+		uavDesc.Buffer.NumElements = count;
+		uavDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_APPEND;
+		hr = this->mpDevice->CreateUnorderedAccessView(pStackBuffer.Get(), &uavDesc, pStackBufferUAV.GetAddressOf());
+		if (FAILED(hr)) {
+			throw std::runtime_error("スタック操作用のバッファのUAVの作成に失敗");
+		}
+	}
+	{//データを受け取るバッファ作成
+		D3D11_BUFFER_DESC desc = {};
+		desc.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
+		desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+		desc.ByteWidth = sizeof(Data) * count;
+		desc.StructureByteStride = sizeof(Data);
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		auto hr = this->mpDevice->CreateBuffer(&desc, nullptr, pRWBuffer.GetAddressOf());
+		if (FAILED(hr)) {
+			throw std::runtime_error("データ受け取り用のバッファ作成に失敗");
+		}
+
+		D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+		uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+		uavDesc.Format = DXGI_FORMAT_UNKNOWN;
+		uavDesc.Buffer.FirstElement = 0;
+		uavDesc.Buffer.NumElements = count;
+		hr = this->mpDevice->CreateUnorderedAccessView(pRWBuffer.Get(), &uavDesc, pRWBufferUAV.GetAddressOf());
+		if (FAILED(hr)) {
+			throw std::runtime_error("データ受け取り用のバッファのUAVの作成に失敗");
+		}
+	}
+	{//GPUからCPUにデータを転送するためのバッファ作成
+		D3D11_BUFFER_DESC desc = {};
+		desc.ByteWidth = sizeof(Data) * count;
+		desc.Usage = D3D11_USAGE_STAGING;
+		desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		auto hr = this->mpDevice->CreateBuffer(&desc, nullptr, pReadBuffer.GetAddressOf());
+		if (FAILED(hr)) {
+			throw std::runtime_error("GPUからCPUへデータを転送するためのバッファ作成に失敗");
+		}
 	}
 
-	HRESULT hr;
-	hr = this->mpDevice->CreateComputeShader(byteCode.data(), static_cast<SIZE_T>(byteCode.size()), nullptr, pOut->GetAddressOf());
-	if (FAILED(hr)) {
-		throw std::runtime_error(filepath + "の作成に失敗");
+	//------------------------------------------------------------
+	//	シェーダ実行
+	std::array<ID3D11UnorderedAccessView*, 2> ppUAVs = { {
+		pStackBufferUAV.Get(),
+		pRWBufferUAV.Get(),
+	} };
+	std::array<UINT, 2> pInitCounter = { {
+			0, 0
+		} };
+
+	//プッシュ操作を行う
+	this->mpImmediateContext->CSSetShader(pCSPushStack.Get(), nullptr, 0);
+	pInitCounter[0] = 0;//スタックの個数を0個にしている
+	this->mpImmediateContext->CSSetUnorderedAccessViews(0, 1, ppUAVs.data(), pInitCounter.data());
+	this->mpImmediateContext->Dispatch(count, 1, 1);
+
+	//ポップ操作を行う
+	this->mpImmediateContext->CSSetShader(pCSPopStack.Get(), nullptr, 0);
+	pInitCounter[0] = -1;//-1を指定すると現在のデータの個数を内部カウンタに設定してくれる
+	pInitCounter[1] = -1;
+	this->mpImmediateContext->CSSetUnorderedAccessViews(0, static_cast<UINT>(ppUAVs.size()), ppUAVs.data(), pInitCounter.data());
+	this->mpImmediateContext->Dispatch(count, 1, 1);
+
+	//CPU側にデータを転送するためにGPUからバッファの設定を外す。
+	ppUAVs[0] = ppUAVs[1] = nullptr;
+	this->mpImmediateContext->CSSetUnorderedAccessViews(0, static_cast<UINT>(ppUAVs.size()), ppUAVs.data(), pInitCounter.data());
+
+	this->mpImmediateContext->CopyResource(pReadBuffer.Get(), pRWBuffer.Get());
+
+	D3D11_MAPPED_SUBRESOURCE mapped;
+	auto hr = this->mpImmediateContext->Map(pReadBuffer.Get(), 0, D3D11_MAP_READ, 0, &mapped);
+	if (SUCCEEDED(hr)) {
+		//CPUにデータを転送できたことを確認するために全部のデータを出力している。
+		auto* pData = static_cast<DirectX::SimpleMath::Vector4*>(mapped.pData);
+		OutputDebugStringA("スタック操作を行うバッファのテストコード\n");
+		for (UINT i = 0; i < count; ++i) {
+			const auto& v = pData[i];
+			std::stringstream str;
+			str << "index=" << i << ":";
+			str << "(" << v.x << ", " << v.y << ", " << v.z << ", " << v.w << ")";
+			str << std::endl;
+			OutputDebugStringA(str.str().c_str());
+		}
+		this->mpImmediateContext->Unmap(pReadBuffer.Get(), 0);
+		OutputDebugStringA("---------------------------------------\n");
 	}
 }
+
+
+void Scene::updateTitle()
+{
+	std::wstring title;
+	switch (this->mMode) {
+	case eMODE_CONSTANT_BUFFER:		title = L"定数バッファ"; break;
+	case eMODE_STRUCTURED_BUFFER:	title = L"StructuredBuffer"; break;
+	case eMODE_BYTE_ADDRESS_BUFFER: title = L"ByteAddressBuffer"; break;
+	default:
+		assert(false && "未実装");
+	}
+	this->setCustomWindowText(title.c_str());
+}
+
 
 void Scene::createScreenTexture()
 {

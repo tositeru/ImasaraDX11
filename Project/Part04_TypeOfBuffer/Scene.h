@@ -35,7 +35,9 @@ public:
 	virtual void onKeyUp(UINT8 key)override;
 
 private:
-	void compileComputeShader(Microsoft::WRL::ComPtr<ID3D11ComputeShader>* pOut, const std::string& filepath);
+	void runStackBuffer();
+
+	void updateTitle();
 	void createScreenTexture();
 
 private:

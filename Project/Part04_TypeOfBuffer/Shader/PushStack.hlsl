@@ -18,18 +18,25 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //*********************************************************
 
-Texture2D<float4> image : register(t0);
+AppendStructuredBuffer<float4> stack : register(u0);
 
-SamplerState point_sampler : register(s0);
-
-RWTexture2D<float4> screen : register(u0);
+#define COLOR_COUNT 10
+static const float4 tblColor[COLOR_COUNT] = {
+	float4(1, 0, 0, 1),
+	float4(0, 1, 0, 1),
+	float4(0, 0, 1, 1),
+	float4(1, 1, 0, 1),
+	float4(1, 0, 1, 1),
+	float4(0, 1, 1, 1),
+	float4(0, 0, 0, 1),
+	float4(1, 1, 1, 1),
+	float4(1, 0.5f, 0, 1),
+	float4(1, 0, 0.5f, 1),
+};
 
 [numthreads(1, 1, 1)]
-void main(uint2 DTid : SV_DispatchThreadID)
+void main( uint3 DTid : SV_DispatchThreadID )
 {
-	uint2 screen_size;
-	screen.GetDimensions(screen_size.x, screen_size.y);
-
-	float2 uv = (float2)DTid / (float2)screen_size;
-	screen[DTid] = image.SampleLevel(point_sampler, uv, 0);
+	uint index = DTid.x % COLOR_COUNT;
+	stack.Append(tblColor[index]);
 }

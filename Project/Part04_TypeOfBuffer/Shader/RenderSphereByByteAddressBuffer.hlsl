@@ -18,39 +18,35 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //*********************************************************
 
-#pragma once
+//
+//	バイトアドレスバッファを使った球体の描画
+//
+#include "Common.hlsli"
 
-#include "Template/DXSample.h"
-
-class Scene : public DXSample
+cbuffer Camera : register(b0)
 {
-public:
-	Scene(UINT width, UINT height, std::wstring name);
+	float4x4 cbInvProjection;
+}
 
-	virtual void onInit()override;
-	virtual void onUpdate()override;
-	virtual void onRender()override;
-	virtual void onDestroy()override;
+//float3 pos;
+//float range;
+//float3 color;
+#define POS (0 * 4)
+#define RANGE (3 * 4)
+#define COLOR (4 * 4)
+ByteAddressBuffer sphereInfo : register(t0);
+RWTexture2D<float4> screen : register(u0);
 
-	virtual void onKeyUp(UINT8 key)override;
+[numthreads(1, 1, 1)]
+void main(uint2 DTid : SV_DispatchThreadID)
+{
+	float2 screenSize;
+	screen.GetDimensions(screenSize.x, screenSize.y);
+	float4 rayDir = calRayDir(DTid, screenSize, cbInvProjection);
 
-private:
-	void updateTitle();
-
-private:
-	enum SHADER_MODE {
-		eMODE_INDEX,
-		eMODE_SAMPLER,
-		eMODE_COUNT,
-	} mMode = eMODE_INDEX;
-
-	Microsoft::WRL::ComPtr<ID3D11ComputeShader> mpCSClearScreen;
-	Microsoft::WRL::ComPtr<ID3D11ComputeShader> mpCSClearScreenWithSampler;
-
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> mpImage;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mpImageSRV;
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> mpSampler;
-
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> mpScreen;
-	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> mpScreenUAV;
-};
+	//レイの方向に球体があるならその色を塗る
+	float3 spherePos = asfloat(sphereInfo.Load3(POS));
+	float sphereRange = asfloat(sphereInfo.Load(RANGE));
+	float3 color = asfloat(sphereInfo.Load3(COLOR));
+	screen[DTid] = calColor(rayDir.xyz, spherePos, sphereRange, color);
+}

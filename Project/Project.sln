@@ -7,8 +7,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part02_ClearScreenWithTextu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTK_Desktop_2015_Win10", "..\Microsoft\DirectXTK\DirectXTK_Desktop_2015_Win10.vcxproj", "{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part03_TypeOfBuffer", "Part3_TypeOfBuffer\Part3_TypeOfBuffer.vcxproj", "{80DB5286-B024-4986-9DA1-AB1D9E43A230}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part04_GraphicsPipeline", "Part4_GraphicsPipeline\Part4_GraphicsPipeline.vcxproj", "{D395C876-28DD-4191-BDB4-13B4FC8C8896}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part05_DrawCall", "Part5_DrawCall\Part5_DrawCall.vcxproj", "{B523EC3A-775F-4B19-BFB4-6C721DD3378A}"
@@ -41,6 +39,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part02_ConstantBuffer", "Pa
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part03_Texture", "Part03_Texture\Part03_Texture.vcxproj", "{2FFC03FE-6B20-4682-8049-D1F1E04FAF53}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part04_TypeOfBuffer", "Part04_TypeOfBuffer\Part04_TypeOfBuffer.vcxproj", "{71C78EDE-78F3-4C78-A217-36B77B0EBCC8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -65,14 +65,6 @@ Global
 		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}.Release|x64.Build.0 = Release|x64
 		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}.Release|x86.ActiveCfg = Release|Win32
 		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}.Release|x86.Build.0 = Release|Win32
-		{80DB5286-B024-4986-9DA1-AB1D9E43A230}.Debug|x64.ActiveCfg = Debug|x64
-		{80DB5286-B024-4986-9DA1-AB1D9E43A230}.Debug|x64.Build.0 = Debug|x64
-		{80DB5286-B024-4986-9DA1-AB1D9E43A230}.Debug|x86.ActiveCfg = Debug|Win32
-		{80DB5286-B024-4986-9DA1-AB1D9E43A230}.Debug|x86.Build.0 = Debug|Win32
-		{80DB5286-B024-4986-9DA1-AB1D9E43A230}.Release|x64.ActiveCfg = Release|x64
-		{80DB5286-B024-4986-9DA1-AB1D9E43A230}.Release|x64.Build.0 = Release|x64
-		{80DB5286-B024-4986-9DA1-AB1D9E43A230}.Release|x86.ActiveCfg = Release|Win32
-		{80DB5286-B024-4986-9DA1-AB1D9E43A230}.Release|x86.Build.0 = Release|Win32
 		{D395C876-28DD-4191-BDB4-13B4FC8C8896}.Debug|x64.ActiveCfg = Debug|x64
 		{D395C876-28DD-4191-BDB4-13B4FC8C8896}.Debug|x64.Build.0 = Debug|x64
 		{D395C876-28DD-4191-BDB4-13B4FC8C8896}.Debug|x86.ActiveCfg = Debug|Win32
@@ -201,6 +193,14 @@ Global
 		{2FFC03FE-6B20-4682-8049-D1F1E04FAF53}.Release|x64.Build.0 = Release|x64
 		{2FFC03FE-6B20-4682-8049-D1F1E04FAF53}.Release|x86.ActiveCfg = Release|Win32
 		{2FFC03FE-6B20-4682-8049-D1F1E04FAF53}.Release|x86.Build.0 = Release|Win32
+		{71C78EDE-78F3-4C78-A217-36B77B0EBCC8}.Debug|x64.ActiveCfg = Debug|x64
+		{71C78EDE-78F3-4C78-A217-36B77B0EBCC8}.Debug|x64.Build.0 = Debug|x64
+		{71C78EDE-78F3-4C78-A217-36B77B0EBCC8}.Debug|x86.ActiveCfg = Debug|Win32
+		{71C78EDE-78F3-4C78-A217-36B77B0EBCC8}.Debug|x86.Build.0 = Debug|Win32
+		{71C78EDE-78F3-4C78-A217-36B77B0EBCC8}.Release|x64.ActiveCfg = Release|x64
+		{71C78EDE-78F3-4C78-A217-36B77B0EBCC8}.Release|x64.Build.0 = Release|x64
+		{71C78EDE-78F3-4C78-A217-36B77B0EBCC8}.Release|x86.ActiveCfg = Release|Win32
+		{71C78EDE-78F3-4C78-A217-36B77B0EBCC8}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

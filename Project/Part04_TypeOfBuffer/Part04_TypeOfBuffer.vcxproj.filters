@@ -14,30 +14,13 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="ソース ファイル\Shader">
-      <UniqueIdentifier>{c834c751-9cee-4b3e-a048-190b2dda6e31}</UniqueIdentifier>
+      <UniqueIdentifier>{1df96864-30d7-4cbd-84ee-d54ed675ea9a}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Template">
-      <UniqueIdentifier>{e9a30b48-e8a7-49a4-ae63-ced1ff14e7ff}</UniqueIdentifier>
+      <UniqueIdentifier>{24c04828-e2b6-4595-8566-8ddb50e22be8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Template\DXSample.cpp">
-      <Filter>ソース ファイル\Template</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Template\Win32Application.cpp">
-      <Filter>ソース ファイル\Template</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Scene.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="..\Template\Common.h">
       <Filter>ソース ファイル\Template</Filter>
     </ClInclude>
@@ -47,16 +30,44 @@
     <ClInclude Include="..\Template\Win32Application.h">
       <Filter>ソース ファイル\Template</Filter>
     </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Template\DXSample.cpp">
+      <Filter>ソース ファイル\Template</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Template\Win32Application.cpp">
+      <Filter>ソース ファイル\Template</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shader\RenderSphereByByteAddressBuffer.hlsl">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
     <FxCompile Include="Shader\RenderSphereByConstantBuffer.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Shader\RenderSphereByStructuredBuffer.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\RenderSphereByByteAddressBuffer.hlsl">
+    <FxCompile Include="Shader\PushStack.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\PopStack.hlsl">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader\Common.hlsli">
+      <Filter>ソース ファイル\Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

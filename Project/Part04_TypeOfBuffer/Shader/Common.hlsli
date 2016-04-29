@@ -18,20 +18,25 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //*********************************************************
 
-Texture2D<float4> image : register(t0);
-
-RWTexture2D<float4> screen : register(u0);
-
-[numthreads(1, 1, 1)]
-void main(uint2 DTid : SV_DispatchThreadID)
+float4 calRayDir(in uint2 DTid, in float2 screenSize, in float4x4 invProjection)
 {
-	uint2 image_size;
-	image.GetDimensions(image_size.x, image_size.y);
+	float4 rayDir;
+	rayDir.xy = (DTid / screenSize) * float2(2, -2) + float2(-1, 1);
+	rayDir.zw = 1;
 
-	[branch]
-	if (DTid.x < image_size.x && DTid.y < image_size.y) {
-		screen[DTid] = image[DTid];
+	rayDir = mul(rayDir, invProjection);
+	rayDir /= rayDir.w;
+	rayDir.xyz = normalize(rayDir.xyz);
+	return rayDir;
+}
+
+float4 calColor(float3 rayDir, float3 spherePos, float sphereRange, float3 color)
+{
+	float3 p = rayDir.xyz * dot(rayDir.xyz, spherePos);
+	float len = distance(p, spherePos);
+	[branch] if (len < sphereRange) {
+		return float4(color * ((1 - saturate(len / sphereRange))*0.8f + 0.2f), 1);
 	} else {
-		screen[DTid] = float4(0, 0, 0, 1);
+		return float4(0, 0.125f, 0.2f, 1);
 	}
 }

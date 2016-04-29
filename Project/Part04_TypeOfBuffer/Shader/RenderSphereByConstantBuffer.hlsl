@@ -18,15 +18,34 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //*********************************************************
 
-#include "Scene.h"
+//
+//	定数バッファを使った球体の描画
+//
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
+#include "Common.hlsli"
+
+cbuffer Camera : register(b0)
 {
-	try {
-		Scene sample(1280, 720, L"いまさらDirect3D11入門 Part1 ComputeShaderによる画面クリア");
-		return Win32Application::run(&sample, hInstance, nCmdShow);
-	} catch (std::exception& e) {
-		MessageBoxA(NULL, e.what(), "Error", MB_OK | MB_ICONERROR);
-	}
-	return 1;
+	float4x4 cbInvProjection;
+}
+
+cbuffer Param : register(b1)
+{
+	float3 cbSpherePos;
+	float cbSphereRange;
+	float3 cbSphereColor;
+	float pad;
+};
+
+RWTexture2D<float4> screen : register(u0);
+
+[numthreads(1, 1, 1)]
+void main(uint2 DTid : SV_DispatchThreadID)
+{
+	float2 screenSize;
+	screen.GetDimensions(screenSize.x, screenSize.y);
+	float4 rayDir = calRayDir(DTid, screenSize, cbInvProjection);
+
+	//レイの方向に球体があるならその色を塗る
+	screen[DTid] = calColor(rayDir.xyz, cbSpherePos, cbSphereRange, cbSphereColor);
 }

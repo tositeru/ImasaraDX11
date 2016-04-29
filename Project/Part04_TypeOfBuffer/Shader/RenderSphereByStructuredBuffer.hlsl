@@ -19,43 +19,36 @@
 //*********************************************************
 
 //
-//	定数バッファを使った球体の描画
+//	構造化バッファを使った球体の描画
 //
+
+#include "Common.hlsli"
 
 cbuffer Camera : register(b0)
 {
 	float4x4 cbInvProjection;
 }
 
-cbuffer Param : register(b1)
+struct Param
 {
-	float3 cbSpherePos;
-	float cbSphereRange;
-	float3 cbSphereColor;
+	float3 pos;
+	float range;
+	float3 color;
 	float pad;
 };
 
+StructuredBuffer<Param> sphereInfo : register(t0);
 RWTexture2D<float4> screen : register(u0);
+
 
 [numthreads(1, 1, 1)]
 void main(uint2 DTid : SV_DispatchThreadID)
 {
 	float2 screenSize;
 	screen.GetDimensions(screenSize.x, screenSize.y);
-	float4 rayDir = float4(
-		(DTid / screenSize) * float2(2, -2) + float2(-1, 1),
-		1,
-		1);
-	rayDir = mul(rayDir, cbInvProjection);
-	rayDir /= rayDir.w;
-	rayDir.xyz = normalize(rayDir.xyz);
+	float4 rayDir = calRayDir(DTid, screenSize, cbInvProjection);
 
 	//レイの方向に球体があるならその色を塗る
-	float3 p = rayDir.xyz * dot(rayDir.xyz, cbSpherePos);
-	float len = distance(p, cbSpherePos);
-	[branch] if (len < cbSphereRange) {
-		screen[DTid] = float4(cbSphereColor * ((1 - saturate(len / cbSphereRange))*0.8f + 0.2f), 1);
-	} else {
-		screen[DTid] = float4(0, 0.125f, 0.2f, 1);
-	}
+	Param sphere = sphereInfo[0];
+	screen[DTid] = calColor(rayDir.xyz, sphere.pos, sphere.range, sphere.color);
 }
