@@ -2,11 +2,11 @@
 layout: default
 title: "グラフィックスパイプライン"
 categories: part
-description: ""
+description: "今パートではグラフィックスパイプラインの基本的なものになる頂点シェーダとピクセルシェーダの2つを使い、画面に点や線分、三角形を描画していきます。"
 ---
 <h1 class="under-bar">グラフィックスパイプライン</h1>
 今回からグラフィックスパイプラインについて見ていきます。
-<b>グラフィックスパイプラインはラスタライズ法で描画を行うために設計されたもので、点や線分、三角形を画面に描画する工程となります。</b>
+<span class="important">グラフィックスパイプラインはラスタライズ法で描画を行うために設計されたもので、点や線分、三角形を画面に描画する工程となります。</span>
 グラフィックパイプラインの全体の流れはドキュメントを参考にしてください。
 
 ドキュメント:
@@ -18,8 +18,8 @@ description: ""
 
 グラフィックスパイプラインのいくつかの工程にはこちらが用意したシェーダを実行することができます。
 それらのシェーダを実装する際は設定する工程に適した処理内容にすることが重要です。
-<b>また、エントリポイントに渡される値や出力する値にはセマンティクスと呼ばれる値を識別する用の名前を付ける必要があります。</b>
-<b>特に<l>システムセマンティクス</l>というGPU側で予め用意されているものがどういった意味を持つのかを理解することで、グラフィックパイプラインを自由に制御できるようになるでしょう。</b>
+<span class="important">また、エントリポイントに渡される値や出力する値にはセマンティクスと呼ばれる値を識別する用の名前を付ける必要があります。</span>
+<span class="important">特に<span class="keyward">システムセマンティクス</span>というGPU側で予め用意されているものがどういった意味を持つのかを理解することで、グラフィックパイプラインを自由に制御できるようになるでしょう。</span>
 もちろんこちらで自由なセマンティクスをつけることも可能です。
 <br>ドキュメント:
 [セマンティクス(日本語)][SEMANTICS_JP]
@@ -28,12 +28,12 @@ description: ""
 [SEMANTICS_JP]:https://msdn.microsoft.com/ja-jp/library/bb509647(v=vs.85).aspx
 [SEMANTICS_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/bb509647(v=vs.85).aspx
 
-<b>また、グラフィックパイプラインを理解する際はデータの流れを意識する必要がとても重要です。</b>
+<span class="important">また、グラフィックパイプラインを理解する際はデータの流れを意識する必要がとても重要です。</span>
 シェーダを実装する際はどのような値がエントリポイントに渡され、どういった値を出力すればいいのかがわかれば、グラフィックスパイプラインを自由に制御することが出来るでしょう。
 
 <h1 class="under-bar">概要</h1>
 今パートではグラフィックスパイプラインの基本的なものになる頂点シェーダとピクセルシェーダの2つを使い、画面に点や線分、三角形を描画していきます。
-対応しているプロジェクトは<b>Part05_GraphicsPipeline</b>になります。
+対応しているプロジェクトは<span class="important">Part05_GraphicsPipeline</span>になります。
 
 <div class="summary">
   <ol>
@@ -64,8 +64,8 @@ description: ""
 <a name="VERTEX_BUFFER"></a>
 
 <h3>頂点バッファ</h3>
-<b>グラフィックパイプラインを使って画面に描画する際、頂点バッファと呼ばれるデータを入力値として設定する必要があります。</b>
-<b>頂点バッファは<l>ID3D11Buffer</l>として扱い、生成する際は<l>BindFlags</l>に<l>D3D11_BIND_VERTEX_BUFFER</l>を設定する必要があり、ビューは必要ありません。</b>
+<span class="important">グラフィックパイプラインを使って画面に描画する際、頂点バッファと呼ばれるデータを入力値として設定する必要があります。</span>
+<span class="important">頂点バッファは<span class="keyward">ID3D11Buffer</span>として扱い、生成する際は<span class="keyward">BindFlags</span>に<span class="keyward">D3D11_BIND_VERTEX_BUFFER</span>を設定する必要があり、ビューは必要ありません。</span>
 その以外は他のバッファと同じです。
 
 {% highlight c++ %}
@@ -89,7 +89,7 @@ if (FAILED(hr)) {
 {% endhighlight %}
 
 <h3>入力レイアウト</h3>
-<b>頂点バッファの内容は自由に決めることが出来ますが、入力レイアウトと呼ばれるもので1要素当たりのデータの並びを指定する必要があります。</b>
+<span class="important">頂点バッファの内容は自由に決めることが出来ますが、入力レイアウトと呼ばれるもので1要素当たりのデータの並びを指定する必要があります。</span>
 
 {% highlight c++ %}
 //Scene::onInit関数の一部
@@ -103,8 +103,8 @@ if (FAILED(hr)) {
 }
 {% endhighlight %}
 
-入力レイアウトは<l>ID3D11InputLayout</l>と表し、<l>ID3D11InputLayout::CreateInputLayout関数</l>で作成します。
-説明が前後しますが、<b>作成するときは入力レイアウトに合う頂点シェーダのコンパイル済みバイナリを渡す必要があります。</b>
+入力レイアウトは<span class="keyward">ID3D11InputLayout</span>と表し、<span class="keyward">ID3D11InputLayout::CreateInputLayout関数</span>で作成します。
+説明が前後しますが、<span class="important">作成するときは入力レイアウトに合う頂点シェーダのコンパイル済みバイナリを渡す必要があります。</span>
 <br>ドキュメント:
 [ID3D11Device::CreateInputLayout(日本語)][CREATE_INPUT_LAYOUT_JP]
 [ID3D11Device::CreateInputLayout(英語)][CREATE_INPUT_LAYOUT_EN]
@@ -112,7 +112,7 @@ if (FAILED(hr)) {
 [CREATE_INPUT_LAYOUT_JP]:https://msdn.microsoft.com/ja-jp/library/ee419795(v=vs.85).aspx
 [CREATE_INPUT_LAYOUT_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476512(v=vs.85).aspx
 
-データの並びは<l>D3D11_INPUT_ELEMENT_DESC</l>の配列を使って指定します。
+データの並びは<span class="keyward">D3D11_INPUT_ELEMENT_DESC</span>の配列を使って指定します。
 <br>ドキュメント:
 [D3D11_INPUT_ELEMENT_DESC(日本語)][D3D11_INPUT_ELEMENT_DESC_JP]
 [D3D11_INPUT_ELEMENT_DESC(英語)][D3D11_INPUT_ELEMENT_DESC_EN]
@@ -123,13 +123,13 @@ if (FAILED(hr)) {
 <div class="argument">
   <h4 class="under-bar">D3D11_INPUT_ELEMENT_DESC</h4>
   <ol>
-    <li><l>SemanticName</l>
+    <li><span class="keyward">SemanticName</span>
       <p>セマンティクス名</p>
     </li>
-    <li><l>SemanticIndex</l>
+    <li><span class="keyward">SemanticIndex</span>
       <p>セマンティクス名の番号。同じ名前のものがあった時に識別するためのものになります。</p>
     </li>
-    <li><l>Format</l>
+    <li><span class="keyward">Format</span>
       <p>要素のフォーマット。どのようなフォーマットを設定するかは下のコードを参考にしてください。
         {% highlight c++ %}
   struct Vertex {
@@ -146,16 +146,16 @@ if (FAILED(hr)) {
         {% endhighlight %}
       </p>
     </li>
-    <li><l>InputSlot</l>
+    <li><span class="keyward">InputSlot</span>
       <p>
         入力スロットの指定。
         頂点バッファはGPUに複数設定することができ、この要素がどのスロットのものかを指定するときに使用します。
       </p>
     </li>
-    <li><l>AlignedByteOffset</l>
+    <li><span class="keyward">AlignedByteOffset</span>
       <p>
         要素内でのオフセット。
-        <l>D3D11_APPEND_ALIGNED_ELEMENT</l>を指定すると直前の要素の後ろに来るような値が設定されます。
+        <span class="keyward">D3D11_APPEND_ALIGNED_ELEMENT</span>を指定すると直前の要素の後ろに来るような値が設定されます。
         {% highlight c++ %}
   //D3D11_INPUT_PER_VERTEX_DATAを使わない時の例
   struct Vertex {
@@ -171,10 +171,10 @@ if (FAILED(hr)) {
         {% endhighlight %}
       </p>
     </li>
-    <li><l>InputSlotClass</l>
+    <li><span class="keyward">InputSlotClass</span>
       <p>入力データの種類を設定。あとのパートで説明するインスタンス描画のときに使用します。</p>
     </li>
-    <li><l>InstanceDataStepRate</l>
+    <li><span class="keyward">InstanceDataStepRate</span>
       <p>
         あとのパートで説明するインスタンス描画のときに使用しますので、省略します。
       </p>
@@ -182,10 +182,10 @@ if (FAILED(hr)) {
   </ol>
 </div>
 
-<b>ちなみに入力レイアウトは使用する頂点シェーダや頂点バッファの個数分生成する必要はなく、同じデータの並びだったり、互換性があるものなら１つの入力レイアウトを使い回すことが可能です。</b>
+<span class="important">ちなみに入力レイアウトは使用する頂点シェーダや頂点バッファの個数分生成する必要はなく、同じデータの並びだったり、互換性があるものなら１つの入力レイアウトを使い回すことが可能です。</span>
 
 以上でグラフィックスパイプラインを使う際に必要となる頂点バッファと入力レイアウトについての説明は終わります。
-あとはこの２つをグラフィックスパイプラインの始めのステージとなる<l>入力アセンブラステージ</l>に設定すれば使うことができます。
+あとはこの２つをグラフィックスパイプラインの始めのステージとなる<span class="keyward">入力アセンブラステージ</span>に設定すれば使うことができます。
 <br>ドキュメント:
 [入力アセンブラー ステージ(日本語)][IA_STAGE_JP]
 [Input-Assembler Stage(英語)][IA_STAGE_EN]
@@ -221,8 +221,8 @@ UINT vertexCount = 3;
 this->mpImmediateContext->Draw(vertexCount, 0);
 {% endhighlight %}
 
-上の<l>ID3D11DeviceContext::IASetVertexBuffers関数</l>で頂点バッファを設定しています。
-引数について詳しく見て行きませんが、<b>設定するときは頂点バッファの配列以外に1要素のサイズと開始オフセットも一緒に指定する必要があります。</b>
+上の<span class="keyward">ID3D11DeviceContext::IASetVertexBuffers関数</span>で頂点バッファを設定しています。
+引数について詳しく見て行きませんが、<span class="important">設定するときは頂点バッファの配列以外に1要素のサイズと開始オフセットも一緒に指定する必要があります。</span>
 <br>ドキュメント：
 [ID3D11DeviceContext::IASetVertexBuffers(日本語)][IASetVertexBuffers_JP]
 [ID3D11DeviceContext::IASetVertexBuffers(英語)][IASetVertexBuffers_EN]
@@ -242,27 +242,27 @@ std::array<UINT, 1> offsets = { { 0 } };
 this->mpImmediateContext->IASetVertexBuffers(0, static_cast<UINT>(ppVertexBuffers.size()), ppVertexBuffers.data(), strides.data(), offsets.data());
 {% endhighlight %}
 
-続いて入力レイアウトは<l>ID3D11DeviceContext::IASetInputLayout関数</l>で設定します。
+続いて入力レイアウトは<span class="keyward">ID3D11DeviceContext::IASetInputLayout関数</span>で設定します。
 {% highlight c++%}
 //入力レイアウトの設定
 this->mpImmediateContext->IASetInputLayout(this->mpInputLayout.Get());
 {% endhighlight %}
 
 頂点バッファと入力レイアウトの設定の仕方は以上です。
-<b>あとは<l>ID3D11DeviceContext::Draw関数</l>でグラフィックスパイプラインを実行すれば、設定した頂点バッファと入力レイアウトが使われます。</b>
+<span class="important">あとは<span class="keyward">ID3D11DeviceContext::Draw関数</span>でグラフィックスパイプラインを実行すれば、設定した頂点バッファと入力レイアウトが使われます。</span>
 
-<l>ID3D11DeviceContext::Draw関数</l>は<l>Draw Call</l>と呼ばれ、これ以外にも幾つかの種類があります。
+<span class="keyward">ID3D11DeviceContext::Draw関数</span>は<span class="keyward">Draw Call</span>と呼ばれ、これ以外にも幾つかの種類があります。
 それらについては別パートで詳しく見ていきます。
 
-あと説明が前後しますが、はじめのコードでは頂点バッファと入力レイアウト以外に<l>プリミティブトポロジ</l>と頂点シェーダ、ピクセルシェーダの設定も行っています。
+あと説明が前後しますが、はじめのコードでは頂点バッファと入力レイアウト以外に<span class="keyward">プリミティブトポロジ</span>と頂点シェーダ、ピクセルシェーダの設定も行っています。
 それらの説明は後で行いますが、グラフィックスパイプラインを実行する際はこれらも設定する必要があることを覚えておいてください。
 
 <div class="topic">
   <h3>ID3D11DeviceContextの関数の名前</h3>
   <p>
-    <b>これまで<l>ID3D11DeviceContext</l>を使ってGPUにいろいろなものを設定してきましたが、その関数には設定する対象に応じて一定のルールがあります。</b>
-    例えばコンピュートシェーダに関連するものは名前の先頭に<l>CS</l>がついており、今回出てきました入力アセンブラステージの場合は<l>IA</l>がつきます。
-    他にも頂点シェーダでは<l>VS</l>が、ピクセルシェーダには<l>PS</l>がつきます。
+    <span class="important">これまで<span class="keyward">ID3D11DeviceContext</span>を使ってGPUにいろいろなものを設定してきましたが、その関数には設定する対象に応じて一定のルールがあります。</span>
+    例えばコンピュートシェーダに関連するものは名前の先頭に<span class="keyward">CS</span>がついており、今回出てきました入力アセンブラステージの場合は<span class="keyward">IA</span>がつきます。
+    他にも頂点シェーダでは<span class="keyward">VS</span>が、ピクセルシェーダには<span class="keyward">PS</span>がつきます。
     今後グラフィックスパイプラインを見ていくうえで様々なステージが出てきますが、どういったものが設定可能なのかはこのルールを知っていればすぐに分かるようになっています。
   </p>
 </div>
@@ -272,7 +272,7 @@ this->mpImmediateContext->IASetInputLayout(this->mpInputLayout.Get());
 それでは頂点シェーダとピクセルシェーダについて見ていきましょう。
 
 <h3>頂点シェーダ</h3>
-<b>頂点シェーダは入力アセンブラステージに設定された頂点バッファを入力値として取るシェーダになります。</b>
+<span class="important">頂点シェーダは入力アセンブラステージに設定された頂点バッファを入力値として取るシェーダになります。</span>
 
 {% highlight hlsl %}
 // VertexShader.hlsl
@@ -284,7 +284,7 @@ float4 main( float4 pos : POSITION ) : SV_POSITION
 上のコードが頂点シェーダのとても簡単な実装になります。
 行っていることは入力レイアウトで"POSITION"というセマンティクスを持つ頂点バッファの要素を"SV_POSITION"というセマンティクスに変えて次のステージに渡しているだけです。
 
-main関数が呼ばれる回数は<l>Draw Call</l>で指定した頂点数で決まります。
+main関数が呼ばれる回数は<span class="keyward">Draw Call</span>で指定した頂点数で決まります。
 このため頂点シェーダで行う処理は1つの頂点を対象にしたものが適切となるでしょう。
 例えば3Dから2Dへの変換行列をかけたり、スキンメッシュアニメーションを適応したりなどなどです。
 {% highlight hlsl %}
@@ -314,13 +314,13 @@ Output main( Input input )
 
 上のコードでは定数バッファを使用しています。シェーダモデル5.0ならテクスチャも使用可能ですが、それ以前だと使えないシェーダモデルもありますので注意してください。
 
-ちなみにCPU上での頂点シェーダは<l>ID3D11VertexShader</l>で表されます。
-生成は<l>ID3D11Device::CreateVertexShader関数</l>で行い、コンピュートシェーダと同じように作ります。
+ちなみにCPU上での頂点シェーダは<span class="keyward">ID3D11VertexShader</span>で表されます。
+生成は<span class="keyward">ID3D11Device::CreateVertexShader関数</span>で行い、コンピュートシェーダと同じように作ります。
 コンパイルの際は必ずシェーダモデルに頂点シェーダのものを指定することを忘れないでください。
-<b>また頂点シェーダのコンパイル済みバイナリは入力レイアウトの生成時に使用しますので、注意してください。</b>
+<span class="important">また頂点シェーダのコンパイル済みバイナリは入力レイアウトの生成時に使用しますので、注意してください。</span>
 
 <h3>ピクセルシェーダ</h3>
-<b>ピクセルシェーダはラスタライザーステージで処理されたデータを受け取り、画面に表示するピクセルの値を計算して返すシェーダになります。</b>
+<span class="important">ピクセルシェーダはラスタライザーステージで処理されたデータを受け取り、画面に表示するピクセルの値を計算して返すシェーダになります。</span>
 {% highlight hlsl %}
 // PixelShader.hlsl
 float4 main(float4 pos : SV_POSITION) : SV_TARGET
@@ -332,22 +332,22 @@ float4 main(float4 pos : SV_POSITION) : SV_TARGET
 
 上のピクセルシェーダでは白色のピクセルを画面に出力するものになります。
 
-<b>ピクセルシェーダでは画面の好きな場所に値を出力することはできません。</b>
+<span class="important">ピクセルシェーダでは画面の好きな場所に値を出力することはできません。</span>
 これはピクセルシェーダの1つ前のステージであるラスタライザーステージで処理するピクセルを決定しているためです。
 そのためピクセルシェーダではピクセルの値を決めるための処理を行うのが適切となるでしょう。
-<l>SV_POSITIONセマンティクス</l>を指定した値で画面上の位置がわかるようになっていますのでそのような情報が欲しい場合は活用してください。
+<span class="keyward">SV_POSITIONセマンティクス</span>を指定した値で画面上の位置がわかるようになっていますのでそのような情報が欲しい場合は活用してください。
 
 ラスタライザーステージは頂点シェーダとピクセルシェーダの間で実行されるステージになります。
-<b>詳しくは後のパートで説明しますが、頂点シェーダで出力されたデータはこのステージで補間されたり、SV_POSITIONを指定されたものはそれのw成分で割られ、画面の位置へと変換されます。</b>
+<span class="important">詳しくは後のパートで説明しますが、頂点シェーダで出力されたデータはこのステージで補間されたり、SV_POSITIONを指定されたものはそれのw成分で割られ、画面の位置へと変換されます。</span>
 
 main関数が呼ばれる回数は頂点バッファと後述するプリミティブトポロジなどで変わってきます。
-<b>これは描画する物によって描画範囲が異なるためです。</b>
+<span class="important">これは描画する物によって描画範囲が異なるためです。</span>
 例えば画面全体を覆う三角形と中央付近に小さく出る三角形では描画されるピクセルの個数は前者が多くなることは明らかです。
-<b>グラフィックスパイプラインでは頂点バッファの内容やピクセルシェーダ以前のステージの処理結果などによって自動的に処理を行うピクセル決めてくれます。</b>
+<span class="important">グラフィックスパイプラインでは頂点バッファの内容やピクセルシェーダ以前のステージの処理結果などによって自動的に処理を行うピクセル決めてくれます。</span>
 もちろんコンピュートシェーダでもこれと同じ機能を実装することはできるでしょうが、GPU自体がこの処理に最適化されているためそのようなことをする意味はないと言ってもいいでしょう。
 
-CPU上ではピクセルシェーダは<l>ID3D11PixelShader</l>と表されます。
-頂点シェーダと似たように<l>ID3D11Device::CreatePixelShader関数</l>を使って生成されます。
+CPU上ではピクセルシェーダは<span class="keyward">ID3D11PixelShader</span>と表されます。
+頂点シェーダと似たように<span class="keyward">ID3D11Device::CreatePixelShader関数</span>を使って生成されます。
 また、コンパイルの際はシェーダモデルにピクセルシェーダのものを指定することを忘れないで下さい。
 
 頂点シェーダとピクセルシェーダについては以上になります。
@@ -365,16 +365,16 @@ CPU上ではピクセルシェーダは<l>ID3D11PixelShader</l>と表されま�
 
 サンプルで使用しているプリミティブトポロジは以下のものになります。
 <ul>
-  <li><l>D3D11_PRIMITIVE_TOPOLOGY_POINTLIST</l>
+  <li><span class="keyward">D3D11_PRIMITIVE_TOPOLOGY_POINTLIST</span>
     <p>頂点バッファの内容を点情報として扱います。</p>
   </li>
-  <li><l>D3D11_PRIMITIVE_TOPOLOGY_LINELIST</l>
+  <li><span class="keyward">D3D11_PRIMITIVE_TOPOLOGY_LINELIST</span>
     <p>
       頂点バッファの内容を線分情報として扱います。
       0と1番目の要素を線分のペアとし、2と3番目、4と5番目...も同じく線分のペアとしてみなします。
     </p>
   </li>
-  <li><l>D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST</l>
+  <li><span class="keyward">D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST</span>
     <p>
       頂点バッファの内容を三角形情報として扱います。
       0,1,2番目を三角形の各頂点として、後の3,4,5番目、6,7,8番目...も同じく三角形の頂点としてみなします。
@@ -396,9 +396,9 @@ CPU上ではピクセルシェーダは<l>ID3D11PixelShader</l>と表されま�
 <div class="supplemental">
   <h4>システムセマンティクス</h4>
   <p>
-    頂点シェーダとピクセルシェーダで<l>SV_POSITION</l>というセマンティクスを使用しました。
-    <l>SV_POSITION</l>の前にある<l>SV_</l>はシステムセマンティクスを表し、グラフィックスパイプラインを実行する上で重要な意味を持ちます。
-    頂点シェーダで<l>SV_POSITION</l>を指定した値はラスタライザーステージで加工されピクセル位置に変換されます。
+    頂点シェーダとピクセルシェーダで<span class="keyward">SV_POSITION</span>というセマンティクスを使用しました。
+    <span class="keyward">SV_POSITION</span>の前にある<span class="keyward">SV_</span>はシステムセマンティクスを表し、グラフィックスパイプラインを実行する上で重要な意味を持ちます。
+    頂点シェーダで<span class="keyward">SV_POSITION</span>を指定した値はラスタライザーステージで加工されピクセル位置に変換されます。
   </p>
   <figure class="highlight"><pre>
 <code>//SV_POSITIONと画面上の位置の関係の例
@@ -413,7 +413,7 @@ float4 main( float4 pos : POSITION ) : SV_POSITION
   </code></pre></figure>
   <p>
     GPUの設定よって上のコードで書いた場所に出るわけではありませんが、意味合いは同じです。
-    ちなみに<l>SV_POSITION</l>で指定した値は必ず<l>float4</l>型を指定し、w成分は0にならないようにしてください。
+    ちなみに<span class="keyward">SV_POSITION</span>で指定した値は必ず<span class="keyward">float4</span>型を指定し、w成分は0にならないようにしてください。
     これはラスタライザーステージでwの値で割るためです。
     なぜ、自動でwの値で割るかと言われれば、変換行列について調べればわかるでしょう。
   </p>
