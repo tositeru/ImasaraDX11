@@ -18,7 +18,43 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //*********************************************************
 
-float4 main() : SV_TARGET
+#pragma once
+
+#include "Template/DXSample.h"
+#include <DirectXTK\Inc\SimpleMath.h>
+
+class Scene : public DXSample
 {
-	return float4(1.0f, 1.0f, 1.0f, 1.0f);
-}
+public:
+	Scene(UINT width, UINT height, std::wstring name);
+
+	virtual void onInit()override;
+	virtual void onUpdate()override;
+	virtual void onRender()override;
+	virtual void onDestroy()override;
+
+	virtual void onKeyUp(UINT8 key)override;
+
+private:
+	struct Vertex {
+		DirectX::SimpleMath::Vector3 pos;
+	};
+
+private:
+	void updateTitle();
+
+private:
+	enum SHADER_MODE {
+		eMODE_TRIANGLE,
+		eMODE_LINE,
+		eMODE_POINT,
+		eMODE_COUNT,
+	} mMode = eMODE_TRIANGLE;
+
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> mpVertexShader;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> mpPixelShader;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> mpTriangleBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> mpPointBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> mpLineBuffer;
+	Microsoft::WRL::ComPtr<ID3D11InputLayout> mpInputLayout;
+};

@@ -13,11 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="ソース ファイル\Template">
-      <UniqueIdentifier>{48c5a28b-c5aa-4d29-9a05-534cc43cae9a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Shader">
-      <UniqueIdentifier>{5cadf2ca-82a6-4298-9bfe-01ac2831edee}</UniqueIdentifier>
+      <UniqueIdentifier>{f8496203-cf38-4f70-84b0-cdf4b5e020f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Template">
+      <UniqueIdentifier>{24f1ca87-9a1e-47d2-a900-188dd2cee60c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -49,10 +49,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shader\VertexShader.hlsl">
+    <FxCompile Include="Shader\PixelShader.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\PixelShader.hlsl">
+    <FxCompile Include="Shader\VertexShader.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
   </ItemGroup>

@@ -27,39 +27,24 @@ Scene::Scene(UINT width, UINT height, std::wstring name)
 
 void Scene::onInit()
 {
+	this->updateTitle();
 	//グラフィックスパイプラインの初期化
 	{//頂点シェーダの作成
 		std::vector<char> byteCode;
-		if (!loadBinaryFile(&byteCode, "VertexShader.cso")) {
-			throw std::runtime_error("VertexShader.csoの読み込みに失敗");
-		}
+		createShader(this->mpVertexShader.GetAddressOf(), this->mpDevice.Get(), "VertexShader.cso", &byteCode);
 
-		HRESULT hr;
-		hr = this->mpDevice->CreateVertexShader(byteCode.data(), static_cast<SIZE_T>(byteCode.size()), nullptr, this->mpVertexShader.GetAddressOf());
-		if (FAILED(hr)) {
-			throw std::runtime_error("VertexShader.csoの作成に失敗");
-		}
 
 		//入力レイアウトの作成
 		std::array<D3D11_INPUT_ELEMENT_DESC, 1> elements = { {
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		} };
-		hr = this->mpDevice->CreateInputLayout(elements.data(), static_cast<UINT>(elements.size()), byteCode.data(), byteCode.size(), this->mpInputLayout.GetAddressOf());
+		auto hr = this->mpDevice->CreateInputLayout(elements.data(), static_cast<UINT>(elements.size()), byteCode.data(), byteCode.size(), this->mpInputLayout.GetAddressOf());
 		if (FAILED(hr)) {
 			throw std::runtime_error("入力レイアウトの作成に失敗");
 		}
 	}
 	{//ピクセルシェーダの作成
-		std::vector<char> byteCode;
-		if (!loadBinaryFile(&byteCode, "PixelShader.cso")) {
-			throw std::runtime_error("PixelShader.hlslの読み込みに失敗");
-		}
-
-		HRESULT hr;
-		hr = this->mpDevice->CreatePixelShader(byteCode.data(), static_cast<SIZE_T>(byteCode.size()), nullptr, this->mpPixelShader.GetAddressOf());
-		if (FAILED(hr)) {
-			throw std::runtime_error("PixelShader.csoの作成に失敗");
-		}
+		createShader(this->mpPixelShader.GetAddressOf(), this->mpDevice.Get(), "PixelShader.cso");
 	}
 	{//頂点バッファの作成
 		{//三角形
@@ -125,6 +110,7 @@ void Scene::onKeyUp(UINT8 key)
 {
 	if (key == 'Z') {
 		this->mMode = static_cast<decltype(this->mMode)>((this->mMode + 1) % eMODE_COUNT);
+		this->updateTitle();
 	}
 }
 
@@ -138,23 +124,23 @@ void Scene::onRender()
 	std::array<ID3D11Buffer*, 1> ppVertexBuffers;
 	std::array<UINT, 1> strides = { { sizeof(Vertex) } };
 	std::array<UINT, 1> offsets = { { 0 } };
-	UINT drawCount = 0;
+	UINT vertexCount = 0;
 	switch (this->mMode) {
 	case eMODE_TRIANGLE:
 		ppVertexBuffers[0] = this->mpTriangleBuffer.Get();
-		drawCount = 3;
+		vertexCount = 3;
 		this->mpImmediateContext->IASetVertexBuffers(0, static_cast<UINT>(ppVertexBuffers.size()), ppVertexBuffers.data(), strides.data(), offsets.data());
 		this->mpImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		break;
 	case eMODE_LINE:
 		ppVertexBuffers[0] = this->mpLineBuffer.Get();
-		drawCount = 4;
+		vertexCount = 4;
 		this->mpImmediateContext->IASetVertexBuffers(0, static_cast<UINT>(ppVertexBuffers.size()), ppVertexBuffers.data(), strides.data(), offsets.data());
 		this->mpImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 		break;
 	case eMODE_POINT:
 		ppVertexBuffers[0] = this->mpPointBuffer.Get();
-		drawCount = 3;
+		vertexCount = 3;
 		this->mpImmediateContext->IASetVertexBuffers(0, static_cast<UINT>(ppVertexBuffers.size()), ppVertexBuffers.data(), strides.data(), offsets.data());
 		this->mpImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 		break;
@@ -169,10 +155,22 @@ void Scene::onRender()
 	this->mpImmediateContext->PSSetShader(this->mpPixelShader.Get(), nullptr, 0);
 
 	//実行
-	this->mpImmediateContext->Draw(drawCount, 0);
+	this->mpImmediateContext->Draw(vertexCount, 0);
 }
 
 void Scene::onDestroy()
 {
 }
 
+void Scene::updateTitle()
+{
+	std::wstring title;
+	switch (this->mMode) {
+	case eMODE_TRIANGLE:		title = L"D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST"; break;
+	case eMODE_LINE:	title = L"D3D11_PRIMITIVE_TOPOLOGY_LINELIST"; break;
+	case eMODE_POINT: title = L"D3D11_PRIMITIVE_TOPOLOGY_POINTLIST"; break;
+	default:
+		assert(false && "未実装");
+	}
+	this->setCustomWindowText(title.c_str());
+}
