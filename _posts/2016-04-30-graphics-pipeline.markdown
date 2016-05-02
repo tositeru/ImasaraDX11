@@ -19,7 +19,7 @@ description: "今パートではグラフィックスパイプラインの基本
 グラフィックスパイプラインのいくつかの工程にはこちらが用意したシェーダを実行することができます。
 それらのシェーダを実装する際は設定する工程に適した処理内容にすることが重要です。
 <span class="important">また、エントリポイントに渡される値や出力する値にはセマンティクスと呼ばれる値を識別する用の名前を付ける必要があります。</span>
-<span class="important">特に<span class="keyward">システムセマンティクス</span>というGPU側で予め用意されているものがどういった意味を持つのかを理解することで、グラフィックパイプラインを自由に制御できるようになるでしょう。</span>
+<span class="important">特に予め用意されている<span class="keyward">システムセマンティクス</span>というものがどういった意味を持つのかを理解することはグラフィックスパイプラインを理解することにつながります。</span>
 もちろんこちらで自由なセマンティクスをつけることも可能です。
 <br>ドキュメント:
 [セマンティクス(日本語)][SEMANTICS_JP]
@@ -251,7 +251,7 @@ this->mpImmediateContext->IASetInputLayout(this->mpInputLayout.Get());
 頂点バッファと入力レイアウトの設定の仕方は以上です。
 <span class="important">あとは<span class="keyward">ID3D11DeviceContext::Draw関数</span>でグラフィックスパイプラインを実行すれば、設定した頂点バッファと入力レイアウトが使われます。</span>
 
-<span class="keyward">ID3D11DeviceContext::Draw関数</span>は<span class="keyward">Draw Call</span>と呼ばれ、これ以外にも幾つかの種類があります。
+<span class="keyward">ID3D11DeviceContext::Draw関数</span>は<span class="keyward">ドローコール(英訳:Draw Call)</span>と呼ばれ、これ以外にも幾つかの種類があります。
 それらについては別パートで詳しく見ていきます。
 
 あと説明が前後しますが、はじめのコードでは頂点バッファと入力レイアウト以外に<span class="keyward">プリミティブトポロジ</span>と頂点シェーダ、ピクセルシェーダの設定も行っています。

@@ -1,0 +1,326 @@
+---
+layout: default
+title: "ドローコール"
+categories: part
+description: "このドローコールにはいくつかのバリエーションが存在していますので、今回のパートではそれらについて見ていきます。"
+---
+<h1 class="under-bar">ドローコール</h1>
+
+グラフィックスパイプラインを実行する時はドローコール(英訳：Draw Call)命令を呼び出す必要があります。
+このドローコールにはいくつかのバリエーションが存在していますので、今回のパートではそれらについて見ていきます。
+
+<h1>概要</h1>
+対応するプロジェクトは<span class="important">Part06_DrawCall</span>になります。
+<div class="summary">
+  <ol>
+    <li><a href="#DRAW">ID3D11DeviceContext::Draw関数</a></li>
+    <li><a href="#DRAW_INDEX">添字を使ったドローコール</a></li>
+    <li><a href="#INSTANCE">インスタンス描画</a></li>
+    <li><a href="#INDIRECT">インダイレクト描画</a></li>
+    <li><a href="#SUMMARY">まとめ</a></li>
+    <li><a href="#SUPPLEMENTAL">補足</a>
+      <ul>
+        <li>ID3D11DeviceContext::DispatchIndirect関数</li>
+      </ul>
+    </li>
+  </ol>
+</div>
+
+<h1 class="under-bar">ID3D11DeviceContext::Draw関数</h1>
+<a name="DRAW"></a>
+<span class="keyward">ID3D11DeviceContext::Draw関数</span>は前回のパートで使用しました。
+描画したい頂点の数と設定した頂点バッファの先頭オフセットを指定してグラフィックスパイプラインを実行します。
+DX11でのドローコールはこの関数が基本形になりますが、Direct3D12では廃止されているので注意してください。
+
+ドキュメント：
+[ID3D11DeviceContext::Draw(日本語)][Draw_JP]
+[ID3D11DeviceContext::Draw(英語)][Draw_EN]
+
+[Draw_JP]:https://msdn.microsoft.com/ja-jp/library/ee419589(v=vs.85).aspx
+[Draw_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476407(v=vs.85).aspx
+
+<h1 class="under-bar">添字を使ったドローコール</h1>
+<a name="DRAW_INDEX"></a>
+
+前回プリミティブトポロジで頂点バッファのペアを指定しました。
+その際、頂点バッファの並びを指定したプリミティブに合うようにしなければいけませんでした。
+場合によっては同じ値の要素が1つの頂点バッファにいくつもある状態になることもあり、メモリを無駄に使用することになります。
+そのような場合はインデックスバッファを使用することでデータの重複を避けることができます。
+
+{% highlight c++ %}
+// Scene::onInit関数の一部
+//頂点バッファの要素への添字
+std::array<uint16_t, 6> data = { {
+  0, 1, 2,
+  5, 3, 4,
+} };
+D3D11_BUFFER_DESC desc = {};
+desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+desc.ByteWidth = sizeof(data);
+D3D11_SUBRESOURCE_DATA initData = {};
+initData.pSysMem = &data;
+initData.SysMemPitch = sizeof(data);
+auto hr = this->mpDevice->CreateBuffer(&desc, &initData, this->mpIndexBuffer.GetAddressOf());
+if (FAILED(hr)) {
+  throw std::runtime_error("インディックスバッファの作成に失敗");
+}
+{% endhighlight %}
+
+インデックスバッファは<span class="keyward">ID3D11Buffer</span>で表します。
+<span class="important">生成の際は<span class="keyward">BindFlags</span>に<span class="keyward">D3D11_BIND_INDEX_BUFFER</span>を指定してください。</span>
+
+インデックスバッファの内容は頂点バッファへの添字になります。
+0なら頂点バッファの0番目の要素を指し、5なら5番目の要素を指します。
+
+<h3>設定</h3>
+グラフィックスパイプラインへの設定は<span class="keyward">ID3D11DeviceContext::IASetIndexBuffer関数</span>で行います。
+<br>ドキュメント：
+[ID3D11DeviceContext::IASetIndexBuffer(日本語)][IASetIndexBuffer_JP]
+[ID3D11DeviceContext::IASetIndexBuffer(英語)][IASetIndexBuffer_EN]
+
+[IASetIndexBuffer_JP]:https://msdn.microsoft.com/ja-jp/library/ee419686(v=vs.85).aspx
+[IASetIndexBuffer_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476453(v=vs.85).aspx
+
+{% highlight c++ %}
+// Scene::onRender関数の一部
+this->mpImmediateContext->IASetIndexBuffer(this->mpIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+{% endhighlight %}
+
+<span class="important">設定の際はインディクスバッファのフォーマットも指定する必要があります。</span>
+<span class="important">この時指定できるものはDXGI_FORMAT_R16_UINTとDXGI_FORMAT_R32_UINTの2つだけですので注意してください。</span>
+
+<h3>ドローコール</h3>
+添字を使ったドローコールは<span class="keyward">ID3D11DeviceContext::DrawIndexed関数</span>になります。
+引数の内容は<span class="keyward">ID3D11DeviceContext::Draw関数</span>と似たものになります。
+
+ドキュメント：
+[ID3D11DeviceContext::DrawIndexed(日本語)][DrawIndexed_JP]
+[ID3D11DeviceContext::DrawIndexed(英語)][DrawIndexed_EN]
+
+[DrawIndexed_JP]:https://msdn.microsoft.com/ja-jp/library/ee419591(v=vs.85).aspx
+[DrawIndexed_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476409(v=vs.85).aspx
+
+{% highlight c++ %}
+// Scene::onRender関数の一部
+this->mpImmediateContext->DrawIndexed(3, 3, 0);
+{% endhighlight %}
+
+<h1 class="under-bar">インスタンス描画</h1>
+<a name="INSTANCE"></a>
+
+次にインスタンス描画について見ていきます。
+インスタンス描画はグラフィックスパイプラインに設定した頂点バッファを指定した個数分、一度に描画するものです。
+
+<span class="important">行っていることは上で紹介したドローコールを複数回呼び出しているのと同じなのですが、ドローコール自体が重たい処理となっているため、大量の頂点バッファを描画するときはインスタンス描画のほうが速くなります。</span>
+
+欠点としては、専用のシェーダとデータを用意する必要があることと1度に１つの頂点バッファしか使えないことでしょうか。
+それでも魅力的な機能でありますし、Direct3D12でのドローコールはインスタンス描画のものしか用意されていません。
+Direct3D12で1つだけ描画するにはインスタンスの個数を1にして行います。
+
+また、インスタンス描画は頂点バッファをそのまま使うものとインディクスバッファを使うものの2種類用意されています。
+
+ドキュメント:<br>
+<span class="keyward">ID3D11DeviceContext::DrawInstanced</span>
+[日本語][DrawInstanced_JP]
+[英語][DrawInstanced_EN]
+<br><span class="keyward">ID3D11DeviceContext::DrawIndexedInstanced</span>
+[日本語][DrawIndexedInstanced_JP]
+[英語][DrawIndexedInstanced_EN]
+
+[DrawInstanced_JP]:https://msdn.microsoft.com/ja-jp/library/ee419594(v=vs.85).aspx
+[DrawInstanced_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476412(v=vs.85).aspx
+[DrawIndexedInstanced_JP]:https://msdn.microsoft.com/ja-jp/library/ee419592(v=vs.85).aspx
+[DrawIndexedInstanced_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476410(v=vs.85).aspx
+
+サンプルでは２種類の方法でインスタンス描画を行っていますので、順に見ていきましょう。
+
+<h3>StructuredBufferを使ったインスタンス描画</h3>
+まず、<span class="keyward">StructuredBuffer</span>を使ったインスタンス描画を見ていきます。
+<span class="important">上で専用のシェーダを用意する必要があると書きましたが、それは頂点シェーダのみ必要でピクセルシェーダはどちらでも共通して使用することができます。</span>
+
+{% highlight hlsl %}
+// VertexShaderWithStructuredBuffer.hlsl
+static float4 gColor = float4(1, 1, 1, 1);
+struct InstancedParam {
+  float3 offset;
+};
+StructuredBuffer<InstancedParam> offsets : register(t0);
+struct Input
+{
+  float4 pos : POSITION;
+  uint instanceID : SV_InstanceID;
+};
+struct Output
+{
+  float4 pos : SV_POSITION;
+  float4 color : COLOR0;
+};
+Output main(Input input)
+{
+  Output output;
+  output.pos = input.pos;
+  const float SCALE = 0.05f;//三角形のサイズ調節用
+  output.pos.xyz = output.pos.xyz * SCALE + offsets[input.instanceID].offset;
+  output.color = gColor * float4(offsets[input.instanceID].offset, 1);
+  return output;
+}
+{% endhighlight %}
+
+シェーダコード自体は今まで出てきたものばかりです。
+<span class="important">ここで注目してもらいたいのは<span class="keyward">Input構造体</span>の<span class="keyward">instanceID</span>です。</span>
+
+<span class="keyward">instanceID</span>には<span class="keyward">SV_InstanceID</span>というシステムセマンティクスがつけられています。
+<span class="important"><span class="keyward">SV_InstanceID</span>はインスタンス描画を行った時の各インスタンスの識別番号になります。</span>
+
+例えば、ある頂点バッファを10個でインスタンス描画した際、<span class="keyward">SV_InstanceID</span>を付けられたものは0～9の値をGPU側で自動で設定されます。
+<span class="important">入力レイアウトで指定する必要はありません。</span>
+頂点バッファの各要素に上の0～9の値が設定された<span class="keyward">SV_InstanceID</span>が渡されます。
+<span class="important">頂点バッファの要素数が３個で10個インスタンス描画する場合のエントリポイントが呼ばれる回数は<span class="keyward">「頂点バッファの要素数 X インスタンス数 = エントリポイントが呼ばれる回数」</span>から30回呼ばれます。</span>
+
+上のコードでは<span class="keyward">instanceID</span>を使って各インスタンス用のデータを<span class="keyward">StructuredBuffer</span>から読み込んでいます。
+<span class="keyward">StructuredBuffer</span>の生成とグラフィックスパイプラインへの設定は今まで出てきたものとそう変わりがないので省略します。
+
+<h3>入力スロット</h3>
+
+次に複数の頂点バッファを使ったインスタンス描画について見ていきます。
+
+{% highlight hlsl %}
+// VertexShaderWithSlot.hlsl
+static float4 gColor = float4(1, 1, 1, 1);
+//書き方がこれまでと異なるが、こうゆう書き方もできる
+void main(
+  in float4 pos : POSITION,
+  in float3 offset : OFFSET,//<- インスタンス用のデータ
+  out float4 outPos : SV_POSITION,
+  out float4 outColor : COLOR0)
+{
+  Output output;
+  outPos = pos;
+  const float SCALE = 0.05f;//三角形のサイズ調節用
+  outPos.xyz = outPos.xyz * SCALE + offset;
+  outColor = gColor * float4(offset, 1);
+}
+{% endhighlight %}
+
+行っている処理自体は<span class="keyward">StructuredBuffer</span>を使ったものと同じです。
+<span class="important">複数の頂点バッファを使った場合は入力レイアウトでインスタンス用のデータを指定します。</span>
+
+{% highlight c++ %}
+// Scene::onInit関数の一部
+//入力レイアウトの作成
+std::array<D3D11_INPUT_ELEMENT_DESC, 2> elements = { {
+  { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+  { "OFFSET", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+} };
+auto hr = this->mpDevice->CreateInputLayout(elements.data(), static_cast<UINT>(elements.size()), byteCode.data(), byteCode.size(), this->mpInputLayoutWithSlot2.GetAddressOf());
+if (FAILED(hr)) {
+  throw std::runtime_error("インスタンス描画用の入力レイアウトの作成に失敗");
+}
+{% endhighlight %}
+
+インスタンス描画用のデータを指定するときは<span class="keyward">D3D11_INPUT_ELEMENT_DESC</span>の以下のメンバを使用してください。
+<br>ドキュメント:
+[D3D11_INPUT_ELEMENT_DESC(日本語)][D3D11_INPUT_ELEMENT_DESC_JP]
+[D3D11_INPUT_ELEMENT_DESC(英語)][D3D11_INPUT_ELEMENT_DESC_EN]
+
+[D3D11_INPUT_ELEMENT_DESC_JP]:https://msdn.microsoft.com/ja-jp/library/ee416244(v=vs.85).aspx
+[D3D11_INPUT_ELEMENT_DESC_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476180(v=vs.85).aspx
+
+<div class="argument">
+  <h4 class="under-bar">D3D11_INPUT_ELEMENT_DESC</h4>
+  <ol>
+    <li><span class="keyward">InputSlotClass</span>
+      <p>入力データの種類を設定。頂点単位のデータなら<span class="keyward">D3D11_INPUT_PER_VERTEX_DATA</span>を、インスタンス単位のデータなら<span class="keyward">D3D11_INPUT_PER_INSTANCE_DATA</span>を指定してください。</p>
+    </li>
+    <li><span class="keyward">InstanceDataStepRate</span>
+      <p>
+        いくつの頂点要素で同じインスタンスデータを使い回すのかを指定するものだと思います。
+        ドキュメントを読んでも意味をつかめなかったですが、2を指定すると２要素ごとに使用するインスタンスデータが変わりました。
+        <span class="important">基本的に1を指定すれば全要素の全インスタンスデータが使用できるようになります。</span>
+      </p>
+    </li>
+  </ol>
+</div>
+
+
+頂点バッファの設定は今までとそう変わりがないのでサンプルを参照してください。
+頂点データとインスタンスデータを別々で設定していますので注意してください。
+
+<h1 class="under-bar">インダイレクト描画</h1>
+<a name="INDIRECT"></a>
+
+最後にインダイレクト(英訳:Indirect)描画を見ていきます。
+これは今まで出てきたドローコールの引数をバッファで指定するものになります。
+言い換えるバッファの内容が引数となります。
+
+{% highlight c++ %}
+// Scene::onInit関数の一部
+//ID3D11DeviceContext::DrawInstancedの引数を構造体にしたもの
+struct {
+  UINT IndexCountPerInstance;
+  UINT InstanceCount;
+  UINT StartIndexLocation;
+  INT BaseVertexLocation;
+  UINT StartInstanceLocation;
+}data;
+data.IndexCountPerInstance = 3;
+data.InstanceCount = 10;
+data.StartIndexLocation = 3;
+data.BaseVertexLocation = 0;
+data.StartInstanceLocation = 0;
+D3D11_BUFFER_DESC desc = {};
+desc.ByteWidth = sizeof(data);
+desc.MiscFlags = D3D11_RESOURCE_MISC_DRAWINDIRECT_ARGS;
+desc.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
+D3D11_SUBRESOURCE_DATA initData = {};
+initData.pSysMem = &data;
+initData.SysMemPitch = sizeof(data);
+auto hr = this->mpDevice->CreateBuffer(&desc, &initData, this->mpIndirectDrawBuffer.GetAddressOf());
+if (FAILED(hr)) {
+  throw std::runtime_error("インダイレクト用のバッファ作成に失敗");
+}
+{% endhighlight %}
+
+<span class="important">サンプルでは回りくどいだけで使用する利点がわかりづらいですが、GPUで描画数の調節ができるためCPUとGPUの同期待ちを減らせることが可能になります。</span>
+このドローコールはインスタンス描画のみ対応しています。
+また、Direct3D12では使い方が大きく変わっていますので注意してください。
+
+ドキュメント:<br>
+<span class="keyward">ID3D11DeviceContext::DrawInstancedIndirect</span>
+[日本語][DrawInstancedIndirect_JP]
+[英語][DrawInstancedIndirect_EN]
+<br><span class="keyward">ID3D11DeviceContext::DrawIndexedInstancedIndirect</span>
+[日本語][DrawIndexedInstancedIndirect_JP]
+[英語][DrawIndexedInstancedIndirect_EN]
+
+[DrawInstancedIndirect_JP]:https://msdn.microsoft.com/ja-jp/library/ee419595(v=vs.85).aspx
+[DrawInstancedIndirect_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476413(v=vs.85).aspx
+[DrawIndexedInstancedIndirect_JP]:https://msdn.microsoft.com/ja-jp/library/ee419593(v=vs.85).aspx
+[DrawIndexedInstancedIndirect_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476411(v=vs.85).aspx
+
+ちなみにコンピュートシェーダを実行するときにもインダイレクト描画のように行えるものが用意されています。
+<br>ドキュメント：
+<span class="keyward">ID3D11DeviceContext::DispatchIndirect</span>
+[日本語][DispatchIndirect_JP]
+[英語][DispatchIndirect_EN]
+
+[DispatchIndirect_JP]:https://msdn.microsoft.com/ja-jp/library/ee419588(v=vs.85).aspx
+[DispatchIndirect_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476406(v=vs.85).aspx
+
+<h1 class="under-bar">まとめ</h1>
+<a name="SUMMARY"></a>
+このパートではドローコールのバリエーションを見てきました。
+これらの関数を使ってグラフィックスパイプラインを実行しますので覚えておいてください。
+
+また、ドローコールは重たい処理になります。
+そのため最適化にはドローコールの回数を減らすのが効果的な場合がありますので遅い場合は一度減らしてみて確認してみてください。
+
+<table class="table table-condensed">
+  <tbody>
+    <tr>
+      <td class="left"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/graphics-pipeline">＜前</a></td>
+      <td class="center"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}">トップ</a></td>
+      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/draw-call">次＞</a></td>
+    </tr>
+  </tbody>
+</table>
