@@ -29,6 +29,7 @@ Scene::Scene(UINT width, UINT height, std::wstring name)
 
 void Scene::onInit()
 {
+	this->updateTitle();
 	auto instanceData = this->makeInstanceData();
 
 	{//グラフィックスパイプラインの初期化
@@ -166,9 +167,11 @@ void Scene::onKeyUp(UINT8 key)
 {
 	if (key == 'Z') {
 		this->mBlendMode = static_cast<decltype(this->mBlendMode)>((this->mBlendMode + 1) % eBLEND_MODE_COUNT);
+		this->updateTitle();
 	}
 	if (key == 'X') {
 		this->mShowRT = static_cast<decltype(this->mShowRT)>((this->mShowRT + 1) % eSHOW_RT_COUNT);
+		this->updateTitle();
 	}
 }
 
@@ -212,7 +215,7 @@ void Scene::onRender()
 		1, 1, 1, 1
 	} };
 	switch (this->mBlendMode) {
-	case eBLEND_MODE_SAME_BLEND: 	this->mpImmediateContext->OMSetBlendState(this->mpBlendState.Get(), factor.data(), 0xffffffff); break;
+	case eBLEND_MODE_SAME_BLEND: 	this->mpImmediateContext->OMSetBlendState(this->mpBlendState.Get(), factor.data(), 0xfffffff1); break;
 	case eBLEND_MODE_SEPARATEBLEND: this->mpImmediateContext->OMSetBlendState(this->mpBlendState2.Get(), factor.data(), 0xffffffff); break;
 	default:
 		assert(false);
@@ -233,6 +236,27 @@ void Scene::onRender()
 void Scene::onDestroy()
 {
 }
+
+void Scene::updateTitle()
+{
+	std::wstring title = L"BLEND_MODE=";
+	switch (this->mBlendMode) {
+	case eBLEND_MODE_SAME_BLEND:		title += L"eBLEND_MODE_SAME_BLEND"; break;
+	case eBLEND_MODE_SEPARATEBLEND:		title += L"eBLEND_MODE_SEPARATEBLEND"; break;
+	default:
+		assert(false && "未実装");
+	}
+	title += L"; SHOW_RENDER_TARGET=";
+	switch (this->mShowRT) {
+	case eSHOW_RT_1:	title += L"eSHOW_RT_1"; break;
+	case eSHOW_RT_2:	title += L"eSHOW_RT_2"; break;
+	default:
+		assert(false && "未実装");
+	}
+
+	this->setCustomWindowText(title.c_str());
+}
+
 
 std::vector<Scene::InstancedParam> Scene::makeInstanceData()const
 {

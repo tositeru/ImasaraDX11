@@ -49,6 +49,9 @@ private:
 	std::vector<InstancedParam> makeInstanceData()const;
 
 private:
+	void updateTitle();
+
+private:
 	enum BLEND_MODE {
 		eBLEND_MODE_SAME_BLEND,
 		eBLEND_MODE_SEPARATEBLEND,
