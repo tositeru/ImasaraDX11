@@ -2,7 +2,7 @@
 layout: default
 title: "レンダーターゲットとブレンドステート"
 categories: part
-description: ""
+description: "今回のパートでは出力結合ステージのレンダーターゲットとブレンドステートについて見ていきます。"
 ---
 <h1 class="under-bar">レンダーターゲットとブレンドステート</h1>
 
@@ -349,7 +349,7 @@ this->mpImmediateContext->OMSetBlendState(this->mpBlendState.Get(), factor.data(
     <tr>
       <td class="left"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/draw-call">＜前</a></td>
       <td class="center"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}">トップ</a></td>
-      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/RT-and-blend">次＞</a></td>
+      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/ZBuffer-and-depth-stencil">次＞</a></td>
     </tr>
   </tbody>
 </table>
