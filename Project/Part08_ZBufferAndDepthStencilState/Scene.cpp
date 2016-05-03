@@ -29,6 +29,8 @@ Scene::Scene(UINT width, UINT height, std::wstring name)
 
 void Scene::onInit()
 {
+	this->updateTitle();
+
 	auto instanceData = this->makeInstanceData();
 
 	{//グラフィックスパイプラインの初期化
@@ -88,9 +90,13 @@ void Scene::onInit()
 		if (FAILED(hr)) {
 			throw std::runtime_error("深度ステンシルバッファの作成に失敗");
 		}
-		hr = this->mpDevice->CreateDepthStencilView(this->mpDepthStencil.Get(), nullptr, this->mpDepthStencilDSV.GetAddressOf());
+		D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+		dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		dsvDesc.Format = desc.Format;
+		dsvDesc.Texture2D.MipSlice = 0;
+		hr = this->mpDevice->CreateDepthStencilView(this->mpDepthStencil.Get(), &dsvDesc, this->mpDepthStencilDSV.GetAddressOf());
 		if (FAILED(hr)) {
-			throw std::runtime_error("レンダーターゲット1のレンダーターゲットビュー作成に失敗");
+			throw std::runtime_error("深度ステンシルビュー作成に失敗");
 		}
 	}
 	{
@@ -104,21 +110,22 @@ void Scene::onInit()
 			throw std::runtime_error("深度テスト用のステート作成に失敗");
 		}
 
+		//ステンシルテスト用のステート作成
 		desc.DepthEnable = false;
 		desc.StencilEnable = true;
 		desc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
 		desc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
-		desc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_INCR;
-		desc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+		desc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		desc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 		desc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_INCR;
-		desc.FrontFace.StencilFunc = D3D11_COMPARISON_LESS_EQUAL;
+		desc.FrontFace.StencilFunc = D3D11_COMPARISON_GREATER_EQUAL;
 
-		desc.BackFace.StencilFailOp = D3D11_STENCIL_OP_INCR;
-		desc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+		desc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		desc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 		desc.BackFace.StencilPassOp = D3D11_STENCIL_OP_INCR;
-		desc.BackFace.StencilFunc = D3D11_COMPARISON_LESS_EQUAL;
+		desc.BackFace.StencilFunc = D3D11_COMPARISON_GREATER_EQUAL;
 
-		//hr = this->mpDevice->CreateDepthStencilState(&desc, this->mpDSStencilTest.GetAddressOf());
+		hr = this->mpDevice->CreateDepthStencilState(&desc, this->mpDSStencilTest.GetAddressOf());
 		if (FAILED(hr)) {
 			throw std::runtime_error("ステンシルテスト用のステート作成に失敗");
 		}
@@ -150,6 +157,7 @@ void Scene::onKeyUp(UINT8 key)
 {
 	if (key == 'Z') {
 		this->mMode = static_cast<decltype(this->mMode)>((this->mMode + 1) % eMODE_COUNT);
+		this->updateTitle();
 	}
 }
 
@@ -210,7 +218,7 @@ void Scene::onRender()
 		this->mpImmediateContext->PSSetShader(nullptr, nullptr, 0);
 		this->mpImmediateContext->Draw(3, 0);
 
-		//ステンシルテストにより上の三角形が描画されていない部分だけが描画される
+		//ステンシルテストにより、上の三角形が描画されていない部分だけが描画される
 		ppBufs[0] = this->mpVertexBuffer.Get();
 		this->mpImmediateContext->IASetVertexBuffers(0, static_cast<UINT>(ppBufs.size()), ppBufs.data(), strides.data(), offsets.data());
 		this->mpImmediateContext->VSSetShader(this->mpVertexShader.Get(), nullptr, 0);
@@ -227,6 +235,7 @@ void Scene::onRender()
 		this->mpImmediateContext->DrawIndexedInstanced(3, M_INSTANCED_COUNT, 0, 0, 0);
 
 		//EarlyZ
+		//加算合成を行うブレンドステートを指定しているので、三角形のどの部分が加算されているか注目してください
 		std::array<float, 4> factor = { { 1, 1, 1, 1 } };
 		this->mpImmediateContext->OMSetBlendState(this->mpBlendState.Get(), factor.data(), 0xffffffff);
 		this->mpImmediateContext->PSSetShader(this->mpPSEarlyZ.Get(), nullptr, 0);
@@ -243,6 +252,21 @@ void Scene::onRender()
 
 void Scene::onDestroy()
 {
+}
+
+void Scene::updateTitle()
+{
+	std::wstring title = L"";
+	switch (this->mMode) {
+	case eMODE_NONE:			title += L"eMODE_NONE"; break;
+	case eMODE_DEPTH_TEST:		title += L"eMODE_DEPTH_TEST"; break;
+	case eMODE_STENCIL_TEST:	title += L"eMODE_STENCIL_TEST"; break;
+	case eMODE_EARLY_Z:			title += L"eMODE_EARLY_Z"; break;
+	default:
+		assert(false && "未実装");
+	}
+
+	this->setCustomWindowText(title.c_str());
 }
 
 std::vector<Scene::InstancedParam> Scene::makeInstanceData()const

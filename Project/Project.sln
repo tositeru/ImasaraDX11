@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTK_Desktop_2015_Win10", "..\Microsoft\DirectXTK\DirectXTK_Desktop_2015_Win10.vcxproj", "{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part07_ZBufferAndDepthStencilState", "Part7_ZBufferAndDepthStencilState\Part7_ZBufferAndDepthStencilState.vcxproj", "{F0F2C841-884A-484D-A0D0-188B1981819C}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part08_RasterizerState", "Part8_RasterizerState\Part8_RasterizerState.vcxproj", "{61607A16-F17E-4622-8C7A-B3B66ED848B1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part09_GeometryShader", "Part9_GeometryShader\Part9_GeometryShader.vcxproj", "{4BA6CEF6-A74C-401C-8E32-692FA56D6CC1}"
@@ -39,6 +37,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part06_DrawCall", "Part06_D
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part07_RenderTargetAndBlendState", "Part07_RenderTargetAndBlendState\Part07_RenderTargetAndBlendState.vcxproj", "{73BA9EFC-350E-42CA-AF1F-34CB36E810EE}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part08_ZBufferAndDepthStencilState", "Part08_ZBufferAndDepthStencilState\Part08_ZBufferAndDepthStencilState.vcxproj", "{7B5B546C-9D21-41EC-BB9C-7CF9249BC6CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -55,14 +55,6 @@ Global
 		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}.Release|x64.Build.0 = Release|x64
 		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}.Release|x86.ActiveCfg = Release|Win32
 		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}.Release|x86.Build.0 = Release|Win32
-		{F0F2C841-884A-484D-A0D0-188B1981819C}.Debug|x64.ActiveCfg = Debug|x64
-		{F0F2C841-884A-484D-A0D0-188B1981819C}.Debug|x64.Build.0 = Debug|x64
-		{F0F2C841-884A-484D-A0D0-188B1981819C}.Debug|x86.ActiveCfg = Debug|Win32
-		{F0F2C841-884A-484D-A0D0-188B1981819C}.Debug|x86.Build.0 = Debug|Win32
-		{F0F2C841-884A-484D-A0D0-188B1981819C}.Release|x64.ActiveCfg = Release|x64
-		{F0F2C841-884A-484D-A0D0-188B1981819C}.Release|x64.Build.0 = Release|x64
-		{F0F2C841-884A-484D-A0D0-188B1981819C}.Release|x86.ActiveCfg = Release|Win32
-		{F0F2C841-884A-484D-A0D0-188B1981819C}.Release|x86.Build.0 = Release|Win32
 		{61607A16-F17E-4622-8C7A-B3B66ED848B1}.Debug|x64.ActiveCfg = Debug|x64
 		{61607A16-F17E-4622-8C7A-B3B66ED848B1}.Debug|x64.Build.0 = Debug|x64
 		{61607A16-F17E-4622-8C7A-B3B66ED848B1}.Debug|x86.ActiveCfg = Debug|Win32
@@ -191,6 +183,14 @@ Global
 		{73BA9EFC-350E-42CA-AF1F-34CB36E810EE}.Release|x64.Build.0 = Release|x64
 		{73BA9EFC-350E-42CA-AF1F-34CB36E810EE}.Release|x86.ActiveCfg = Release|Win32
 		{73BA9EFC-350E-42CA-AF1F-34CB36E810EE}.Release|x86.Build.0 = Release|Win32
+		{7B5B546C-9D21-41EC-BB9C-7CF9249BC6CC}.Debug|x64.ActiveCfg = Debug|x64
+		{7B5B546C-9D21-41EC-BB9C-7CF9249BC6CC}.Debug|x64.Build.0 = Debug|x64
+		{7B5B546C-9D21-41EC-BB9C-7CF9249BC6CC}.Debug|x86.ActiveCfg = Debug|Win32
+		{7B5B546C-9D21-41EC-BB9C-7CF9249BC6CC}.Debug|x86.Build.0 = Debug|Win32
+		{7B5B546C-9D21-41EC-BB9C-7CF9249BC6CC}.Release|x64.ActiveCfg = Release|x64
+		{7B5B546C-9D21-41EC-BB9C-7CF9249BC6CC}.Release|x64.Build.0 = Release|x64
+		{7B5B546C-9D21-41EC-BB9C-7CF9249BC6CC}.Release|x86.ActiveCfg = Release|Win32
+		{7B5B546C-9D21-41EC-BB9C-7CF9249BC6CC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

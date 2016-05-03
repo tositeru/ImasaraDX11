@@ -23,7 +23,7 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
 	try {
-		Scene sample(1280, 720, L"いまさらDirect3D11入門 Part3 Bufferの種類");
+		Scene sample(1280, 720, L"いまさらDirect3D11入門 Part06 ドローコール");
 		return Win32Application::run(&sample, hInstance, nCmdShow);
 	} catch (std::exception& e) {
 		MessageBoxA(NULL, e.what(), "Error", MB_OK | MB_ICONERROR);

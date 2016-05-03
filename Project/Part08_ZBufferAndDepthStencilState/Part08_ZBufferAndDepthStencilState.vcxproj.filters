@@ -13,11 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="ソース ファイル\Template">
-      <UniqueIdentifier>{1ad748b5-08ba-4323-a2d9-85a129d7e50d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Shader">
-      <UniqueIdentifier>{49bd9b47-6720-4776-8a89-26fa82eaea7a}</UniqueIdentifier>
+      <UniqueIdentifier>{89e0bcfb-8c83-4735-a7ea-150bf0a66d77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Template">
+      <UniqueIdentifier>{7adcfbfb-1dae-4e85-a220-945edf49c0ad}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -52,13 +52,13 @@
     <FxCompile Include="Shader\PixelShader.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\PSEarlyZ.hlsl">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
     <FxCompile Include="Shader\VertexShader.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Shader\VSLargeTriangle.hlsl">
-      <Filter>ソース ファイル\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\PSEarlyZ.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
   </ItemGroup>
