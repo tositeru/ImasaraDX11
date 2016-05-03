@@ -281,6 +281,8 @@ if (FAILED(hr)) {
 }
 {% endhighlight %}
 
+<span class="important">インダイレクト用のバッファを作成するときは<l>MiscFlags</l>に<l>D3D11_RESOURCE_MISC_DRAWINDIRECT_ARGS</l>を指定してください。</span>
+
 <span class="important">サンプルでは回りくどいだけで使用する利点がわかりづらいですが、GPUで描画数の調節ができるためCPUとGPUの同期待ちを減らせることが可能になります。</span>
 このドローコールはインスタンス描画のみ対応しています。
 また、Direct3D12では使い方が大きく変わっていますので注意してください。
@@ -320,7 +322,7 @@ if (FAILED(hr)) {
     <tr>
       <td class="left"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/graphics-pipeline">＜前</a></td>
       <td class="center"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}">トップ</a></td>
-      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/draw-call">次＞</a></td>
+      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/RT-and-blend">次＞</a></td>
     </tr>
   </tbody>
 </table>
