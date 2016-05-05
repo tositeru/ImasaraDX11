@@ -13,11 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="ソース ファイル\Template">
-      <UniqueIdentifier>{189f8980-5ebf-4563-a89c-86df0daa3b04}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Shader">
-      <UniqueIdentifier>{9dcb824e-8451-4f1b-8c78-4103a34818b0}</UniqueIdentifier>
+      <UniqueIdentifier>{1131d401-a94c-454d-9d4c-c5b7cc513144}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Template">
+      <UniqueIdentifier>{6dc88e52-ff43-48b8-8d83-69a0b4dde642}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -49,16 +49,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shader\PixelShader.hlsl">
-      <Filter>ソース ファイル\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\VertexShader.hlsl">
-      <Filter>ソース ファイル\Shader</Filter>
-    </FxCompile>
     <FxCompile Include="Shader\GeometryShader.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Shader\GeometryShader2.hlsl">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\PixelShader.hlsl">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\VertexShader.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Shader\VSDummy.hlsl">

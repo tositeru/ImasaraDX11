@@ -46,6 +46,9 @@ private:
 		float pad;
 		DirectX::SimpleMath::Vector4 color;
 	};
+
+private:
+	void udpateTitle();
 	std::vector<InstancedParam> makeInstanceData()const;
 
 private:

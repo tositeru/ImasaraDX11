@@ -29,6 +29,7 @@ Scene::Scene(UINT width, UINT height, std::wstring name)
 
 void Scene::onInit()
 {
+	this->udpateTitle();
 	auto instanceData = this->makeInstanceData();
 
 	{//グラフィックスパイプラインの初期化
@@ -44,7 +45,7 @@ void Scene::onInit()
 			throw std::runtime_error("入力レイアウトの作成に失敗");
 		}
 
-		createShader(this->mpVSDummy.GetAddressOf(), this->mpDevice.Get(), "VertexShader.cso", &byteCode);
+		createShader(this->mpVSDummy.GetAddressOf(), this->mpDevice.Get(), "VSDummy.cso", &byteCode);
 		//ジオメトリシェーダ
 		createShader(this->mpGeometryShader.GetAddressOf(), this->mpDevice.Get(), "GeometryShader.cso", &byteCode);
 		createShader(this->mpGeometryShader2.GetAddressOf(), this->mpDevice.Get(), "GeometryShader2.cso", &byteCode);
@@ -73,6 +74,7 @@ void Scene::onKeyUp(UINT8 key)
 {
 	if (key == 'Z') {
 		this->mMode = static_cast<decltype(this->mMode)>((this->mMode + 1) % eMODE_COUNT);
+		this->udpateTitle();
 	}
 }
 
@@ -102,6 +104,7 @@ void Scene::onRender()
 		this->mpImmediateContext->Draw(3, 0);
 		break;
 	case eMODE_NO_INPUT_TO_TRIANGLE:
+		this->mpImmediateContext->IASetInputLayout(nullptr);
 		this->mpImmediateContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
 		this->mpImmediateContext->VSSetShader(this->mpVSDummy.Get(), nullptr, 0);
 		this->mpImmediateContext->GSSetShader(this->mpGeometryShader2.Get(), nullptr, 0);
@@ -114,6 +117,19 @@ void Scene::onRender()
 
 void Scene::onDestroy()
 {
+}
+
+void Scene::udpateTitle()
+{
+	std::wstring title = L"";
+	switch (this->mMode) {
+	case eMODE_POINT_TO_TRIANGLE:		title += L"eMODE_POINT_TO_TRIANGLE"; break;
+	case eMODE_NO_INPUT_TO_TRIANGLE:	title += L"eMODE_NO_INPUT_TO_TRIANGLE"; break;
+	default:
+		assert(false && "未実装");
+	}
+
+	this->setCustomWindowText(title.c_str());
 }
 
 std::vector<Scene::InstancedParam> Scene::makeInstanceData()const

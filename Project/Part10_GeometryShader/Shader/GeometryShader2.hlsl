@@ -18,15 +18,33 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //*********************************************************
 
-#include "Scene.h"
+struct DummyInput {
+};
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
+struct GSOutput
 {
-	try {
-		Scene sample(1280, 720, L"‚¢‚Ü‚³‚çDirect3D11“ü–å Part3 Buffer‚ÌŽí—Þ");
-		return Win32Application::run(&sample, hInstance, nCmdShow);
-	} catch (std::exception& e) {
-		MessageBoxA(NULL, e.what(), "Error", MB_OK | MB_ICONERROR);
+	float4 pos : SV_POSITION;
+	float4 color : COLOR0;
+};
+
+static const float4 trianglePos[3] = {
+	float4(0.f, 0.5f, 0.f, 1.f),
+	float4(0.5f, -0.5f, 0.f, 1.f),
+	float4(-0.5f, -0.5f, 0.f, 1.f),
+};
+
+
+[maxvertexcount(3)]
+void main(
+	point DummyInput input[1] : POSITION,
+	in uint id : SV_PrimitiveID,
+	inout TriangleStream< GSOutput > output
+	)
+{
+	[unroll] for (uint i = 0; i < 3; i++) {
+		GSOutput element;
+		element.pos = trianglePos[i];
+		element.color = float4(0.3f, 1.0f, 1.0f, 1.f);
+		output.Append(element);
 	}
-	return 1;
 }
