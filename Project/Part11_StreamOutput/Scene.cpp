@@ -101,9 +101,6 @@ void Scene::onUpdate()
 
 void Scene::onKeyUp(UINT8 key)
 {
-	if (key == 'Z') {
-		this->mMode = static_cast<decltype(this->mMode)>((this->mMode + 1) % eMODE_COUNT);
-	}
 }
 
 void Scene::onRender()
@@ -140,6 +137,7 @@ void Scene::onRender()
 
 	this->mpImmediateContext->DrawAuto();
 
+	//再びストリームアウトステージ設定できるよう入力アセンブラステージから設定を外している
 	ppSOBufs[0] = nullptr;
 	this->mpImmediateContext->IASetVertexBuffers(0, static_cast<UINT>(ppSOBufs.size()), ppSOBufs.data(), strides.data(), soOffsets.data());
 

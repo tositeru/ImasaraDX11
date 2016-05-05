@@ -42,12 +42,6 @@ private:
 	};
 
 private:
-	enum MODE {
-		eMODE_POINT_TO_TRIANGLE,
-		eMODE_NO_INPUT_TO_TRIANGLE,
-		eMODE_COUNT
-	} mMode = eMODE_POINT_TO_TRIANGLE;
-
 	static const UINT M_STREAM_OUTPUT_COUNT = 100 * 3;
 
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> mpVSStreamOutput;

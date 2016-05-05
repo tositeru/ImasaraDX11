@@ -14,13 +14,30 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="ソース ファイル\Shader">
-      <UniqueIdentifier>{09232485-646c-4974-adc6-8418c387e0ed}</UniqueIdentifier>
+      <UniqueIdentifier>{e535cf72-dedd-4588-9239-658a3f572563}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Template">
-      <UniqueIdentifier>{cf0f58cb-1569-418d-9933-3705a1e90a32}</UniqueIdentifier>
+      <UniqueIdentifier>{4ca71424-78e5-410f-ad02-7087fd85904a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Template\DXSample.cpp">
+      <Filter>ソース ファイル\Template</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Template\Win32Application.cpp">
+      <Filter>ソース ファイル\Template</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Scene.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="..\Template\Common.h">
       <Filter>ソース ファイル\Template</Filter>
     </ClInclude>
@@ -30,23 +47,6 @@
     <ClInclude Include="..\Template\Win32Application.h">
       <Filter>ソース ファイル\Template</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Template\DXSample.cpp">
-      <Filter>ソース ファイル\Template</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Template\Win32Application.cpp">
-      <Filter>ソース ファイル\Template</Filter>
-    </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\GeometryShader.hlsl">
