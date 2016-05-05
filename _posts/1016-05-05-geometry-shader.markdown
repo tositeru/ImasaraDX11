@@ -10,8 +10,8 @@ description: ""
 
 ジオメトリシェーダはDirect3D10から追加されたステージでシェーダモデル4.0以上に対応したGPUで使用できます。
 グラフィックスパイプラインではラスタライザステージの前に実行されます。
-<b>特徴はGPU内で線分や三角形を生成することが可能な点でしょう。</b>
-<b>さらに頂点シェーダでは1つの頂点の情報しか見れませんでしたが、ジオメトリシェーダではペアとなる他の頂点の情報も見ることが出来ます。</b>
+<span class="important">特徴はGPU内で線分や三角形を生成することが可能な点でしょう。</span>
+<span class="important">さらに頂点シェーダでは1つの頂点の情報しか見れませんでしたが、ジオメトリシェーダではペアとなる他の頂点の情報も見ることが出来ます。</span>
 ジオメトリシェーダを利用することにより、グラフィックスパイプラインはより自由度の高い処理が行えるようになります。
 
 ドキュメント：ジオメトリシェーダ
@@ -23,7 +23,7 @@ description: ""
 
 <h1 class="under-bar">概要</h1>
 今パートではジオメトリシェーダの書き方について見ていきます。
-対応するプロジェクトは<b>Part10_GeometryShader</b>になります。
+対応するプロジェクトは<span class="important">Part10_GeometryShader</span>になります。
 <div class="summary">
   <ol>
     <li><a href="#SHADER">ジオメトリシェーダ</a></li>
@@ -72,12 +72,12 @@ void main(
 頂点シェーダやピクセルシェーダと違って、キーワードなどが多いですが1つずつ見ていきましょう。
 
 <h4>maxvertexcount属性</h4>
-<l>maxvertexcount属性</l>はジオメトリシェーダが生成する頂点の最大数を指定する属性になります。
+<span class="keyward">maxvertexcount属性</span>はジオメトリシェーダが生成する頂点の最大数を指定する属性になります。
 必ず記述してください。
 カッコの中の数字が最大数になります。
 
 <h4>プリミティブ型</h4>
-まず、main関数の引数にある<l>pointキーワード</l>です。
+まず、main関数の引数にある<span class="keyward">pointキーワード</span>です。
 {% highlight hlsl %}
 //頂点シェーダから点情報を受け取っている
 //必ず配列にすること
@@ -90,10 +90,10 @@ void main(
   triangle float4 input[3] : POSITION,
 {% endhighlight %}
 
-<b><l>pointキーワード</l>はジオメトリシェーダの入力として点情報が渡されることを表しています。</b>
-<b>もちろん、線分や三角形のものもそれぞれ<l>line</l>、<l>triangle</l>として用意されています。</b>
-<b>また、線分と三角形には隣接する頂点も受け取る<l>lineadj</l>と<l>triangleadj</l>も用意されています。</b>
-<b>この2つを使用するときは頂点バッファ（またはインディクスバッファ）の並びを専用の並びにする必要がありますので注意してください。</b>
+<span class="important"><span class="keyward">pointキーワード</span>はジオメトリシェーダの入力として点情報が渡されることを表しています。</span>
+<span class="important">もちろん、線分や三角形のものもそれぞれ<span class="keyward">line</span>、<span class="keyward">triangle</span>として用意されています。</span>
+<span class="important">また、線分と三角形には隣接する頂点も受け取る<span class="keyward">lineadj</span>と<span class="keyward">triangleadj</span>も用意されています。</span>
+<span class="important">この2つを使用するときは頂点バッファ（またはインディクスバッファ）の並びを専用の並びにする必要がありますので注意してください。</span>
 日本語の方はキーワードの説明までしか書かれていませんので、その詳細は英語ドキュメントを参考にしてください。
 <br>ドキュメント：
 [ジオメトリ シェーダー オブジェクト][Geometry-Shader_Object_JP]
@@ -123,9 +123,9 @@ void main(
 //点の場合
   inout PointStream< GSOutput > output
 {% endhighlight %}
-<l>TriangleStream</l>が三角形の生成を行います。
-<b>テンプレート引数のように<l><...></l>の中で頂点の型を指定します。</b>
-<b>必ず、inoutキーワードを付けてください。</b>
+<span class="keyward">TriangleStream</span>が三角形の生成を行います。
+<span class="important">テンプレート引数のように<span class="keyward"><...></span>の中で頂点の型を指定します。</span>
+<span class="important">必ず、inoutキーワードを付けてください。</span>
 
 ストリーム出力オブジェクトには2つのメンバ関数が用意されています。
 <ul>
@@ -142,15 +142,15 @@ void main(
 [Stream-Output_Object_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/bb509661(v=vs.85).aspx
 
 ジオメトリシェーダでは以上の要素を使って実装します。
-CPU側ではジオメトリシェーダは<l>ID3D11GeometryShader</l>と表現されています。
-シェーダのコンパイル時にはシェーダモデルに<l>"gs_"</l>を指定してコンパイルしてください。
-<l>ID3D11GeometryShader</l>の作成とグラフィックスパイプラインへの設定は他のシェーダと似ていますので省略します。
+CPU側ではジオメトリシェーダは<span class="keyward">ID3D11GeometryShader</span>と表現されています。
+シェーダのコンパイル時にはシェーダモデルに<span class="keyward">"gs_"</span>を指定してコンパイルしてください。
+<span class="keyward">ID3D11GeometryShader</span>の作成とグラフィックスパイプラインへの設定は他のシェーダと似ていますので省略します。
 サンプルを御覧ください。
 
 <a name="MAKE_PRIMITIVE"></a>
 <h1 class="under-bar">頂点バッファを使わない三角形を描画</h1>
 
-<b>ジオメトリシェーダを使用すると頂点バッファを使わずともプリミティブを描画することが可能です。</b>
+<span class="important">ジオメトリシェーダを使用すると頂点バッファを使わずともプリミティブを描画することが可能です。</span>
 その時は空の構造体をジオメトリシェーダの入力として受け取る必要があります。
 
 {% highlight hlsl %}
@@ -184,13 +184,13 @@ void main(
 }
 {% endhighlight %}
 
-上の<l>SV_PrimitiveID</l>というシステムセマンティクスは描画中のプリミティブの識別子になります。
-例えば、三角形を10個描画したとすると、<l>SV_PrimitiveID</l>は0～9の値を各三角形に振り分けます。
+上の<span class="keyward">SV_PrimitiveID</span>というシステムセマンティクスは描画中のプリミティブの識別子になります。
+例えば、三角形を10個描画したとすると、<span class="keyward">SV_PrimitiveID</span>は0～9の値を各三角形に振り分けます。
 頂点バッファを使用しない場合はシェーダリソースからデータを取得することになると思いますので、その時に使用するシステムセマンティクスになります。
 
 <h4>何もしない頂点シェーダ</h4>
-<b>頂点バッファを使用しない時は何もしない頂点シェーダを用意する必要があります。</b>
-<b>このシェーダを使うときは入力レイアウトは必要ありません。</b>
+<span class="important">頂点バッファを使用しない時は何もしない頂点シェーダを用意する必要があります。</span>
+<span class="important">このシェーダを使うときは入力レイアウトは必要ありません。</span>
 
 {% highlight hlsl %}
 // VSDummy.hlsl
@@ -203,15 +203,18 @@ void main()
 <h1 class="under-bar">まとめ</h1>
 
 以上でジオメトリシェーダの書き方についての説明は終わります。
-<b>ジオメトリシェーダはプリミティブを生成できる特徴からかなり自由度の高いシェーダになります。</b>
+<span class="important">ジオメトリシェーダはプリミティブを生成できる特徴からかなり自由度の高いシェーダになります。</span>
 デバッグ用の簡易な箱をシェーダのみで生成できたりとちょっとしたこともできますので活用していきましょう。
+
+また、グラフィックスパイプラインで処理したプリミティブをバッファに出力することができます。
+これについては次のパートで見ていきます。
 
 <table class="table table-condensed">
   <tbody>
     <tr>
       <td class="left"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/rasterizer-state">＜前</a></td>
       <td class="center"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}">トップ</a></td>
-      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/geometry-shader">次＞</a></td>
+      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/stream-output">次＞</a></td>
     </tr>
   </tbody>
 </table>
