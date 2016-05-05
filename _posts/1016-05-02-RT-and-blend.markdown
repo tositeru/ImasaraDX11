@@ -329,7 +329,7 @@ this->mpImmediateContext->OMSetBlendState(this->mpBlendState.Get(), factor.data(
 グラフィックスパイプラインはコンピュートシェーダのように全てこちらで制御することはできませんが、
 ブレンドステートなどの機能がありますので活用していきましょう。
 
-<h1 class="under-bar">備考</h1>
+<h1 class="under-bar">補足</h1>
 <a name="SUPPLEMENTAL"></a>
 
 <div class="supplemental">

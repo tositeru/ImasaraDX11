@@ -264,7 +264,7 @@ Zバッファの値を調節することもできるなどちょっとした小�
     <tr>
       <td class="left"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/ZBuffer-and-depth-stencil">＜前</a></td>
       <td class="center"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}">トップ</a></td>
-      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/rasterizer-state">次＞</a></td>
+      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/geometry-shader">次＞</a></td>
     </tr>
   </tbody>
 </table>

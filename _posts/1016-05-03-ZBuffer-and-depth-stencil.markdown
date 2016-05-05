@@ -278,7 +278,7 @@ if (FAILED(hr)) {
 以上から、行いたい処理によって深度ステンシルステートとブレンドステートを切り替える必要がありますので注意してください。
 
 <a name="SUPPLEMENTAL"></a>
-<h1 class="under-bar">備考</h1>
+<h1 class="under-bar">補足</h1>
 
 <div class="supplemental">
   <h4>Early Z</h4>
