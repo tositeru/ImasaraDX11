@@ -33,28 +33,44 @@ public:
 	virtual void onRender()override;
 	virtual void onDestroy()override;
 
+	virtual void onKeyDown(UINT8 key)override;
 	virtual void onKeyUp(UINT8 key)override;
 
 private:
-	struct Vertex {
-		DirectX::SimpleMath::Vector3 pos;
-		DirectX::SimpleMath::Vector4 color;
-	};
-
+	void updateTitle();
 
 private:
-	static const UINT M_STREAM_OUTPUT_COUNT = 100 * 3;
+	enum MODE {
+		eMODE_TRIANGLE,
+		eMODE_QUAD,
+		eMODE_ISOLINE,
+		eMODE_POINT_TO_TRIANGLE,
+		eMODE_COUNT
+	} mMode = eMODE_TRIANGLE;
 
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> mpVSStreamOutput;
-	Microsoft::WRL::ComPtr<ID3D11GeometryShader> mpGeometryShader;
+	struct HSParam {
+		float edgeFactor;
+		float insideFactor;
+		float pad[2];
+	} mHSParam;
+
+	Microsoft::WRL::ComPtr<ID3D11HullShader> mpHSTriangle;
+	Microsoft::WRL::ComPtr<ID3D11DomainShader> mpDSTriangle;
+
+	Microsoft::WRL::ComPtr<ID3D11HullShader> mpHSQuad;
+	Microsoft::WRL::ComPtr<ID3D11DomainShader> mpDSQuad;
+
+	Microsoft::WRL::ComPtr<ID3D11HullShader> mpHSIsoline;
+	Microsoft::WRL::ComPtr<ID3D11DomainShader> mpDSIsoline;
+
+	Microsoft::WRL::ComPtr<ID3D11HullShader> mpHSPointToTriangle;
+	Microsoft::WRL::ComPtr<ID3D11DomainShader> mpDSPointToTriangle;
 
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> mpVertexShader;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> mpPixelShader;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> mpVertexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> mpIndexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> mpHSParamBuffer;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> mpInputLayout;
-
-	Microsoft::WRL::ComPtr<ID3D11Buffer> mpStreamOutputBuffer;
-
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> mpRSWireframe;
 };

@@ -18,43 +18,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //*********************************************************
 
-#pragma once
-
-#include "Template/DXSample.h"
-#include <DirectXTK\Inc\SimpleMath.h>
-
-class Scene : public DXSample
+float4 main(float4 pos : SV_POSITION, float4 color : TEXCOORD0) : SV_Target
 {
-public:
-	Scene(UINT width, UINT height, std::wstring name);
-
-	virtual void onInit()override;
-	virtual void onUpdate()override;
-	virtual void onRender()override;
-	virtual void onDestroy()override;
-
-	virtual void onKeyUp(UINT8 key)override;
-
-private:
-	struct Vertex {
-		DirectX::SimpleMath::Vector3 pos;
-		DirectX::SimpleMath::Vector4 color;
-	};
-
-
-private:
-	static const UINT M_STREAM_OUTPUT_COUNT = 100 * 3;
-
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> mpVSStreamOutput;
-	Microsoft::WRL::ComPtr<ID3D11GeometryShader> mpGeometryShader;
-
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> mpVertexShader;
-	Microsoft::WRL::ComPtr<ID3D11PixelShader> mpPixelShader;
-
-	Microsoft::WRL::ComPtr<ID3D11Buffer> mpVertexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> mpIndexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11InputLayout> mpInputLayout;
-
-	Microsoft::WRL::ComPtr<ID3D11Buffer> mpStreamOutputBuffer;
-
-};
+	return color;
+}

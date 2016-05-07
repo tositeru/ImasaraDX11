@@ -18,43 +18,54 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //*********************************************************
 
-#pragma once
-
-#include "Template/DXSample.h"
-#include <DirectXTK\Inc\SimpleMath.h>
-
-class Scene : public DXSample
+cbuffer Param : register(b0)
 {
-public:
-	Scene(UINT width, UINT height, std::wstring name);
-
-	virtual void onInit()override;
-	virtual void onUpdate()override;
-	virtual void onRender()override;
-	virtual void onDestroy()override;
-
-	virtual void onKeyUp(UINT8 key)override;
-
-private:
-	struct Vertex {
-		DirectX::SimpleMath::Vector3 pos;
-		DirectX::SimpleMath::Vector4 color;
-	};
-
-
-private:
-	static const UINT M_STREAM_OUTPUT_COUNT = 100 * 3;
-
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> mpVSStreamOutput;
-	Microsoft::WRL::ComPtr<ID3D11GeometryShader> mpGeometryShader;
-
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> mpVertexShader;
-	Microsoft::WRL::ComPtr<ID3D11PixelShader> mpPixelShader;
-
-	Microsoft::WRL::ComPtr<ID3D11Buffer> mpVertexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> mpIndexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11InputLayout> mpInputLayout;
-
-	Microsoft::WRL::ComPtr<ID3D11Buffer> mpStreamOutputBuffer;
-
+	float cbEdgeFactor;
+	float cbInsideFactor;
 };
+
+struct VS_CONTROL_POINT_OUTPUT
+{
+	float3 pos : POSITION;
+};
+
+struct HS_CONTROL_POINT_OUTPUT
+{
+	float3 pos : POSITION;
+};
+
+struct HS_CONSTANT_DATA_OUTPUT
+{
+	float EdgeTessFactor[3]			: SV_TessFactor;
+	float InsideTessFactor : SV_InsideTessFactor;
+};
+
+#define NUM_CONTROL_POINTS 1
+
+// ÉpÉbÉ`íËêîä÷êî
+HS_CONSTANT_DATA_OUTPUT CalcHSPatchConstants(
+	InputPatch<VS_CONTROL_POINT_OUTPUT, NUM_CONTROL_POINTS> ip,
+	uint PatchID : SV_PrimitiveID)
+{
+	HS_CONSTANT_DATA_OUTPUT Output;
+
+	Output.EdgeTessFactor[0] = Output.EdgeTessFactor[1] = Output.EdgeTessFactor[2] = cbEdgeFactor;
+	Output.InsideTessFactor = cbInsideFactor;
+
+	return Output;
+}
+
+[domain("tri")]
+[partitioning("fractional_odd")]
+[outputtopology("triangle_cw")]
+[outputcontrolpoints(1)]
+[patchconstantfunc("CalcHSPatchConstants")]
+HS_CONTROL_POINT_OUTPUT main(
+	InputPatch<VS_CONTROL_POINT_OUTPUT, NUM_CONTROL_POINTS> inputPatch,
+	uint i : SV_OutputControlPointID,
+	uint PatchID : SV_PrimitiveID)
+{
+	HS_CONTROL_POINT_OUTPUT Output;
+	Output.pos = inputPatch[i].pos;
+	return Output;
+}
