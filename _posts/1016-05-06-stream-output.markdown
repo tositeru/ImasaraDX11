@@ -2,7 +2,7 @@
 layout: default
 title: "ストリームアウトプット"
 categories: part
-description: ""
+description: "今回のパートではストリームアウトプットステージ(英訳:Stream-Output Stage)について見ていきます。"
 ---
 <h1 class="under-bar">ストリームアウトプット</h1>
 
@@ -230,7 +230,7 @@ this->mpImmediateContext->DrawAuto();
     <tr>
       <td class="left"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/geometry-shader">＜前</a></td>
       <td class="center"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}">トップ</a></td>
-      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/stream-output">次＞</a></td>
+      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/tessellation">次＞</a></td>
     </tr>
   </tbody>
 </table>
