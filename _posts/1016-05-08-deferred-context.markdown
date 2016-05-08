@@ -2,7 +2,7 @@
 layout: default
 title: "ディファードコンテキスト"
 categories: part
-description: ""
+description: "今パートではID3D11DeviceContextの1種であるディファードコンテキスト(英訳：Deferred Context)について見ていきます。"
 ---
 <h1 class="under-bar">ディファードコンテキスト</h1>
 
@@ -160,7 +160,7 @@ this->mEnableExecuting = false;
     <tr>
       <td class="left"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/tessellation">＜前</a></td>
       <td class="center"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}">トップ</a></td>
-      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/deferred-context">次＞</a></td>
+      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/query">次＞</a></td>
     </tr>
   </tbody>
 </table>

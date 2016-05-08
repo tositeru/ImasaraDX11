@@ -1,0 +1,255 @@
+---
+layout: default
+title: "クエリ"
+categories: part
+description: ""
+---
+<h1 class="under-bar">クエリ</h1>
+
+今パートではクエリについて見ていきます。
+
+クエリとはGPUが行った情報を取得する際に使います。
+取得できる情報はストリームアウトプットがいくつプリミティブを作成したかとか、描画したプリミティブがレンダーターゲットに書き込まれたのかなどがあります。
+
+<h1 class="under-bar">概要</h1>
+それではクエリの使い方を見ていきましょう。
+対応するプロジェクトは<span class="important">Part14_Query</span>になります。
+
+<div class="summary">
+  <ol>
+    <li><a href="#QUERY">ID3D11Query</a></li>
+    <li><a href="#PREDICATE">ID3D11Predicate</a></li>
+    <li><a href="#COUNTER">ID3D11Counter</a></li>
+    <li><a href="#SUMMARY">まとめ</a></li>
+  </ol>
+</div>
+
+<a name="QUERY"></a>
+<h1 class="under-bar">ID3D11Query</h1>
+
+クエリにはいくつかインターフェイスに分かれています。
+まず、<span class="keyward">ID3D11Query</span>について見ていきます。
+
+<span class="keyward">ID3D11Query</span>はストリームアウトプットの出力数やグラフィックスパイプラインの統計情報について取得できます。
+
+ドキュメント：<span class="keyward">ID3D11Query</span>
+[(日本語)][ID3D11Query_JP]
+[(英語)][ID3D11Query_EN]
+
+[ID3D11Query_JP]:https://msdn.microsoft.com/ja-jp/library/ee419860(v=vs.85).aspx
+[ID3D11Query_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476578(v=vs.85).aspx
+
+<h3>作成</h3>
+
+{% highlight c++ %}
+// Scene::onInit関数の一部
+D3D11_QUERY_DESC queryDesc;
+queryDesc.Query = D3D11_QUERY_SO_STATISTICS_STREAM0;
+queryDesc.MiscFlags = 0;
+auto hr = this->mpDevice->CreateQuery(&queryDesc, this->mpQuery.GetAddressOf());
+if (FAILED(hr)) {
+  throw std::runtime_error("ID3D11Queryの作成に失敗。");
+}
+{% endhighlight %}
+
+<span class="keyward">ID3D11Device::CreateQuery</span>で<span class="keyward">ID3D11Query</span>を作成します。
+
+ドキュメント：
+<br><span class="keyward">ID3D11Device::CreateQuery</span>
+[(日本語)][CreateQuery_JP]
+[(英語)][CreateQuery_EN]
+<br><span class="keyward">D3D11_QUERY_DESC</span>
+[(日本語)][D3D11_QUERY_DESC_JP]
+[(英語)][D3D11_QUERY_DESC_EN]
+
+[CreateQuery_JP]:https://msdn.microsoft.com/ja-jp/library/ee419798(v=vs.85).aspx
+[CreateQuery_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476515(v=vs.85).aspx
+[D3D11_QUERY_DESC_JP]:https://msdn.microsoft.com/ja-jp/library/ee416259(v=vs.85).aspx
+[D3D11_QUERY_DESC_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476195(v=vs.85).aspx
+<div class="argument">
+  <h4>D3D11_QUERY_DESC</h4>
+  <ul>
+    <li><span class="keyward">Query</span>
+      <p>
+        <span class="keyward">D3D11_QUERY</span>で取得する情報指定します。
+        <br>ドキュメント：<span class="keyward">D3D11_QUERY</span>
+        <a href="https://msdn.microsoft.com/ja-jp/library/ee416255(v=vs.85).aspx">(日本語)</a>
+        <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476191(v=vs.85).aspx">(英語)</a>
+      </p>
+    </li>
+    <li><span class="keyward">MiscFlags</span>
+      <p>
+        その他のフラグになります。
+      </p>
+    </li>
+  </ul>
+</div>
+
+<h3>情報の収集と取り出し</h3>
+
+<span class="keyward">ID3D11Query</span>を作成した後は実際に情報を収集してからそれを取り出す必要があります。
+
+{% highlight c++ %}
+void Scene::renderQuery()
+{
+  //情報の収集を行う
+  this->mpImmediateContext->Begin(this->mpQuery.Get());
+  {//三角形を生成する
+    outputTriangles(4);
+  }
+  this->mpImmediateContext->End(this->mpQuery.Get());
+  //this->mpImmediateContext->Flush();
+  //生成した三角形の個数を取得する
+  D3D11_QUERY_DATA_SO_STATISTICS soStatistics = {};
+  UINT flag = 0;
+  HRESULT hr;
+  do {
+    hr = this->mpImmediateContext->GetData(this->mpQuery.Get(), &soStatistics, sizeof(soStatistics), flag);
+  } while (hr != S_OK);
+  //生成した三角形を描画する
+  renderTriangles(static_cast<UINT>(soStatistics.NumPrimitivesWritten));
+}
+{% endhighlight %}
+
+<span class="important"><span class="keyward">ID3D11DeviceContext::Begin</span>と<span class="keyward">ID3D11DeviceContext::End</span>の間で実行されたコマンドの情報を収集します。</span>
+
+ドキュメント：
+<br><span class="keyward">ID3D11DeviceContext::Begin</span>
+[(日本語)][Begin_JP]
+[(英語)][Begin_EN]
+<br><span class="keyward">ID3D11DeviceContext::End</span>
+[(日本語)][End_JP]
+[(英語)][End_EN]
+
+[Begin_JP]:https://msdn.microsoft.com/ja-jp/library/ee419568(v=vs.85).aspx
+[Begin_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476386(v=vs.85).aspx
+[End_JP]:https://msdn.microsoft.com/ja-jp/library/ee419624(v=vs.85).aspx
+[End_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476422(v=vs.85).aspx
+
+<span class="important">収集を終えた後は<span class="keyward">ID3D11DeviceContext::GetData</span>を使用して情報を取得します。</span>
+<span class="important">コマンドがいつ実行されるかはGPU依存のため、<span class="keyward">ID3D11DeviceContext::GetData</span>を呼び出したからといって必ず情報を取得できるわけではありません。</span>
+<span class="important">その場合は戻り値として<span class="keyward">S_FLASE</span>を返します。取得できた場合は<span class="keyward">S_OK</span>を返しますので確認は忘れないで下さい。</span>
+
+ドキュメント：<span class="keyward">ID3D11DeviceContext::GetData</span>
+[(日本語)][GET_DATA_JP]
+[(英語)][GET_DATA_EN]
+
+[GET_DATA_JP]:https://msdn.microsoft.com/ja-jp/library/ee419635(v=vs.85).aspx
+[GET_DATA_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476428(v=vs.85).aspx
+
+<div class="argument">
+  <h4>ID3D11DeviceContext::GetData</h4>
+  <ul>
+    <li><span class="keyward">第1引数：pAsync</span>
+      <p>収集した情報を取得するインタフェースを渡します</p>
+    </li>
+    <li><span class="keyward">第2引数：pData</span>
+      <p>
+        取得した情報を格納する変数へのポインタを渡します。
+        <span class="important">ここに渡す変数の型は<span class="keyward">D3D11_QUERY</span>ごとに用意されていますのでドキュメントを参考にしてください。</span>
+      </p>
+    </li>
+    <li><span class="keyward">第3引数：DataSize</span>
+      <p>第2引数に渡した変数のサイズを指定します。
+      </p>
+    </li>
+    <li><span class="keyward">第4引数：GetDataFlags</span>
+      <p>0または<span class="keyward">D3D11_ASYNC_GETDATA_FLAG</span>で列挙されているフラグを組み合わせたものを渡してください。</p>
+    </li>
+  </ul>
+</div>
+
+<a name="PREDICATE"></a>
+<h1 class="under-bar">ID3D11Predicate</h1>
+次に<span class="keyward">ID3D11Predicate</span>について見ていきます。
+
+<span class="keyward">ID3D11Predicate</span>はストリームアウトプットの上限を超えたのを検出することと深度ステンシルテストに成功したかどうか調べることが出来ます。
+
+<h3>作成</h3>
+
+作成には<span class="keyward">ID3D11Device::CreatePredicate</span>を使います。
+<span class="keyward">ID3D11Query</span>と同じく<span class="keyward">D3D11_QUERY_DESC</span>を使って収集する対象を決めます。
+<span class="important">この時、<span class="keyward">MiscFlags</span>に<span class="keyward">D3D11_QUERY_MISC_PREDICATEHINT</span>を指定する必要があります。</span>
+
+ドキュメント：<span class="keyward">ID3D11Device::CreatePredicate</span>
+[(日本語)][CreatePredicate_JP]
+[(英語)][CreatePredicate_EN]
+
+[CreatePredicate_JP]:https://msdn.microsoft.com/ja-jp/library/ee419797(v=vs.85).aspx
+[CreatePredicate_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476514(v=vs.85).aspx
+
+{% highlight c++%}
+// Scene::onInit関数の一部
+D3D11_QUERY_DESC predicateDesc;
+predicateDesc.Query = D3D11_QUERY_OCCLUSION_PREDICATE;
+predicateDesc.MiscFlags = D3D11_QUERY_MISC_PREDICATEHINT;
+hr = this->mpDevice->CreatePredicate(&predicateDesc, this->mpPredicate.GetAddressOf());
+if (FAILED(hr)) {
+  throw std::runtime_error("ID3D11Predicateの作成に失敗。");
+}
+{% endhighlight %}
+
+<h3>情報の収集と取り出し</h3>
+<span class="important">情報の収集には<span class="keyward">ID3D11Query</span>と同じく<span class="keyward">ID3D11DeviceContext::Begin</span>と<span class="keyward">ID3D11DeviceContext::End</span>を使用します。</span>
+収集した結果は<span class="keyward">ID3D11DeviceContext::GetData</span>で取り出せますが、<span class="keyward">ID3D11Predicate</span>の場合は<span class="keyward">ID3D11DeviceContext::SetPredication</span>で任意のドローコールを無効化することが出来ます。
+<span class="important">一見無駄な機能に見えますが、オクルージョンカリングと呼ばれる画面上に描画されないプリミティブの描画を省く手法に活用することが出来ます。</span>
+
+ドキュメント：<span class="keyward">ID3D11DeviceContext::SetPredication</span>
+[(日本語)][SetPredication_JP]
+[(英語)][SetPredication_EN]
+
+[SetPredication_JP]:https://msdn.microsoft.com/ja-jp/library/ee419746(v=vs.85).aspx
+[SetPredication_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476481(v=vs.85).aspx
+
+{% highlight c++ %}
+// Scene::renderPredicateの一部
+//わざと深度テストを失敗させる
+this->mpImmediateContext->Begin(this->mpPredicate.Get());
+{
+  this->mpImmediateContext->OMSetDepthStencilState(this->mpDSNotDepthTestPass.Get(), 0);
+  this->renderTriangles(-1);
+}
+this->mpImmediateContext->End(this->mpPredicate.Get());
+this->mpImmediateContext->Flush();
+//Predicateの効果を確認する
+if (this->mOnPredicate) {
+  //this->mpPredicateがfalseの場合、ドローコールを無視する
+  this->mpImmediateContext->SetPredication(this->mpPredicate.Get(), false);
+}
+this->mpImmediateContext->OMSetDepthStencilState(nullptr, 0);
+this->renderTriangles(-1);
+this->mpImmediateContext->SetPredication(nullptr, true);
+{% endhighlight %}
+
+<a name="COUNTER"></a>
+<h1 class="under-bar">ID3D11Counter</h1>
+最後に<span class="keyward">ID3D11Counter</span>について見ていきたいのですが、使い方がわからなかったので省きます。
+<span class="keyward">ID3D11Counter</span>はGPUのタイムスタンプを取得でき、処理時間の計測に適しているそうです。
+が、こちらで試したところ同じ値しか取得出来ませんでした。
+サンプルではコードが一応有りますので興味がある方は御覧ください。
+
+時間計測には各GPUベンダーが用意しているAPIやツールを利用することが出来ます。
+またVisual Studio 2015上でも計測できますので、それらを活用するのが手っ取り早い方法になるかと思います。
+
+[GPU使用率][GPU_PROFILE_JP]
+[NVIDIA Nsight][NSIHGT_EN]
+[AMD GPU PerfStudio][GPU_PerfStudio]
+
+[GPU_PROFILE_JP]:https://msdn.microsoft.com/ja-jp/library/mt126195.aspx
+[NSIHGT_EN]:https://developer.nvidia.com/nvidia-nsight-visual-studio-edition
+[GPU_PerfStudio]:http://developer.amd.com/tools-and-sdks/graphics-development/gpu-perfstudio/
+
+<a name="SUMMARY"></a>
+<h1 class="under-bar">まとめ</h1>
+今回のパートではクエリについて見てきました。
+必ず使うものとは言えませんが、知っていれば便利な機能です。
+
+<table class="table table-condensed">
+  <tbody>
+    <tr>
+      <td class="left"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/deferred-context">＜前</a></td>
+      <td class="center"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}">トップ</a></td>
+      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/query">次＞</a></td>
+    </tr>
+  </tbody>
+</table>

@@ -2,7 +2,7 @@
 layout: default
 title: "テッセレーション"
 categories: part
-description: ""
+description: "今パートではテッセレーションの使い方について見ていきます。"
 ---
 <h1 class="under-bar">テッセレーション</h1>
 
