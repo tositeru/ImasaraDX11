@@ -13,14 +13,31 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="ソース ファイル\Template">
-      <UniqueIdentifier>{cab9e117-2dda-493d-b821-054c9b7c0f74}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Shader">
-      <UniqueIdentifier>{b135276b-0851-4242-8743-e0c9e6b4cf87}</UniqueIdentifier>
+      <UniqueIdentifier>{d4c65e49-dadf-4c61-b3d3-b585deaaa29a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Template">
+      <UniqueIdentifier>{69307557-f42d-4579-9e3c-3e769300a0aa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Template\DXSample.cpp">
+      <Filter>ソース ファイル\Template</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Template\Win32Application.cpp">
+      <Filter>ソース ファイル\Template</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Scene.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="..\Template\Common.h">
       <Filter>ソース ファイル\Template</Filter>
     </ClInclude>
@@ -30,23 +47,6 @@
     <ClInclude Include="..\Template\Win32Application.h">
       <Filter>ソース ファイル\Template</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Template\DXSample.cpp">
-      <Filter>ソース ファイル\Template</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Template\Win32Application.cpp">
-      <Filter>ソース ファイル\Template</Filter>
-    </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\PixelShader.hlsl">

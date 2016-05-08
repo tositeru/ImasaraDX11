@@ -42,16 +42,6 @@ private:
 	};
 
 private:
-	enum SHADER_MODE {
-		eMODE_DRAW,
-		eMODE_DRAW_INDEXED,
-		eMODE_DRAW_INSTANCED,
-		eMODE_DRAW_INDEXED_INSTANCED,
-		eMODE_DRAW_INDEXED_INDIRECT,
-		eMODE_COUNT,
-	} mMode = eMODE_DRAW;
-	static const UINT M_INSTANCED_COUNT = 1000;
-
 	Microsoft::WRL::ComPtr<ID3D11Buffer> mpTriangleBuffer;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> mpPixelShader;
 

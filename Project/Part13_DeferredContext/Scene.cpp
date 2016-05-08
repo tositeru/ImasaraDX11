@@ -29,7 +29,7 @@ Scene::Scene(UINT width, UINT height, std::wstring name)
 
 void Scene::onInit()
 {
-	{
+	{//ディファードコンテキストの作成
 		this->mpDevice->CreateDeferredContext(0, this->mpDeferedContext.GetAddressOf());
 
 		//ビューポートとレンダーターゲットの設定コマンドを記憶する
@@ -84,9 +84,14 @@ void Scene::onInit()
 		while (this->mIsRunRecordingThread) {
 			Sleep(2);
 			std::unique_lock<std::mutex> lock(this->mMutex);
-			this->mpCommandLists.Reset();
 
+			//記録したコマンドをクリアしている
+			this->mpCommandLists.Reset();
+			//別のディファードコンテキストが記録したものをコピーすることも出来る
+			//グラフィックスパイプラインに関係するものは複数のディファードコンテキストにまたがって記録することはできないので注意
 			this->mpDeferedContext->ExecuteCommandList(this->mpCLRBindTAndVP.Get(), false);
+
+			//グラフィックスパイプラインを実行するために必要なものを位置から設定している。
 			D3D11_VIEWPORT vp;
 			vp.TopLeftX = 0;
 			vp.TopLeftY = 0;
@@ -124,6 +129,7 @@ void Scene::onInit()
 			//実行
 			this->mpDeferedContext->Draw(3, 0);
 
+			//ここまでのコマンドを記録する
 			this->mpDeferedContext->FinishCommandList(true, this->mpCommandLists.GetAddressOf());
 
 			this->mEnableExecuting = true;
@@ -139,9 +145,6 @@ void Scene::onUpdate()
 
 void Scene::onKeyUp(UINT8 key)
 {
-	if (key == 'Z') {
-		this->mMode = static_cast<decltype(this->mMode)>((this->mMode + 1) % eMODE_COUNT);
-	}
 }
 
 void Scene::onRender()
