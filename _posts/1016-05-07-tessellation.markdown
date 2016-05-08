@@ -11,8 +11,8 @@ description: ""
 これを利用することで１つの三角形や線分、四角形をより細かく分割することが出来ます。
 この機能はディスプレイスメントマッピング(英訳：Displacement Mapping)やカメラからの距離に応じてポリゴンの数を調節するLevel of Detail(略称:LOD)などに利用されているようです。
 
-<b>テッセレーションは頂点シェーダの後に実行される3つのステージから構成されており、ハルシェーダとドメインシェーダの2つのシェーダとテッセレータステージのGPUの固定機能に分けることが出来ます。</b>
-<b>ハルシェーダでテッセレータステージがどのようにプリミティブを分割するかを決め、ドメインシェーダで分割した頂点の移動などの処理を行います。</b>
+<span class="important">テッセレーションは頂点シェーダの後に実行される3つのステージから構成されており、ハルシェーダとドメインシェーダの2つのシェーダとテッセレータステージのGPUの固定機能に分けることが出来ます。</span>
+<span class="important">ハルシェーダでテッセレータステージがどのようにプリミティブを分割するかを決め、ドメインシェーダで分割した頂点の移動などの処理を行います。</span>
 GPUの固定機能を使用しているためシステムセマンティクスの意味を理解することがテッセレーションの理解につながります。
 
 参考サイト：
@@ -27,7 +27,7 @@ GPUの固定機能を使用しているためシステムセマンティクス�
 
 <h1 class="under-bar">概要</h1>
 今パートではテッセレーションの使い方について見ていきます。
-対応するプロジェクトは<b>Part12_Tessellation</b>になります。
+対応するプロジェクトは<span class="important">Part12_Tessellation</span>になります。
 
 <div class="summary">
   <ol>
@@ -44,8 +44,8 @@ GPUの固定機能を使用しているためシステムセマンティクス�
 それでははじめに三角形の分割を仕方を見ながらハルシェーダとドメインシェーダについて見ていきましょう。
 
 <h3>ハルシェーダ</h3>
-<b>ハルシェーダは与えられたプリミティブをどのように分割するかを決めるシェーダになります。</b>
-<b>ちなみに分割を行うプリミティブのことをパッチ(英訳:Patch)と呼ばれているようです。</b>
+<span class="important">ハルシェーダは与えられたプリミティブをどのように分割するかを決めるシェーダになります。</span>
+<span class="important">ちなみに分割を行うプリミティブのことをパッチ(英訳:Patch)と呼ばれているようです。</span>
 
 ドキュメント：ハル シェーダーの設計
 [(日本語)][DESING_HULL_JP]
@@ -138,29 +138,29 @@ HS_CONTROL_POINT_OUTPUT main(
 
 <div class="argument">
   <ol>
-    <li><l>domain</l>
-      <p>ハルシェーダで処理を行うパッチを指定します。三角形の<l>tri</l>,四角形の<l>quad</l>,線分の<l>isoline</l>の3つ指定出来ます。</p>
+    <li><span class="keyward">domain</span>
+      <p>ハルシェーダで処理を行うパッチを指定します。三角形の<span class="keyward">tri</span>,四角形の<span class="keyward">quad</span>,線分の<span class="keyward">isoline</span>の3つ指定出来ます。</p>
     </li>
-    <li><l>partitioning</l>
-      <p>分割方法を指定します。指定できるのは<l>integer</l>,<l>fractional_even</l>,<l>fractional_odd</l>,<l>pow2</l>になります。</p>
+    <li><span class="keyward">partitioning</span>
+      <p>分割方法を指定します。指定できるのは<span class="keyward">integer</span>,<span class="keyward">fractional_even</span>,<span class="keyward">fractional_odd</span>,<span class="keyward">pow2</span>になります。</p>
     </li>
-    <li><l>outputcontrolpoints</l>
+    <li><span class="keyward">outputcontrolpoints</span>
       <p>ハルシェーダが作成する制御点の個数を指定します。</p>
     </li>
-    <li><l>outputtopology</l>
-      <p>テッセレータの出力するプリミティブを指定します。<l>line</l>,<l>triangle_cw</l>,<l>triangle_ccw</l>が指定できます。</p>
+    <li><span class="keyward">outputtopology</span>
+      <p>テッセレータの出力するプリミティブを指定します。<span class="keyward">line</span>,<span class="keyward">triangle_cw</span>,<span class="keyward">triangle_ccw</span>が指定できます。</p>
     </li>
-    <li><l>patchconstantfunc</l>
-      <p>パッチ定数データを計算する関数を指定します。上のコードだと<l>CalcHSPatchConstants関数</l>がパッチ定数データを計算する関数になります。</p>
+    <li><span class="keyward">patchconstantfunc</span>
+      <p>パッチ定数データを計算する関数を指定します。上のコードだと<span class="keyward">CalcHSPatchConstants関数</span>がパッチ定数データを計算する関数になります。</p>
     </li>
-    <li><l>maxtessfactor</l>
+    <li><span class="keyward">maxtessfactor</span>
       <p>最大となる分割係数の値を指定します。</p>
     </li>
   </ol>
 </div>
 
-エントリポイントの引数にある<l>InputPatch</l>はハルシェーダの入力値となる制御点の配列を表しています。
-制御点の型と個数は<l><...></l>で指定します。
+エントリポイントの引数にある<span class="keyward">InputPatch</span>はハルシェーダの入力値となる制御点の配列を表しています。
+制御点の型と個数は<span class="keyward"><...></span>で指定します。
 
 ドキュメント：InputPatch
 [(日本語)][InputPatch_JP]
@@ -169,12 +169,12 @@ HS_CONTROL_POINT_OUTPUT main(
 [InputPatch_JP]:https://msdn.microsoft.com/ja-jp/library/ee422338(v=vs.85).aspx
 [InputPatch_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff471462(v=vs.85).aspx
 
-<b>説明が後になってしまいましたが、エントリポイントは１つのパッチにつきその制御点の個数分呼びだされます。</b>
+<span class="important">説明が後になってしまいましたが、エントリポイントは１つのパッチにつきその制御点の個数分呼びだされます。</span>
 
 <h3>パッチ定数関数</h3>
 
 パッチ定数関数がパッチ1つごとに1回実行され、分割数の決定やこちらで用意したパラメータを計算します。
-<b>言い換えるとパッチを分割するためのデータを計算する関数となります。</b>
+<span class="important">言い換えるとパッチを分割するためのデータを計算する関数となります。</span>
 
 {% highlight hlsl %}
 // HSTriangle.hlsl
@@ -198,7 +198,7 @@ HS_CONSTANT_DATA_OUTPUT CalcHSPatchConstants(
 }
 {% endhighlight %}
 
-<b>分割数を指定するにはシステムセマンティックの<l>SV_TessFactor</l>と<l>SV_InsideTessFactor</l>を利用します。</b>
+<span class="important">分割数を指定するにはシステムセマンティックの<span class="keyward">SV_TessFactor</span>と<span class="keyward">SV_InsideTessFactor</span>を利用します。</span>
 
 ドキュメント：
 <br>SV_TessFactor
@@ -218,18 +218,18 @@ HS_CONSTANT_DATA_OUTPUT CalcHSPatchConstants(
 <div class="argument">
   <h4>三角形の場合の分割数の指定</h4>
   <ul>
-    <li><l>SV_TessFactor</l>
+    <li><span class="keyward">SV_TessFactor</span>
       <p>
         三角形の辺の分割数を指定します。
-        <b>三角形の場合、このシステムセマンティクスを指定する場合は必ず要素数が3つのfloat型の配列にする必要があります。</b>
+        <span class="important">三角形の場合、このシステムセマンティクスを指定する場合は必ず要素数が3つのfloat型の配列にする必要があります。</span>
         配列の0番目は三角形の0番目の頂点と向き合っている辺に対応しています。
         配列の1番目は三角形の1番目の頂点と向き合っている辺と、配列の2番目は三角形の2番目の頂点と向き合っている辺にそれぞれ対応しています。
       </p>
     </li>
-    <li><l>SV_InsideTessFactor</l>
+    <li><span class="keyward">SV_InsideTessFactor</span>
       <p>
         三角形の内部の分割数を指定します。
-        <b>三角形の場合、このシステムセマンティクスを指定する場合は必ずfloat型の変数にする必要があります。</b>
+        <span class="important">三角形の場合、このシステムセマンティクスを指定する場合は必ずfloat型の変数にする必要があります。</span>
       </p>
     </li>
   </ul>
@@ -260,7 +260,7 @@ HS_CONSTANT_DATA_OUTPUT CalcHSPatchConstants(
 ハルシェーダは以上のことに注意して実装する必要があります。
 
 <h3>ドメインシェーダ</h3>
-<b>ドメインシェーダはテッセレータステージで分割、生成した頂点を加工するシェーダになります。</b>
+<span class="important">ドメインシェーダはテッセレータステージで分割、生成した頂点を加工するシェーダになります。</span>
 
 ドキュメント：ドメイン シェーダーの設計
 [(日本語)][DESING_DOMAIN_JP]
@@ -329,10 +329,10 @@ DS_OUTPUT main(
 }
 {% endhighlight %}
 
-<b>エントリポイントにつける<l>domain属性</l>はパッチのプリミティブを指定します。</b>
-<b>ハルシェーダと同じくtri、quad、isolineが指定できます。</b>
+<span class="important">エントリポイントにつける<span class="keyward">domain属性</span>はパッチのプリミティブを指定します。</span>
+<span class="important">ハルシェーダと同じくtri、quad、isolineが指定できます。</span>
 
-ドキュメント：<l>domain属性</l>
+ドキュメント：<span class="keyward">domain属性</span>
 [(日本語)][DOMAIN_ATTR_JP]
 [(英語)][DOMAIN_ATTR_EN]
 
@@ -340,7 +340,7 @@ DS_OUTPUT main(
 [DOMAIN_ATTR_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff471438(v=vs.85).aspx
 
 
-<b>エントリポイントの引数にはハルシェーダからの出力値とパッチ内での位置（<l>SV_DomainLocation</l>）が渡されます。</b>
+<span class="important">エントリポイントの引数にはハルシェーダからの出力値とパッチ内での位置（<span class="keyward">SV_DomainLocation</span>）が渡されます。</span>
 
 <div class="argument">
   <h4>SV_DomainLocation</h4>
@@ -351,9 +351,9 @@ DS_OUTPUT main(
   </p>
   <p>
     生成された頂点のパッチ上の位置を求めるために使うものになります。
-    <b>ドメインシェーダのエントリポイントには必ずこのセマンティクスを付けた引数を用意する必要があります。</b>
-    このセマンティクスを付けた変数の型は<l>domain属性</l>で指定したプリミティブによって異なります。
-    <b>三角形の場合は<l>float3</l>にする必要があります。</b>
+    <span class="important">ドメインシェーダのエントリポイントには必ずこのセマンティクスを付けた引数を用意する必要があります。</span>
+    このセマンティクスを付けた変数の型は<span class="keyward">domain属性</span>で指定したプリミティブによって異なります。
+    <span class="important">三角形の場合は<span class="keyward">float3</span>にする必要があります。</span>
     float3の各要素はxが0番目の頂点に、yは1番目の頂点、zが2番目の頂点の係数になります。
     位置を求めるには以下のように補間してください。
     {% highlight c++ %}
@@ -368,7 +368,7 @@ output.pos = float4(patch[0].pos * domain.x + patch[1].pos * domain.y + patch[2]
 
 <a name="SQUARE"></a>
 <h1 class="under-bar">四角形の分割</h1>
-<b>四角形を分割する際は各<l>domain属性</l>に<l>quad</l>を指定してください。</b>
+<span class="important">四角形を分割する際は各<span class="keyward">domain属性</span>に<span class="keyward">quad</span>を指定してください。</span>
 
 <h3>ハルシェーダ</h3>
 処理自体は三角形の分割とそう変わりはありません。
@@ -415,21 +415,21 @@ HS_CONTROL_POINT_OUTPUT main(
 <div class="argument">
   <h4>四角形の場合の分割数の指定</h4>
   <ul>
-    <li><l>SV_TessFactor</l>
+    <li><span class="keyward">SV_TessFactor</span>
       <p>
         四角形の辺の分割数を指定します。
-        <b>四角形の場合、このシステムセマンティクスを指定する場合は必ず要素数が4つのfloat型の配列にする必要があります。</b>
+        <span class="important">四角形の場合、このシステムセマンティクスを指定する場合は必ず要素数が4つのfloat型の配列にする必要があります。</span>
         <br>配列の0番目は四角形の0番目のと2番目をつなぐ辺に対応しています。
         <br>配列の1番目は四角形の0番目のと1番目をつなぐ辺に対応しています。
         <br>配列の2番目は四角形の1番目のと3番目をつなぐ辺に対応しています。
         <br>配列の3番目は四角形の2番目のと3番目をつなぐ辺に対応しています。
       </p>
     </li>
-    <li><l>SV_InsideTessFactor</l>
+    <li><span class="keyward">SV_InsideTessFactor</span>
       <p>
         四角形の内部の分割数を指定します。
-        <b>四角形の場合、このシステムセマンティクスを指定する場合は必ず要素数が2つのfloat型の配列にする必要があります。</b>
-        <b>内部の分割はいわゆる縦と横それぞれの分割になります。</b>
+        <span class="important">四角形の場合、このシステムセマンティクスを指定する場合は必ず要素数が2つのfloat型の配列にする必要があります。</span>
+        <span class="important">内部の分割はいわゆる縦と横それぞれの分割になります。</span>
         <br>配列の0番目は四角形の0番目のと1番目をつなぐ辺の向きに分割する数になります。
         <br>配列の1番目は四角形の0番目のと2番目をつなぐ辺の向きに分割する数になります。
       </p>
@@ -475,7 +475,7 @@ HS_CONTROL_POINT_OUTPUT main(
 
 <h3>ドメインシェーダ</h3>
 ドメインシェーダも行う処理自体に変わりはありません。
-<b>パッチ内の位置を計算する方法が変わるぐらいでしょう。</b>
+<span class="important">パッチ内の位置を計算する方法が変わるぐらいでしょう。</span>
 
 {% highlight hlsl %}
 // DSQuad.hlsl
@@ -524,7 +524,7 @@ DS_OUTPUT main(
 <div class="argument">
   <h4>四角形の時のSV_DomainLocation</h4>
   <p>
-    <b>四角形の場合は<l>float2</l>にする必要があります。</b>
+    <span class="important">四角形の場合は<span class="keyward">float2</span>にする必要があります。</span>
     意味は0～1の範囲のUV座標系とおなじになります。
     <br>(0,0)で0番目の頂点の位置に、
     <br>(1,0)で1番目の頂点の位置に、
@@ -544,11 +544,11 @@ output.pos = float4(
 
 <a name="ISOLINE"></a>
 <h1 class="under-bar">線分の分割</h1>
-<b>線分を分割する際は各<l>domain属性</l>に<l>isoline</l>を指定してください。</b>
+<span class="important">線分を分割する際は各<span class="keyward">domain属性</span>に<span class="keyward">isoline</span>を指定してください。</span>
 
 <h3>ハルシェーダ</h3>
 線分も前2つとほぼ同じです。
-<b>ただし、分割数を指定するための<l>SV_TessFactor</l>の意味が少々異なり、SV_InsideTessFactorは必要ありません。</b>
+<span class="important">ただし、分割数を指定するための<span class="keyward">SV_TessFactor</span>の意味が少々異なり、SV_InsideTessFactorは必要ありません。</span>
 {% highlight hlsl %}
 // HSIsoline.hlslの一部
 //パッチ定数データ
@@ -588,12 +588,12 @@ HS_CONTROL_POINT_OUTPUT main(
 <div class="argument">
   <h4>線分の場合の分割数の指定</h4>
   <ul>
-    <li><l>SV_TessFactor</l>
+    <li><span class="keyward">SV_TessFactor</span>
       <p>
         線分の辺の分割数を指定します。
-        <b>線分の場合、このシステムセマンティクスを指定する場合は必ず要素数が2つのfloat型の配列にする必要があります。</b>
-        <br><b>配列の0番目は線分の本数を調節するものになります。</b>
-        <br><b>配列の1番目は1線分の分割数になります。</b>
+        <span class="important">線分の場合、このシステムセマンティクスを指定する場合は必ず要素数が2つのfloat型の配列にする必要があります。</span>
+        <br><span class="important">配列の0番目は線分の本数を調節するものになります。</span>
+        <br><span class="important">配列の1番目は1線分の分割数になります。</span>
       </p>
     </li>
   </ul>
@@ -611,7 +611,7 @@ HS_CONTROL_POINT_OUTPUT main(
 
 <h3>ドメインシェーダ</h3>
 ドメインシェーダもあまり変わりはありません。
-<b>SV_DomainLocationの意味が変わったぐらいです。</b>
+<span class="important">SV_DomainLocationの意味が変わったぐらいです。</span>
 
 {% highlight hlsl %}
 // DSIsoline.hlsl
@@ -661,16 +661,16 @@ DS_OUTPUT main(
 <div class="argument">
   <h4>線分の時のSV_DomainLocation</h4>
   <p>
-    <b>線分の場合は<l>float2</l>にする必要があります。</b>
+    <span class="important">線分の場合は<span class="keyward">float2</span>にする必要があります。</span>
     x成分が生成した線分を表すものでy成分が分割数となります。
-    <b>両方共0～1の範囲を取りますので注意してください。</b>
+    <span class="important">両方共0～1の範囲を取りますので注意してください。</span>
     線分の場合はパッチ定数関数の出力を使うのが必須となりそうです。
   </p>
 </div>
 <a name="POINT_TO_TRIANGLE"></a>
 <h1 class="under-bar">点から三角形を生成</h1>
 テッセレーションステージもジオメトリシェーダと同じく点から三角形を生成することが出来ます。
-<b>その際はパッチの制御点に1を指定する必要があります。</b>
+<span class="important">その際はパッチの制御点に1を指定する必要があります。</span>
 
 {% highlight hlsl %}
 // HSPointToTriangle.hlslの一部
@@ -710,23 +710,28 @@ DS_OUTPUT main(
 }
 {% endhighlight %}
 
-<b>InputPatchとOutputPatchの制御点数に1を設定している以外は三角形の分割と同じです。</b>
+<span class="important">InputPatchとOutputPatchの制御点数に1を設定している以外は三角形の分割と同じです。</span>
 
 <a name="SUMMARY"></a>
 <h1 class="under-bar">まとめ</h1>
 
 今回はテッセレーションについて見てきました。
 GPUの固定機能を使用しているため設定する部分が多く、使いこなすには知識も必要となります。
-ですが、行っていることは複雑ではないのでハルシェーダ、バッチ定数関数、ドメインシェーダの役割を把握すればうまくあつかえるようになるのではないでしょうか？
+ですが行っていることは複雑ではないのでハルシェーダ、バッチ定数関数、ドメインシェーダの役割を把握すればうまくあつかえるようになるのではないでしょうか？
 
-<b>後、本文では説明しませんでしたがテッセレーションを使用する際、入力アセンブラステージのプリミティブトポロジにはパッチの制御点の個数を表すものを設定する必要がありますので忘れずに設定してください。</b>
+<span class="important">後、本文では説明しませんでしたがテッセレーションを使用する際、入力アセンブラステージのプリミティブトポロジにはパッチの制御点の個数を表すものを設定する必要がありますので忘れずに設定してください。</span>
+
+このパートでグラフィックスパイプラインも一通り見終えました。
+ここまでくればDX11の一山を登り終えたといえます。
+シェーダについてはこれ以上新しい物はありません。
+ここまでの内容があれば後は３DCG知識があれば実装に困ることはあまりないと思います。
 
 <table class="table table-condensed">
   <tbody>
     <tr>
       <td class="left"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/stream-output">＜前</a></td>
       <td class="center"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}">トップ</a></td>
-      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/tessellation">次＞</a></td>
+      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/deferred-context">次＞</a></td>
     </tr>
   </tbody>
 </table>

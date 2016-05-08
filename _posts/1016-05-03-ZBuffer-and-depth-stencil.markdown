@@ -20,8 +20,8 @@ description: "今回は残りのZバッファ(英訳：Z-Buffer)と深度ステ�
 
 <h1 class="under-bar">概要</h1>
 このパートではピクセルシェーダの後にその出力値を使うか使わないかをテストする深度テストとステンシルテストについて見ていきます。
-この2つのテストは<l>ID3D11DepthStencilState</l>で制御します。
-対応しているプロジェクトは<b>Part07_ZBufferAndDepthStencilState</b>になります。
+この2つのテストは<span class="keyward">ID3D11DepthStencilState</span>で制御します。
+対応しているプロジェクトは<span class="important">Part07_ZBufferAndDepthStencilState</span>になります。
 
 <div class="summary">
   <ol>
@@ -46,7 +46,7 @@ description: "今回は残りのZバッファ(英訳：Z-Buffer)と深度ステ�
 <h1 class="under-bar">深度ステンシルビュー</h1>
 
 深度テストとステンシルテストではテスト結果をテクスチャに保存することができます。
-<b>保存するときは深度ステンシルビューを作成する必要があります。</b>
+<span class="important">保存するときは深度ステンシルビューを作成する必要があります。</span>
 
 <h3>作成</h3>
 
@@ -75,14 +75,14 @@ if (FAILED(hr)) {
 }
 {% endhighlight %}
 
-上の<l>ID3D11Device::CreateDepthStencilView</l>で深度ステンシルビューを作成しています。
+上の<span class="keyward">ID3D11Device::CreateDepthStencilView</span>で深度ステンシルビューを作成しています。
 作り方はレンダーターゲットと同じく今まで出てきたビューとよく似ています。
 
 ドキュメント:
-<br><l>ID3D11Device::CreateDepthStencilView</l>
+<br><span class="keyward">ID3D11Device::CreateDepthStencilView</span>
 [(日本語)][CreateDepthStencilView_JP]
 [(英語)][CreateDepthStencilView_EN]
-<br><l>D3D11_DEPTH_STENCIL_VIEW_DESC</l>
+<br><span class="keyward">D3D11_DEPTH_STENCIL_VIEW_DESC</span>
 [(日本語)][D3D11_DEPTH_STENCIL_VIEW_DESC_JP]
 [(英語)][D3D11_DEPTH_STENCIL_VIEW_DESC_EN]
 
@@ -91,14 +91,14 @@ if (FAILED(hr)) {
 [D3D11_DEPTH_STENCIL_VIEW_DESC_JP]:https://msdn.microsoft.com/ja-jp/library/ee416084(v=vs.85).aspx
 [D3D11_DEPTH_STENCIL_VIEW_DESC_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476112(v=vs.85).aspx
 
-<b>深度ステンシルビューを作成するにはリソース作成時に<l>BindFlags</l>に<l>D3D11_BIND_DEPTH_STENCIL</l>を指定する必要があります。</b>
+<span class="important">深度ステンシルビューを作成するにはリソース作成時に<span class="keyward">BindFlags</span>に<span class="keyward">D3D11_BIND_DEPTH_STENCIL</span>を指定する必要があります。</span>
 
-リソースの<l>Format</l>にはZバッファを表す<l>D</l>、ステンシル成分を表す<l>S</l>を持つものを使用してください。
-<b>Zバッファとして使用したリソースをシェーダリソースビュー等ほかの用途で使用したい場合は、リソース作成時に<l>TYPELESS</l>を持つものを指定し、ビュー作成時フォーマットを改めて指定する必要があります。</b>
+リソースの<span class="keyward">Format</span>にはZバッファを表す<span class="keyward">D</span>、ステンシル成分を表す<span class="keyward">S</span>を持つものを使用してください。
+<span class="important">Zバッファとして使用したリソースをシェーダリソースビュー等ほかの用途で使用したい場合は、リソース作成時に<span class="keyward">TYPELESS</span>を持つものを指定し、ビュー作成時フォーマットを改めて指定する必要があります。</span>
 
 <h3>設定</h3>
 
-設定は前回レンダーターゲットの設定した時に使った<l>ID3D11DeviceContext::OMSetRenderTargets</l>で行います。
+設定は前回レンダーターゲットの設定した時に使った<span class="keyward">ID3D11DeviceContext::OMSetRenderTargets</span>で行います。
 <br>ドキュメント：
 [ID3D11DeviceContext::OMSetRenderTargets(日本語)][OMSetRenderTargets_JP]
 [ID3D11DeviceContext::OMSetRenderTargets(英語)][OMSetRenderTargets_EN]
@@ -118,13 +118,13 @@ this->mpImmediateContext->OMSetRenderTargets(static_cast<UINT>(ppRTVs.size()), p
 <a name="DEPTH_STENCIL_STATE"></a>
 <h1 class="under-bar">ID3D11DepthStencilState</h1>
 
-深度テストとステンシルテストは<l>ID3D11DepthStencilState</l>で同時に設定します。
-<b>この2つのテストの順序は深度テストから実行され、その後にステンシルテストが行われます。</b>
+深度テストとステンシルテストは<span class="keyward">ID3D11DepthStencilState</span>で同時に設定します。
+<span class="important">この2つのテストの順序は深度テストから実行され、その後にステンシルテストが行われます。</span>
 
 <h3>設定</h3>
-まず、グラフィックスパイプラインへの設定は<l>ID3D11DeviceContext::OMSetDepthStencilState</l>で行います。
+まず、グラフィックスパイプラインへの設定は<span class="keyward">ID3D11DeviceContext::OMSetDepthStencilState</span>で行います。
 
-ドキュメント：<l>ID3D11DeviceContext::OMSetDepthStencilState</l>
+ドキュメント：<span class="keyward">ID3D11DeviceContext::OMSetDepthStencilState</span>
 [(日本語)][OMSetDepthStencilState_JP]
 [(英語)][OMSetDepthStencilState_EN]
 
@@ -137,8 +137,8 @@ this->mpImmediateContext->OMSetDepthStencilState(this->mpDSStencilTest.Get(), 0)
 {% endhighlight %}
 
 <h3>作成</h3>
-次に<l>ID3D11DepthStencilState</l>の作成は<l>ID3D11Device::CreateDepthStencilState</l>で行います。
-ドキュメント：<l>ID3D11DeviceContext::CreateDepthStencilState</l>
+次に<span class="keyward">ID3D11DepthStencilState</span>の作成は<span class="keyward">ID3D11Device::CreateDepthStencilState</span>で行います。
+ドキュメント：<span class="keyward">ID3D11DeviceContext::CreateDepthStencilState</span>
 [(日本語)][CreateDepthStencilState_JP]
 [(英語)][CreateDepthStencilState_EN]
 
@@ -180,8 +180,8 @@ if (FAILED(hr)) {
 }
 {% endhighlight %}
 
-各テストの設定は<l>D3D11_DEPTH_STENCIL_DESC</l>で指定します。各テストの設定については分けてみていきます。
-<br>ドキュメント：<l>D3D11_DEPTH_STENCIL_DESC</l>
+各テストの設定は<span class="keyward">D3D11_DEPTH_STENCIL_DESC</span>で指定します。各テストの設定については分けてみていきます。
+<br>ドキュメント：<span class="keyward">D3D11_DEPTH_STENCIL_DESC</span>
 [(日本語)][D3D11_DEPTH_STENCIL_DESC_JP]
 [(英語)][D3D11_DEPTH_STENCIL_DESC_EN]
 
@@ -194,24 +194,24 @@ if (FAILED(hr)) {
 <div class="argument">
   <h4>D3D11_DEPTH_STENCIL_DESC</h4>
   <ul>
-    <li><l>DepthEnable</l>
+    <li><span class="keyward">DepthEnable</span>
       <p>
         深度テストを行うかを指定するフラグになります。
-        <l>true</l>でテストを行います。
+        <span class="keyward">true</span>でテストを行います。
       </p>
     </li>
-    <li><l>DepthFunc</l>
+    <li><span class="keyward">DepthFunc</span>
       <p>
-        <l>D3D11_COMPARISON_FUNC</l>を使い、深度テストを行う際の元データと上書きするデータ同士での比較方法を指定します。
-        <br>ドキュメント:<l>D3D11_COMPARISON_FUNC</l>
+        <span class="keyward">D3D11_COMPARISON_FUNC</span>を使い、深度テストを行う際の元データと上書きするデータ同士での比較方法を指定します。
+        <br>ドキュメント:<span class="keyward">D3D11_COMPARISON_FUNC</span>
         <a href="https://msdn.microsoft.com/ja-jp/library/ee416063(v=vs.85).aspx">D3D11_DEPTH_WRITE_MASK(日本語)</a>
         <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476101(v=vs.85).aspx">D3D11_DEPTH_WRITE_MASK(英語)</a>
       </p>
     </li>
-    <li><l>DepthWriteMask</l>
+    <li><span class="keyward">DepthWriteMask</span>
       <p>
-        <l>D3D11_DEPTH_WRITE_MASK</l>を使用して深度データを書き込む際のマスクを設定します。
-        <l>D3D11_DEPTH_WRITE_MASK</l>は今のところ書き込むか書き込まないかの2種類用意されています。
+        <span class="keyward">D3D11_DEPTH_WRITE_MASK</span>を使用して深度データを書き込む際のマスクを設定します。
+        <span class="keyward">D3D11_DEPTH_WRITE_MASK</span>は今のところ書き込むか書き込まないかの2種類用意されています。
       </p>
     </li>
   </ul>
@@ -223,41 +223,41 @@ if (FAILED(hr)) {
 <div class="argument">
   <h4>D3D11_DEPTH_STENCIL_DESC</h4>
   <ul>
-    <li><l>StencilEnable </l>
+    <li><span class="keyward">StencilEnable </span>
       <p>
         ステンシルテストを行うかを指定するフラグになります。
-        <l>true</l>でテストを行います。
+        <span class="keyward">true</span>でテストを行います。
       </p>
     </li>
-    <li><l>StencilReadMask, StencilWriteMask</l>
+    <li><span class="keyward">StencilReadMask, StencilWriteMask</span>
       <p>
         読み込む部分または書き込む部分を指定するマスク値になります
       </p>
     </li>
-    <li><l>FrontFace, BackFace</l>
+    <li><span class="keyward">FrontFace, BackFace</span>
       <p>
         深度テストとステンシルテストの結果でどのような処理を行うかを設定するものになります。
-        <b>表面と裏面別で設定でき、<l>D3D11_DEPTH_STENCILOP_DESC</l>で指定します。</b>
-        <br>ドキュメント:<l>D3D11_DEPTH_STENCILOP_DESC</l>
+        <span class="important">表面と裏面別で設定でき、<span class="keyward">D3D11_DEPTH_STENCILOP_DESC</span>で指定します。</span>
+        <br>ドキュメント:<span class="keyward">D3D11_DEPTH_STENCILOP_DESC</span>
         <a href="https://msdn.microsoft.com/ja-jp/library/ee416080(v=vs.85).aspx">D3D11_DEPTH_WRITE_MASK(日本語)</a>
         <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476109(v=vs.85).aspx">D3D11_DEPTH_WRITE_MASK(英語)</a>
         <ul>
-          <li><l>StencilFunc</l>
-            <p>深度テストと同じく<l>D3D11_COMPARISON_FUNC</l>を使ってステンシルテストの元データと上書きするデータの比較方法を指定します。</p>
+          <li><span class="keyward">StencilFunc</span>
+            <p>深度テストと同じく<span class="keyward">D3D11_COMPARISON_FUNC</span>を使ってステンシルテストの元データと上書きするデータの比較方法を指定します。</p>
           </li>
-          <li><l>StencilPassOp</l>
+          <li><span class="keyward">StencilPassOp</span>
             <p>
-              <l>D3D11_STENCIL_OP</l>を使って、ステンシルテストに成功した時に実行する処理を指定します。
-              <br>ドキュメント:<l>D3D11_STENCIL_OP</l>
+              <span class="keyward">D3D11_STENCIL_OP</span>を使って、ステンシルテストに成功した時に実行する処理を指定します。
+              <br>ドキュメント:<span class="keyward">D3D11_STENCIL_OP</span>
               <a href="https://msdn.microsoft.com/ja-jp/library/ee416283(v=vs.85).aspx">(日本語)</a>
               <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476219(v=vs.85).aspx">(英語)</a>              
             </p>
           </li>
-          <li><l>StencilDepthFailOp</l>
-            <p><l>StencilPassOp</l>と同じく、深度テストに失敗した時の処理を指定します。</p>
+          <li><span class="keyward">StencilDepthFailOp</span>
+            <p><span class="keyward">StencilPassOp</span>と同じく、深度テストに失敗した時の処理を指定します。</p>
           </li>
-          <li><l>StencilFailOp</l>
-            <p><l>StencilPassOp</l>と同じく、ステンシルテストに失敗した時の処理を指定します。</p>
+          <li><span class="keyward">StencilFailOp</span>
+            <p><span class="keyward">StencilPassOp</span>と同じく、ステンシルテストに失敗した時の処理を指定します。</p>
           </li>
         </ul>
       </p>
@@ -270,9 +270,9 @@ if (FAILED(hr)) {
 このパートでは出力結合ステージの深度テストとステンシルテストについて見てきました。
 深度テストを使うことでカメラから近いものだけが描画できるようになったり、ステンシルテストで好きな部分だけを描画することができるようになります。
 
-<b>重たいピクセルシェーダや上書きされるピクセルが多い場合はカメラから一番近いものだけに対してだけピクセルシェーダを実行できるよう、事前にZバッファだけに書き込むというZプリパス(英訳:Z Pre-Pass)という手法も存在します。</b>
+<span class="important">重たいピクセルシェーダや上書きされるピクセルが多い場合はカメラから一番近いものだけに対してだけピクセルシェーダを実行できるよう、事前にZバッファだけに書き込むというZプリパス(英訳:Z Pre-Pass)という手法も存在します。</span>
 
-<b>また、深度テストはその性質から前パートで説明したブレンディングと相性が悪いものになります。</b>
+<span class="important">また、深度テストはその性質から前パートで説明したブレンディングと相性が悪いものになります。</span>
 ガラスといった半透明なものや眩しさを表現するために加算合成を行ったパーティクルの描画を行う際は深度テストを切らないと正しい結果が得られません。
 
 以上から、行いたい処理によって深度ステンシルステートとブレンドステートを切り替える必要がありますので注意してください。
@@ -283,7 +283,7 @@ if (FAILED(hr)) {
 <div class="supplemental">
   <h4>Early Z</h4>
   <p>
-    最近のGPUにはピクセルシェーダを実行する前に深度テストを行う<l>Early Z</l>と呼ばれる機能が存在します。
+    最近のGPUにはピクセルシェーダを実行する前に深度テストを行う<span class="keyward">Early Z</span>と呼ばれる機能が存在します。
     {% highlight hlsl %}
 // PSEarlyZ.hlsl
 [earlydepthstencil]
@@ -292,13 +292,13 @@ void main(float4 pos : SV_POSITION, float4 color : COLOR0, out float4 outColor :
   outColor = color;
 }
     {% endhighlight %}
-    ピクセルシェーダのエントリポイント前に<l>earlydepthstencil属性</l>を指定することで<l>Early Z</l>の機能を使うことを宣言します。
-    <br>ドキュメント:<l>earlydepthstencil</l>
+    ピクセルシェーダのエントリポイント前に<span class="keyward">earlydepthstencil属性</span>を指定することで<span class="keyward">Early Z</span>の機能を使うことを宣言します。
+    <br>ドキュメント:<span class="keyward">earlydepthstencil</span>
     <a href="https://msdn.microsoft.com/ja-jp/library/ee422314(v=vs.85).aspx">(日本語)</a>
     <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff471439(v=vs.85).aspx">(英語)</a>
     <br>
     この機能を使用することで不要なピクセルシェーダの実行を減らすことができ、実行速度が速くできる様になります。
-    <b>制限事項として、この機能を使った場合はZバッファへの書き込みはできないため、深度バッファに書き込まない深度ステンシルステートを作成する必要がありますので注意してください。</b>
+    <span class="important">制限事項として、この機能を使った場合はZバッファへの書き込みはできないため、深度バッファに書き込まない深度ステンシルステートを作成する必要がありますので注意してください。</span>
   </p>
   <p>
     また、効率的な深度テストのやり方については以下のリンクで詳しく説明されています。
