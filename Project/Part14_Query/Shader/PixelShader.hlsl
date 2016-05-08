@@ -18,54 +18,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //*********************************************************
 
-cbuffer Param : register(b0)
+void main(float4 pos : SV_POSITION, float4 color : TEXCOORD0, out float4 outColor : SV_Target0)
 {
-	float cbEdgeFactor;
-	float cbInsideFactor;
-};
-
-struct VS_CONTROL_POINT_OUTPUT
-{
-	float3 pos : POSITION;
-};
-
-struct HS_CONTROL_POINT_OUTPUT
-{
-	float3 pos : POSITION;
-};
-
-struct HS_CONSTANT_DATA_OUTPUT
-{
-	float EdgeTessFactor[3]			: SV_TessFactor;
-	float InsideTessFactor			: SV_InsideTessFactor;
-};
-
-#define NUM_CONTROL_POINTS 3
-
-// ÉpÉbÉ`íËêîä÷êî
-HS_CONSTANT_DATA_OUTPUT CalcHSPatchConstants(
-	InputPatch<VS_CONTROL_POINT_OUTPUT, NUM_CONTROL_POINTS> ip,
-	uint PatchID : SV_PrimitiveID)
-{
-	HS_CONSTANT_DATA_OUTPUT Output;
-
-	Output.EdgeTessFactor[0] = Output.EdgeTessFactor[1] = Output.EdgeTessFactor[2] = cbEdgeFactor;
-	Output.InsideTessFactor = cbInsideFactor;
-
-	return Output;
-}
-
-[domain("tri")]
-[partitioning("fractional_odd")]
-[outputtopology("triangle_cw")]
-[outputcontrolpoints(3)]
-[patchconstantfunc("CalcHSPatchConstants")]
-HS_CONTROL_POINT_OUTPUT main( 
-	InputPatch<VS_CONTROL_POINT_OUTPUT, NUM_CONTROL_POINTS> inputPatch, 
-	uint i : SV_OutputControlPointID,
-	uint PatchID : SV_PrimitiveID )
-{
-	HS_CONTROL_POINT_OUTPUT Output;
-	Output.pos = inputPatch[i].pos;
-	return Output;
+	outColor = color;
 }

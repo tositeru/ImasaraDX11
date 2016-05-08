@@ -14,10 +14,10 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="ソース ファイル\Shader">
-      <UniqueIdentifier>{ea6ef5a5-2f3b-43b6-928b-0697aa7ceebf}</UniqueIdentifier>
+      <UniqueIdentifier>{b385e57e-92de-47b8-9471-d4ff6f9973c8}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Template">
-      <UniqueIdentifier>{6a4556dc-a321-4edd-a4cb-a0e927cef9f8}</UniqueIdentifier>
+      <UniqueIdentifier>{0193bcc9-5708-4391-b9cb-e38fdb14e4e2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -49,34 +49,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Shader\GeometryShader.hlsl">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
     <FxCompile Include="Shader\PixelShader.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\HSTriangle.hlsl">
+    <FxCompile Include="Shader\VertexShader.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\DSTriangle.hlsl">
-      <Filter>ソース ファイル\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\VS.hlsl">
-      <Filter>ソース ファイル\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\HSQuad.hlsl">
-      <Filter>ソース ファイル\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\DSQuad.hlsl">
-      <Filter>ソース ファイル\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\DSIsoline.hlsl">
-      <Filter>ソース ファイル\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\HSIsoline.hlsl">
-      <Filter>ソース ファイル\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\HSPointToTriangle.hlsl">
-      <Filter>ソース ファイル\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\DSPointToTriangle.hlsl">
+    <FxCompile Include="Shader\VSStreamOutput.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
   </ItemGroup>

@@ -18,6 +18,23 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //*********************************************************
 
+struct Input
+{
+	uint id : ID;
+};
+
+struct GSOutput
+{
+	float4 pos : POSITION;
+	float4 color : TEXCOORD0;
+};
+
+static const float4 trianglePos[3] = {
+	float4(0.f, 0.5f, 0.1f, 1.f),
+	float4(0.5f, -0.5f, 0.1f, 1.f),
+	float4(-0.5f, -0.5f, 0.1f, 1.f),
+};
+
 uint2 random(uint stream, uint sequence)
 {
 	uint2 v = uint2(stream, sequence);
@@ -30,52 +47,30 @@ uint2 random(uint stream, uint sequence)
 	return v;
 }
 
-struct DS_OUTPUT
+[maxvertexcount(3)]
+void main(
+	point Input input[1],
+	inout TriangleStream< GSOutput > output
+	)
 {
-	float4 pos  : SV_POSITION;
-	float4 color : TEXCOORD0;
-};
-
-// 出力制御点
-struct HS_CONTROL_POINT_OUTPUT
-{
-	float3 pos : POSITION;
-};
-
-// 出力パッチ定数データ。
-struct HS_CONSTANT_DATA_OUTPUT
-{
-	float EdgeTessFactor[2]			: SV_TessFactor;
-};
-
-#define NUM_CONTROL_POINTS 2
-
-[domain("isoline")]
-DS_OUTPUT main(
-	HS_CONSTANT_DATA_OUTPUT input,
-	float2 domain : SV_DomainLocation,
-	const OutputPatch<HS_CONTROL_POINT_OUTPUT, NUM_CONTROL_POINTS> patch)
-{
-	DS_OUTPUT output;
-
-	output.pos = float4(lerp(patch[0].pos, patch[1].pos, domain.x), 1);
-	output.pos.x += 0.5f * domain.y;
-
-	const float RATE = abs(domain.x - 0.5f) * 2.f;
-	output.pos.y = cos(RATE * 0.5f * 3.14159265f);
-
-	output.color = 1;
-	uint rnd_seed = domain.x * 123123123 + domain.y * 456456456;
-	uint2 r = random(rnd_seed, rnd_seed << 3);
+	uint2 r = random(input[0].id, input[0].id*input[0].id);
+	float4 offset = 0;
+	offset.x = r.x / (float)0xffffffff * 2.f - 1;
 	r = random(r.x, r.y);
-	output.color.r = r.x / (float)0xffffffff;
-	r = random(r.x, r.y);
-	output.color.g = r.x / (float)0xffffffff;
-	r = random(r.x, r.y);
-	output.color.b = r.x / (float)0xffffffff;
+	offset.y = r.x / (float)0xffffffff * 2.f - 1;
 
-	output.color.rg = domain;
-	output.color.b = 0;
+	[unroll] for (uint i = 0; i < 3; i++) {
+		GSOutput element;
+		element.pos = trianglePos[i]*0.15f + offset;
 
-	return output;
+		element.color = 1;
+		r = random(r.x, r.y);
+		element.color.r = r.x / (float)0xffffffff;
+		r = random(r.x, r.y);
+		element.color.g = r.x / (float)0xffffffff;
+		r = random(r.x, r.y);
+		element.color.b = r.x / (float)0xffffffff;
+
+		output.Append(element);
+	}
 }

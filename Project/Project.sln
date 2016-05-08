@@ -39,6 +39,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part12_Tessellation", "Part
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part13_DeferredContext", "Part13_DeferredContext\Part13_DeferredContext.vcxproj", "{086A5BDA-3AD7-4184-86B9-22AD13FFF45B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Part14_Query", "Part14_Query\Part14_Query.vcxproj", "{BED5A430-5A53-4F56-969A-D7DD1B099870}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -191,6 +193,14 @@ Global
 		{086A5BDA-3AD7-4184-86B9-22AD13FFF45B}.Release|x64.Build.0 = Release|x64
 		{086A5BDA-3AD7-4184-86B9-22AD13FFF45B}.Release|x86.ActiveCfg = Release|Win32
 		{086A5BDA-3AD7-4184-86B9-22AD13FFF45B}.Release|x86.Build.0 = Release|Win32
+		{BED5A430-5A53-4F56-969A-D7DD1B099870}.Debug|x64.ActiveCfg = Debug|x64
+		{BED5A430-5A53-4F56-969A-D7DD1B099870}.Debug|x64.Build.0 = Debug|x64
+		{BED5A430-5A53-4F56-969A-D7DD1B099870}.Debug|x86.ActiveCfg = Debug|Win32
+		{BED5A430-5A53-4F56-969A-D7DD1B099870}.Debug|x86.Build.0 = Debug|Win32
+		{BED5A430-5A53-4F56-969A-D7DD1B099870}.Release|x64.ActiveCfg = Release|x64
+		{BED5A430-5A53-4F56-969A-D7DD1B099870}.Release|x64.Build.0 = Release|x64
+		{BED5A430-5A53-4F56-969A-D7DD1B099870}.Release|x86.ActiveCfg = Release|Win32
+		{BED5A430-5A53-4F56-969A-D7DD1B099870}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

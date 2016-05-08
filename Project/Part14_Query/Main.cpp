@@ -23,7 +23,7 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
 	try {
-		Scene sample(1280, 720, L"‚¢‚Ü‚³‚çDirect3D11“ü–å Part3 Buffer‚ÌŽí—Þ");
+		Scene sample(1280, 720, L"‚¢‚Ü‚³‚çDirect3D11“ü–å Part14 ƒNƒGƒŠ");
 		return Win32Application::run(&sample, hInstance, nCmdShow);
 	} catch (std::exception& e) {
 		MessageBoxA(NULL, e.what(), "Error", MB_OK | MB_ICONERROR);

@@ -33,41 +33,87 @@ public:
 	virtual void onRender()override;
 	virtual void onDestroy()override;
 
-	virtual void onKeyDown(UINT8 key)override;
 	virtual void onKeyUp(UINT8 key)override;
 
 private:
+	struct Vertex {
+		DirectX::SimpleMath::Vector3 pos;
+		DirectX::SimpleMath::Vector4 color;
+	};
+
+	struct CounterType
+	{
+		D3D11_COUNTER_TYPE type;
+		std::string name;
+		std::string units;
+		std::string decription;
+	};
+
+	union CounterValue {
+		float f;
+		UINT16 u16;
+		UINT32 u32;
+		UINT64 u64;
+
+		UINT stride(D3D11_COUNTER_TYPE type)const
+		{
+			switch (type) {
+			case D3D11_COUNTER_TYPE_FLOAT32:	return sizeof(float);
+			case D3D11_COUNTER_TYPE_UINT16:		return sizeof(UINT16);
+			case D3D11_COUNTER_TYPE_UINT32:		return sizeof(UINT32);
+			case D3D11_COUNTER_TYPE_UINT64:		return sizeof(UINT64);
+			default:							return 0;
+			}
+		}
+
+		std::string toString(D3D11_COUNTER_TYPE type)const
+		{
+			switch (type) {
+			case D3D11_COUNTER_TYPE_FLOAT32:	return std::to_string(this->f);
+			case D3D11_COUNTER_TYPE_UINT16:		return std::to_string(this->u16);
+			case D3D11_COUNTER_TYPE_UINT32:		return std::to_string(this->u32);
+			case D3D11_COUNTER_TYPE_UINT64:		return std::to_string(this->u64);
+			default:							return "NOT HAVE VALUE";
+			}
+		}
+	};
+
+private:
+	void udpateTitle();
+
+	void renderQuery();
+	void renderPredicate();
+
+	void outputTriangles(UINT count);
+	void renderTriangles(UINT count);
+
+private:
 	enum MODE {
-		eMODE_TRIANGLE,
-		eMODE_QUAD,
-		eMODE_ISOLINE,
-		eMODE_POINT_TO_TRIANGLE,
-		eMODE_COUNT
-	} mMode = eMODE_TRIANGLE;
+		eMODE_QUERY,
+		eMODE_PREDICATE,
+		eMODE_COUNT,
+	} mMode = eMODE_QUERY;
 
-	struct HSParam {
-		float edgeFactor;
-		float insideFactor;
-		float pad[2];
-	} mHSParam;
+	static const UINT M_STREAM_OUTPUT_COUNT = 100 * 3;
 
-	Microsoft::WRL::ComPtr<ID3D11HullShader> mpHSTriangle;
-	Microsoft::WRL::ComPtr<ID3D11DomainShader> mpDSTriangle;
+	CounterType mCounterType;
 
-	Microsoft::WRL::ComPtr<ID3D11HullShader> mpHSQuad;
-	Microsoft::WRL::ComPtr<ID3D11DomainShader> mpDSQuad;
-
-	Microsoft::WRL::ComPtr<ID3D11HullShader> mpHSIsoline;
-	Microsoft::WRL::ComPtr<ID3D11DomainShader> mpDSIsoline;
-
-	Microsoft::WRL::ComPtr<ID3D11HullShader> mpHSPointToTriangle;
-	Microsoft::WRL::ComPtr<ID3D11DomainShader> mpDSPointToTriangle;
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> mpVSStreamOutput;
+	Microsoft::WRL::ComPtr<ID3D11GeometryShader> mpGeometryShader;
 
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> mpVertexShader;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> mpPixelShader;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> mpVertexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> mpHSParamBuffer;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> mpInputLayout;
-	Microsoft::WRL::ComPtr<ID3D11RasterizerState> mpRSWireframe;
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> mpStreamOutputBuffer;
+
+	bool mOnPredicate = true;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> mpDSNotDepthTestPass;
+
+	Microsoft::WRL::ComPtr<ID3D11Query> mpQuery;
+	Microsoft::WRL::ComPtr<ID3D11Predicate> mpPredicate;
+	Microsoft::WRL::ComPtr<ID3D11Counter> mpCounter;
+	Microsoft::WRL::ComPtr<ID3D11Counter> mpCounter2;
 };

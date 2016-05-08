@@ -18,57 +18,22 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //*********************************************************
 
-cbuffer Param : register(b0)
+struct Input
 {
-	float cbEdgeFactor;
-	float cbInsideFactor;
+	float4 pos : POSITION;
+	float4 color : TEXCOORD0;
 };
 
-struct VS_CONTROL_POINT_OUTPUT
+struct Output
 {
-	float3 pos : POSITION;
+	float4 pos : SV_POSITION;
+	float4 color : TEXCOORD0;
 };
 
-struct HS_CONTROL_POINT_OUTPUT
+Output main(Input input)
 {
-	float3 pos : POSITION;
-};
-
-struct HS_CONSTANT_DATA_OUTPUT
-{
-	float EdgeTessFactor[4]	: SV_TessFactor;
-	float InsideTessFactor[2]  : SV_InsideTessFactor;
-};
-
-#define NUM_CONTROL_POINTS 4
-
-// ÉpÉbÉ`íËêîä÷êî
-HS_CONSTANT_DATA_OUTPUT CalcHSPatchConstants(
-	InputPatch<VS_CONTROL_POINT_OUTPUT, NUM_CONTROL_POINTS> ip,
-	uint PatchID : SV_PrimitiveID)
-{
-	HS_CONSTANT_DATA_OUTPUT Output;
-
-	[unroll] for (uint i = 0; i < NUM_CONTROL_POINTS; ++i) {
-		Output.EdgeTessFactor[i] = cbEdgeFactor;
-	}
-	Output.InsideTessFactor[0] = Output.InsideTessFactor[1] = cbInsideFactor;
-
-	return Output;
-}
-
-[domain("quad")]
-[partitioning("integer")]
-[outputtopology("triangle_cw")]
-[outputcontrolpoints(4)]
-[patchconstantfunc("CalcHSPatchConstants")]
-[maxtessfactor(16.f)]
-HS_CONTROL_POINT_OUTPUT main(
-	InputPatch<VS_CONTROL_POINT_OUTPUT, NUM_CONTROL_POINTS> inputPatch,
-	uint i : SV_OutputControlPointID,
-	uint PatchID : SV_PrimitiveID)
-{
-	HS_CONTROL_POINT_OUTPUT Output;
-	Output.pos = inputPatch[i].pos;
-	return Output;
+	Output output;
+	output.pos = input.pos;
+	output.color = input.color;
+	return output;
 }

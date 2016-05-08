@@ -18,7 +18,8 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //*********************************************************
 
-float4 main(float4 pos : POSITION) : POSITION
+
+uint main( uint id : SV_VertexID ) : ID
 {
-	return pos;
+	return id;
 }
