@@ -40,6 +40,8 @@ void Scene::onInit()
 	this->mpSwapChain.Reset();
 
 	//デバイスなどを作り直す
+
+	//DXGIを使う上で必要となるIDXGIFactory1を作成
 	HRESULT hr;
 	Microsoft::WRL::ComPtr<IDXGIFactory1> pFactory;
 	hr = CreateDXGIFactory1(IID_PPV_ARGS(pFactory.GetAddressOf()));
@@ -62,6 +64,7 @@ void Scene::onInit()
 		OutputDebugStringA(  std::string("  DedicatedSystemMemory =  " + std::to_string(desc.DedicatedSystemMemory) + "\n").c_str());
 		OutputDebugStringA(  std::string("  SharedSystemMemory =  " + std::to_string(desc.SharedSystemMemory) + "\n").c_str());
 		OutputDebugStringA(  std::string("  AdapterLuid =  high:" + std::to_string(desc.AdapterLuid.HighPart) + " low:" + std::to_string(desc.AdapterLuid.LowPart) + "\n").c_str());
+		OutputDebugStringA(  std::string("  Flag = " + std::to_string(desc.Flags) + "\n").c_str());
 
 		if (nullptr == this->mpAdapter) {
 			if (desc.Flags ^= DXGI_ADAPTER_FLAG_SOFTWARE) {
@@ -83,7 +86,7 @@ void Scene::onInit()
 		pAdapterIt.Reset();
 	}
 
-	//ID3D11Deviceの作成
+	//ID3D11DeviceとID3D11DeviceContextの作成
 	std::array<D3D_FEATURE_LEVEL, 3> featureLevels = { {
 			D3D_FEATURE_LEVEL_11_0,
 			D3D_FEATURE_LEVEL_10_1,
@@ -122,7 +125,7 @@ void Scene::onInit()
 	//swapChainDesc.Flags = 0;
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.SampleDesc.Quality = 0;
-	//フルスクリーンとウィンドモードの切り替えがしたい場合は、ウィンドウモードとして生成することを推奨しているみたい
+	//フルスクリーンとウィンドモードの切り替えがしたい場合は、まずウィンドウモードとして生成することを推奨しているみたい
 	//https://msdn.microsoft.com/en-us/library/bb174579(v=vs.85).aspx
 	swapChainDesc.Windowed = true;
 
@@ -143,7 +146,7 @@ void Scene::onInit()
 	if (FAILED(hr)) {
 		throw std::runtime_error("表示モードの取得に失敗");
 	}
-
+	//IDXGISwapChainの作成
 	swapChainDesc.BufferDesc = modeDesc;
 	hr = pFactory->CreateSwapChain(this->mpDevice.Get(), &swapChainDesc, this->mpSwapChain.GetAddressOf());
 	if (FAILED(hr)) {
@@ -223,9 +226,19 @@ void Scene::onUpdate()
 void Scene::onKeyUp(UINT8 key)
 {
 	if (key == 'Z') {
+
 		DXGI_SWAP_CHAIN_DESC desc;
 		this->mpSwapChain->GetDesc(&desc);
-		auto hr = this->mpSwapChain->SetFullscreenState(desc.Windowed, nullptr);
+
+		Microsoft::WRL::ComPtr<IDXGIOutput> pOutput;
+		if (desc.Windowed) {
+			//全画面モードに切り替える際はどのディスプレイを対象にするか決めれる
+			if (DXGI_ERROR_NOT_FOUND == this->mpAdapter->EnumOutputs(0, pOutput.GetAddressOf())) {
+				throw std::runtime_error("アダプターの出力先が見つかりません。");
+			}
+		}
+
+		auto hr = this->mpSwapChain->SetFullscreenState(desc.Windowed, pOutput.Get());
 		if (FAILED(hr)) {
 			throw std::runtime_error("フルスリーンモードとウィンドウモードの切り替えに失敗。");
 		}

@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D702086B-25F4-441B-9686-5E886DAF04EC}</ProjectGuid>
+    <ProjectGuid>{C16464D7-C1DD-494D-9F43-638A1D43697F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Part14_Initialize</RootNamespace>
+    <RootNamespace>Part15_Initialize</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -123,9 +123,9 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,22 +142,22 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Template\Common.h" />
-    <ClInclude Include="..\Template\DXSample.h" />
-    <ClInclude Include="..\Template\Win32Application.h" />
-    <ClInclude Include="Scene.h" />
-  </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Template\DXSample.cpp" />
     <ClCompile Include="..\Template\Win32Application.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Scene.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Template\Common.h" />
+    <ClInclude Include="..\Template\DXSample.h" />
+    <ClInclude Include="..\Template\Win32Application.h" />
+    <ClInclude Include="Scene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

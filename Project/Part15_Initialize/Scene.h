@@ -39,12 +39,5 @@ private:
 	void initRenderTargetAndDepthStencil(UINT width, UINT height);
 
 private:
-	enum SHADER_MODE
-	{
-		eMODE_SOLID,
-		eMODE_WITH_CONSTANT_BUFFER,
-		eMODE_COUNT,
-	} mMode = eMODE_SOLID;
-
 	Microsoft::WRL::ComPtr<IDXGIAdapter1> mpAdapter;
 };

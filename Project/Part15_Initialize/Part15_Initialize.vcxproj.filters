@@ -14,10 +14,27 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="ソース ファイル\Template">
-      <UniqueIdentifier>{09d2ea3d-29fe-44ee-b502-795dc9f8efb6}</UniqueIdentifier>
+      <UniqueIdentifier>{ec2385f2-74d5-4caf-9728-6378b836b1d9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Template\DXSample.cpp">
+      <Filter>ソース ファイル\Template</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Template\Win32Application.cpp">
+      <Filter>ソース ファイル\Template</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Scene.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="..\Template\Common.h">
       <Filter>ソース ファイル\Template</Filter>
     </ClInclude>
@@ -27,22 +44,5 @@
     <ClInclude Include="..\Template\Win32Application.h">
       <Filter>ソース ファイル\Template</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Template\DXSample.cpp">
-      <Filter>ソース ファイル\Template</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Template\Win32Application.cpp">
-      <Filter>ソース ファイル\Template</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>
