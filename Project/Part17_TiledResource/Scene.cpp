@@ -48,6 +48,7 @@ void Scene::onInit()
 		desc.Height = this->height();
 		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
 		//desc.MipLevels = calMaxMipLevel(desc.Width, desc.Height);
+		//複数のタイルリソースを作成するので、作成処理を1つにまとめた
 		auto create = [&](TileTexture* pOut) {
 			auto hr = this->mpDevice->CreateTexture2D(&desc, nullptr, pOut->mpResource.GetAddressOf());
 			if (FAILED(hr)) {
@@ -72,13 +73,13 @@ void Scene::onInit()
 	}
 
 	{//タイルプールの作成
+		 //タイルリソースの情報を取得する
+		 //タイルリソースに関係する操作はID3D11Device2やID3D11DeviceContext2を使う必要がある
 		Microsoft::WRL::ComPtr<ID3D11Device2> pDevice2;
 		auto hr = this->mpDevice.Get()->QueryInterface(IID_PPV_ARGS(&pDevice2));
 		if (FAILED(hr)) {
-			throw std::runtime_error("Device2が使えません。");
+			throw std::runtime_error("ID3D11Device2が使えません。");
 		}
-
-		//タイルリソースの情報を取得する
 		TileInfo tileInfo;
 		tileInfo.subresourceTileCount = 1;
 		tileInfo.firstSubresourceTile = 0;
@@ -87,7 +88,7 @@ void Scene::onInit()
 			tex.mInfo = tileInfo;
 		}
 		this->mTargetTex.mInfo = tileInfo;
-
+		//タイルプールの作成
 		D3D11_BUFFER_DESC desc = {};
 		desc.ByteWidth = 64 * 1024;//64KBの倍数でないといけない
 		desc.Usage = D3D11_USAGE_DEFAULT;
@@ -96,63 +97,62 @@ void Scene::onInit()
 		if (FAILED(hr)) {
 			throw std::runtime_error("タイルプールの作成に失敗");
 		}
-
-		UINT64 unitSize = tileInfo.tileCount * (64 * 1024);
+		//タイルプールのサイズを必要となるサイズに変更している
+		UINT64 unitSize = tileInfo.tileCount * (64 * 1024);//タイルリソース１枚あたりのサイズ
 		hr = this->mpContext2->ResizeTilePool(this->mpTilePool.Get(), unitSize * this->mTextures.size());
 		if (FAILED(hr)) {
 			throw std::runtime_error("タイルプールのリサイズに失敗");
 		}
+
+		OutputDebugStringA("tileInfo\n");
+		OutputDebugStringA((std::string("  tileCount=") + std::to_string(tileInfo.tileCount) + "\n").c_str());
+		OutputDebugStringA((std::string("  width=") + std::to_string(tileInfo.subresourceTiling.WidthInTiles)+ "\n").c_str());
+		OutputDebugStringA((std::string("  height=") + std::to_string(tileInfo.subresourceTiling.HeightInTiles) + "\n").c_str());
+		OutputDebugStringA((std::string("  depth=") + std::to_string(tileInfo.subresourceTiling.DepthInTiles) + "\n").c_str());
+		OutputDebugStringA((std::string("  StartTileIndexInOverallResource=") + std::to_string(tileInfo.subresourceTiling.StartTileIndexInOverallResource) + "\n").c_str());
 	}
 	{//タイルリソースにタイルプールを設定する
 		D3D11_TEXTURE2D_DESC desc;
 		this->mTargetTex.mpResource->GetDesc(&desc);
 		auto& tileInfo = this->mTargetTex.mInfo;
-
-		std::array<D3D11_TILE_REGION_SIZE, 1 > regionSizes;
-		regionSizes[0].Width = tileInfo.subresourceTiling.WidthInTiles;
-		regionSizes[0].Height = tileInfo.subresourceTiling.HeightInTiles;
-		regionSizes[0].Depth = tileInfo.subresourceTiling.DepthInTiles;
-		regionSizes[0].bUseBox = true;
-		regionSizes[0].NumTiles = regionSizes[0].Width * regionSizes[0].Height * regionSizes[0].Depth;
+		//設定するタイルリソース内の範囲
+		std::array<D3D11_TILE_REGION_SIZE, 1 > regionSizesInResource;
+		regionSizesInResource[0].Width = tileInfo.subresourceTiling.WidthInTiles;
+		regionSizesInResource[0].Height = tileInfo.subresourceTiling.HeightInTiles;
+		regionSizesInResource[0].Depth = tileInfo.subresourceTiling.DepthInTiles;
+		regionSizesInResource[0].bUseBox = true;
+		regionSizesInResource[0].NumTiles = regionSizesInResource[0].Width * regionSizesInResource[0].Height * regionSizesInResource[0].Depth;
+		//設定するタイルリソース内の開始座標
+		std::array<D3D11_TILED_RESOURCE_COORDINATE, 1> coordinatesInResource;
+		coordinatesInResource[0].Subresource = 0;
+		coordinatesInResource[0].X = 0;
+		coordinatesInResource[0].Y = 0;
+		coordinatesInResource[0].Z = 0;
 
 		for (UINT i = 0; i < this->mTextures.size(); ++i) {
 			auto& tex = this->mTextures[i];
-
-			//タイルリソース単位の座標値
-			std::array<D3D11_TILED_RESOURCE_COORDINATE, 1> coordinates;
-			coordinates[0].Subresource = 0;
-			coordinates[0].X = 0;
-			coordinates[0].Y = 0;
-			coordinates[0].Z = 0;
-
-			std::array<UINT, 1> ranges = { { 0 } };
+			//割り当てるタイルプールの場所の設定
+			std::array<UINT, 1> rangeFlags = { { 0 } };
 			std::array<UINT, 1> offsets = { { i * tileInfo.tileCount } };
 			std::array<UINT, 1> rangeTileCounts = { { tileInfo.tileCount } };
 			UINT flags = 0;
-
-
+			//タイルリソースにタイルプールを設定する
 			hr = this->mpContext2->UpdateTileMappings(
-				tex.mpResource.Get(), static_cast<UINT>(coordinates.size()), coordinates.data(), regionSizes.data(),
-				this->mpTilePool.Get(), static_cast<UINT>(ranges.size()), /*ranges.data()*/nullptr, offsets.data(), rangeTileCounts.data(), flags);
+				tex.mpResource.Get(), static_cast<UINT>(coordinatesInResource.size()), coordinatesInResource.data(), regionSizesInResource.data(),
+				this->mpTilePool.Get(), static_cast<UINT>(rangeFlags.size()), rangeFlags.data(), offsets.data(), rangeTileCounts.data(), flags);
 			if (FAILED(hr)) {
 				throw std::runtime_error("タイルリソースがさすタイルプールの場所の設定に失敗");
 			}
 		}
 
 		//タイルプールの同じ場所をマップすることもできる
-		std::array<D3D11_TILED_RESOURCE_COORDINATE, 1> coordinates;
-		coordinates[0].Subresource = 0;
-		coordinates[0].X = 0;
-		coordinates[0].Y = 0;
-		coordinates[0].Z = 0;
-
-		std::array<UINT, 1> ranges = { { 0 } };
+		std::array<UINT, 1> rangeFlags = { { 0 } };
 		std::array<UINT, 1> offsets = { { 0 } };
 		std::array<UINT, 1> rangeTileCounts = { { tileInfo.tileCount } };
 		UINT flags = 0;
 		hr = this->mpContext2->UpdateTileMappings(
-			this->mTargetTex.mpResource.Get(), static_cast<UINT>(coordinates.size()), coordinates.data(), regionSizes.data(),
-			this->mpTilePool.Get(), static_cast<UINT>(ranges.size()), /*ranges.data()*/nullptr, offsets.data(), rangeTileCounts.data(), flags);
+			this->mTargetTex.mpResource.Get(), static_cast<UINT>(coordinatesInResource.size()), coordinatesInResource.data(), regionSizesInResource.data(),
+			this->mpTilePool.Get(), static_cast<UINT>(rangeFlags.size()), rangeFlags.data(), offsets.data(), rangeTileCounts.data(), flags);
 		if (FAILED(hr)) {
 			throw std::runtime_error("タイルリソースがさすタイルプールの場所の設定に失敗");
 		}
@@ -177,9 +177,6 @@ void Scene::onInit()
 
 			this->mpImmediateContext->UpdateSubresource(this->mpCBParam.Get(), 0, nullptr, &colorTable[i], sizeof(colorTable[i]), sizeof(colorTable[i]));
 
-			//初めて使うのでGPUに伝える必要はない
-			//this->mpContext2->TiledResourceBarrier(tex.mpResource.Get(), tex.mpUAV.Get());
-
 			this->mpImmediateContext->CSSetShader(this->mpCSDrawTexture.Get(), nullptr, 0);
 			std::array<ID3D11Buffer*, 1> ppCBs = { { this->mpCBParam.Get() } };
 			this->mpImmediateContext->CSSetConstantBuffers(0, static_cast<UINT>(ppCBs.size()), ppCBs.data());
@@ -194,9 +191,9 @@ void Scene::onInit()
 			ppUAVs[0] = nullptr;
 			this->mpImmediateContext->CSSetUnorderedAccessViews(0, static_cast<UINT>(ppUAVs.size()), ppUAVs.data(), pInitValues.data());
 
-			//コピー元として扱っていいようGPUに伝える
+			//同じタイルプールのタイルを複数のタイルリソースで共有している時は必ず使用する順序を指定すること
 			//これがなければ、EXECUTION WARNING #3146139: NEED_TO_CALL_TILEDRESOURCEBARRIERと警告が出る
-			this->mpContext2->TiledResourceBarrier(tex.mpUAV.Get(), tex.mpResource.Get());
+			this->mpContext2->TiledResourceBarrier(tex.mpUAV.Get(), this->mTargetTex.mpResource.Get());
 		}
 
 		{//UpdateSubresourceのようにCPUからデータを送ることもできる
@@ -207,7 +204,7 @@ void Scene::onInit()
 
 			D3D11_TEXTURE2D_DESC desc;
 			this->mTargetTex.mpResource->GetDesc(&desc);
-			UINT size = sqrt(64 * 1024 / sizeof(uint32_t));
+			UINT size = static_cast<UINT>(sqrt(64 * 1024 / sizeof(uint32_t)));
 			for (UINT tileIndex = 0; tileIndex < tileInfo.tileCount; ++tileIndex) {
 				//タイル単位にデータを設定する必要がある
 				UINT offset = tileIndex * (128 * 128);
@@ -236,8 +233,9 @@ void Scene::onInit()
 			regionSizes[0].bUseBox = true;
 			regionSizes[0].NumTiles = regionSizes[0].Width * regionSizes[0].Height * regionSizes[0].Depth;
 			this->mpContext2->UpdateTiles(last.mpResource.Get(), coordinates.data(), regionSizes.data(), src.data(), 0);
-			//CPUからデータを送り終えたことをGPUに伝える
-			this->mpContext2->TiledResourceBarrier(last.mpResource.Get(), last.mpResource.Get());
+			//同じタイルプールのタイルを複数のタイルリソースで共有している時は必ず使用する順序を指定すること
+			//これがなければ、EXECUTION WARNING #3146139: NEED_TO_CALL_TILEDRESOURCEBARRIERと警告が出る
+			this->mpContext2->TiledResourceBarrier(last.mpResource.Get(), this->mTargetTex.mpResource.Get());
 		}
 	}
 
@@ -260,6 +258,7 @@ void Scene::onInit()
 			throw std::runtime_error("コンピュータシェーダの出力先用のID3D11Texture2DのUnorderedAccessViewの作成に失敗");
 		}
 	}
+	this->updateTitle();
 }
 
 void Scene::onUpdate()
@@ -296,9 +295,6 @@ void Scene::onKeyUp(UINT8 key)
 		regionSizes[0].bUseBox = true;
 		regionSizes[0].NumTiles = regionSizes[0].Width * regionSizes[0].Height * regionSizes[0].Depth;
 
-		std::array<UINT, 1> ranges = { { 0 } };
-		std::array<UINT, 1> offsets = { { 0 } };
-		std::array<UINT, 1> rangeTileCounts = { { tileInfo.tileCount } };
 		UINT flags = 0;
 		auto hr = this->mpContext2->CopyTileMappings(
 			this->mTargetTex.mpResource.Get(), coordinates.data(),
@@ -306,6 +302,7 @@ void Scene::onKeyUp(UINT8 key)
 		if (FAILED(hr)) {
 			throw std::runtime_error("タイルリソースのマッピング情報のコピーに失敗");
 		}
+		this->updateTitle();
 	}
 }
 
@@ -321,3 +318,9 @@ void Scene::onDestroy()
 {
 }
 
+void Scene::updateTitle()
+{
+	std::wstring title = L"";
+	title += L"; Tile Index=" + std::to_wstring(this->mTargetIndex);
+	this->setCustomWindowText(title.c_str());
+}

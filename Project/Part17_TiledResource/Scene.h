@@ -49,6 +49,9 @@ private:
 	};
 
 private:
+	void updateTitle();
+
+private:
 	enum SHADER_MODE {
 		eMODE_NONE,
 		eMODE_COUNT,

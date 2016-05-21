@@ -14,10 +14,10 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="ソース ファイル\Shader">
-      <UniqueIdentifier>{5da31180-f2f9-4611-9559-30df44a2586a}</UniqueIdentifier>
+      <UniqueIdentifier>{efd6c45b-41ca-470e-976d-38c2d044c1df}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Template">
-      <UniqueIdentifier>{f1ed9da0-9898-4954-8307-e11815b875bb}</UniqueIdentifier>
+      <UniqueIdentifier>{fbd546a5-db2b-4d96-b47d-a377bf9c0727}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -49,7 +49,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="CSDrawTexture.hlsl">
+    <FxCompile Include="Shader\CSDrawTexture.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
   </ItemGroup>

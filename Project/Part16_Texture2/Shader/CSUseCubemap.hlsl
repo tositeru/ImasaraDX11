@@ -38,7 +38,7 @@ void main( uint3 DTid : SV_DispatchThreadID )
 	float2 screenSize;
 	screen.GetDimensions(screenSize.x, screenSize.y);
 
-	float4 rayDir = calRayDir(DTid, screenSize, cbInvProjection);
+	float4 rayDir = calRayDir(DTid.xy, screenSize, cbInvProjection);
 
 	//ƒŒƒC‚Ì•ûŒü‚É‹…‘Ì‚ª‚ ‚é‚È‚ç‚»‚ÌF‚ğ“h‚é
 	const float3 spherePos = float3(0, 0, 30.f);
