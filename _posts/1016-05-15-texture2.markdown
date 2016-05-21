@@ -2,13 +2,13 @@
 layout: default
 title: "テクスチャ専用機能"
 categories: part
-description: ""
+description: "今パートではテクスチャの専用機能について見ていきます。"
 ---
 <h1 class="under-bar">テクスチャ専用機能</h1>
 
 今パートではテクスチャの専用機能について見ていきます。
-<b>サンプラによるデータの読み込みもバッファとの違いになりますが、テクスチャの配列を作れたり、ミップマップと呼ばれる低解像度のデータを1つのテクスチャにまとめて使えたりとデータ構造もバッファとは違ってきます。</b>
-3DCGではこの機能を活かした技法もありますので、簡単な使い方を覚えておくと理解が早くなのではないでしょうか。
+<span class="important">サンプラによるデータの読み込みもバッファとの違いになりますが、テクスチャの配列を作れたり、ミップマップと呼ばれる低解像度のデータを1つのテクスチャにまとめて使えたりとデータ構造もバッファとは違ってきます。</span>
+3DCGではこの機能を活かした技法もありますので、簡単な使い方を覚えておくと理解が早くなるのではないでしょうか。
 
 ドキュメント：Direct3D 11 のテクスクチャーの概要
 [(日本語)][TEXTURE_OVERVIEW_JP]
@@ -19,7 +19,7 @@ description: ""
 
 <h1 class="under-bar">概要</h1>
 それではテクスチャの専用機能について見ていきましょう。
-対応するプロジェクトは<b>Part16_Texture2</b>になります。
+対応するプロジェクトは<span class="important">Part16_Texture2</span>になります。
 
 <div class="summary">
   <ol>
@@ -52,13 +52,13 @@ description: ""
 
 <h3>作成</h3>
 
-<b>ミップマップを持つテクスチャを作るときは<l>D3D11_TEXTURE2D_DESC</l>の<l>MipLevels</l>に必要となるミップマップの数を指定します。</b>
+<span class="important">ミップマップを持つテクスチャを作るときは<span class="keyward">D3D11_TEXTURE2D_DESC</span>の<span class="keyward">MipLevels</span>に必要となるミップマップの数を指定します。</span>
 その他は今までのテクスチャの作成と同じです。
 ちなみにミップマップの各要素をミップレベルと呼びます。
 
 GPUに設定するときもシェーダリソースビューやアンオーダードアクセスビューを使用します。
-<b>ただし、アンオーダードアクセスビューを使うときはミップレベルの数分用意する必要があるので忘れないで下さい。</b>
-<b>シェーダリソースビューは1つのビューで全ミップレベルにアクセスできますが、作成時の設定で1つのミップマップにしかアクセス出来ないようにしたり、最大レベルを指定したり出来ます。</b>
+<span class="important">ただし、アンオーダードアクセスビューを使うときはミップレベルの数分用意する必要があるので忘れないで下さい。</span>
+<span class="important">シェーダリソースビューは1つのビューで全ミップレベルにアクセスできますが、作成時の設定で1つのミップマップにしかアクセス出来ないようにしたり、最大レベルを指定したり出来ます。</span>
 
 {% highlight c++ %}
 // Scene::initMipmap関数の一部
@@ -103,12 +103,12 @@ for (UINT level = 0; level < desc.MipLevels; ++level) {
   <h3>ID3D11DeviceContext::GenerateMips</h3>
   <p>
     サンプルではアンオーダードアクセスビューを使って各ミップレベルの内容を書き込んでいました。
-    ですが、<l>ID3D11DeviceContext::GenerateMips</l>を使用すると、最上位のミップレベルの内容をもとに下層のミップレベルを自動生成することが出来ます。
+    ですが、<span class="keyward">ID3D11DeviceContext::GenerateMips</span>を使用すると、最上位のミップレベルの内容をもとに下層のミップレベルを自動生成することが出来ます。
     機能レベルによっては対応していないフォーマットがあるので注意してください。
-    <b><l>ID3D11DeviceContext::GenerateMips</l>を使用するときは<l>BindFlags</l>に<l>D3D11_BIND_RENDER_TARGET</l>と<l>D3D11_BIND_SHADER_RESOURCE</l>を指定した上で<l>MiscFlags</l>にD3D11_RESOURCE_MISC_GENERATE_MIPSを設定する必要があります。</b>
+    <span class="important"><span class="keyward">ID3D11DeviceContext::GenerateMips</span>を使用するときは<span class="keyward">BindFlags</span>に<span class="keyward">D3D11_BIND_RENDER_TARGET</span>と<span class="keyward">D3D11_BIND_SHADER_RESOURCE</span>を指定した上で<span class="keyward">MiscFlags</span>にD3D11_RESOURCE_MISC_GENERATE_MIPSを設定する必要があります。</span>
   </p>
   <p>
-    ドキュメント：<l>ID3D11DeviceContext::GenerateMips</l>
+    ドキュメント：<span class="keyward">ID3D11DeviceContext::GenerateMips</span>
     <a href="https://msdn.microsoft.com/ja-jp/library/ee419632(v=vs.85).aspx">(日本語)</a>
     <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476426(v=vs.85).aspx">(英語)</a>
   </p>
@@ -116,7 +116,7 @@ for (UINT level = 0; level < desc.MipLevels; ++level) {
 
 <h3>書き込み</h3>
 各ミップレベルへの書き込みを行うシェーダは以下のようになります。
-<b>と言いましても、今までのRWTexture2Dと変わりません。</b>
+<span class="important">と言いましても、今までのRWTexture2Dと変わりません。</span>
 GPUへの設定も変わりません。書き込みたいミップレベルのアンオーダードアクセスビューを設定するのを忘れないようにするだけです。
 
 {% highlight hlsl %}
@@ -155,8 +155,8 @@ void main(uint2 DTid : SV_DispatchThreadID)
 
 ミップマップの読み込みは少し異なります。
 
-サンプラを使う場合は<l>SampleLevel</l>の第3引数に読み込みたいミップレベルを指定します。
-<b>添字を使った場合は<l>mips.Operator[][]</l>を使用します。</b>
+サンプラを使う場合は<span class="keyward">SampleLevel</span>の第3引数に読み込みたいミップレベルを指定します。
+<span class="important">添字を使った場合は<span class="keyward">mips.Operator[][]</span>を使用します。</span>
 使い方は下のコードを参考にしてください。
 
 ドキュメント：
@@ -212,13 +212,13 @@ void main(uint2 DTid : SV_DispatchThreadID)
 この配列は文字通りの配列で、テクスチャは配列を作ることが出来ます。
 
 <h3>作成</h3>
-<b>配列を持つテクスチャを作るには<l>D3D11_TEXTURE2D_DESC</l>の<l>ArraySize</l>に配列の要素数を指定するだけできます。</b>
+<span class="important">配列を持つテクスチャを作るには<span class="keyward">D3D11_TEXTURE2D_DESC</span>の<span class="keyward">ArraySize</span>に配列の要素数を指定するだけできます。</span>
 配列でないテクスチャを作るときは必ず１を指定してください。
 
-<b>後、ミップマップと異なりアンオーダードアクセスビューは１つで全要素にアクセスできます。</b>
+<span class="important">後、ミップマップと異なりアンオーダードアクセスビューは１つで全要素にアクセスできます。</span>
 シェーダリソースビューはミップマップと同じで１つで全要素にアクセス可能です。
 
-<b>補足ですが、配列とミップマップは同時作成することが可能ですので必要に応じて設定を行ってください。</b>
+<span class="important">補足ですが、配列とミップマップは同時作成することが可能ですので必要に応じて設定を行ってください。</span>
 
 {% highlight c++ %}
 // Scene::initArrayの一部
@@ -259,10 +259,10 @@ pUAV->Release();
 
 <h3>書き込み</h3>
 
-<b>配列に書き込む際は座標に加えて書き込み先の要素の添字を指定します。</b>
+<span class="important">配列に書き込む際は座標に加えて書き込み先の要素の添字を指定します。</span>
 
-例えば<l>RWTexture2D</l>の場合なら<l>uint3</l>を使ってアクセスします。
-<b><l>uint3.xy</l>でテクスチャの座標を、<l>uint3.z</l>で配列の添字を指定します。</b>
+例えば<span class="keyward">RWTexture2D</span>の場合なら<span class="keyward">uint3</span>を使ってアクセスします。
+<span class="important"><span class="keyward">uint3.xy</span>でテクスチャの座標を、<span class="keyward">uint3.z</span>で配列の添字を指定します。</span>
 
 {% highlight hlsl %}
 cbuffer Param :register(b0)
@@ -292,7 +292,7 @@ void main(uint2 DTid : SV_DispatchThreadID)
 {% endhighlight %}
 
 <h3>読み込み</h3>
-<b>配列の読み込みも書き込みと同じく、座標と配列の添字を指定することでアクセスできます。</b>
+<span class="important">配列の読み込みも書き込みと同じく、座標と配列の添字を指定することでアクセスできます。</span>
 
 {% highlight hlsl %}
 // CSArrayRead.hlsl
@@ -336,16 +336,16 @@ void main(uint2 DTid : SV_DispatchThreadID)
 次はキューブマップについて見ていきます。
 
 キューブマップは[環境マッピング][ENV_MAP]という鏡などの映り込みや周囲の環境光を再現するときによく使われるものです。
-<b>キューブマップ自体のデータ構造はテクスチャ配列と変わりません。ですがデータの並びに意味があります。</b>
+<span class="important">キューブマップ自体のデータ構造はテクスチャ配列と変わりません。ですがデータの並びに意味があります。</span>
 0番目はX軸方向の環境を,1番目は-X軸方向の環境,2番目はy軸方向の環境を...といった感じです。
 
 [ENV_MAP]:https://ja.wikipedia.org/wiki/%E7%92%B0%E5%A2%83%E3%83%9E%E3%83%83%E3%83%94%E3%83%B3%E3%82%B0
 
-<b>もちろんキューブマップも配列やミップマップを持つことができます。</b>
+<span class="important">もちろんキューブマップも配列やミップマップを持つことができます。</span>
 
 <h3>作成</h3>
-<b>キューブマップを作成するときは<l>ArraySize</l>に6を指定します。</b>
-<b>配列の場合は6の倍数になるようにします。</b>
+<span class="important">キューブマップを作成するときは<span class="keyward">ArraySize</span>に6を指定します。</span>
+<span class="important">配列の場合は6の倍数になるようにします。</span>
 
 {% highlight c++ %}
 // Scene::initCubemap関数
@@ -417,11 +417,11 @@ void main(
 }
 {% endhighlight %}
 
-<b>上の<l>SV_RenderTargetArrayIndex</l>がもっとも重要な部分になります。</b>
-<b>レンダーターゲットにはテクスチャ配列を指定することが出来ますが、何もしなければ０番目の要素にしか書き込みができません。</b>
-<b>それを防ぐために<l>SV_RenderTargetArrayIndex</l>を指定した変数に書き込みたい要素の添字を指定します。</b>
+<span class="important">上の<span class="keyward">SV_RenderTargetArrayIndex</span>がもっとも重要な部分になります。</span>
+<span class="important">レンダーターゲットにはテクスチャ配列を指定することが出来ますが、何もしなければ０番目の要素にしか書き込みができません。</span>
+<span class="important">それを防ぐために<span class="keyward">SV_RenderTargetArrayIndex</span>を指定した変数に書き込みたい要素の添字を指定します。</span>
 
-ドキュメント：<l>SV_RenderTargetArrayIndex</l>
+ドキュメント：<span class="keyward">SV_RenderTargetArrayIndex</span>
 [(日本語)][Semantics_JP]
 [(英語)][Semantics_EN]
 
@@ -431,7 +431,7 @@ void main(
 <h3>読み込み</h3>
 
 キューブマップの読み込みは他のものとは大きく異なります。
-<b>読み込みはサンプラのみで、UV座標ではなく方向を表す<l>float3</l>でサンプリングする場所を指定します。</b>
+<span class="important">読み込みはサンプラのみで、UV座標ではなく方向を表す<span class="keyward">float3</span>でサンプリングする場所を指定します。</span>
 このことからキューブマップを環境マッピングを行うのに特化したものといえるでしょう。
 
 {% highlight hlsl %}
@@ -474,11 +474,11 @@ void main( uint3 DTid : SV_DispatchThreadID )
 
 <h3>作成</h3>
 
-マルチサンプリングテクスチャの作るには<l>D3D11_TEXTURE2D_DESC</l>の<l>SampleDesc</l>を使用します。
-<l>SampleDesc</l>はメンバに<l>Count(サンプリング数)</l>と<l>Quality(品質)</l>の２つ持っています。
-<b><l>Quality</l>はGPUによっては使用できる値が異なりますので、必ず<l>ID3D11Device::CheckMultisampleQualityLevels</l>で使えるか確認してください。</b>
+マルチサンプリングテクスチャの作るには<span class="keyward">D3D11_TEXTURE2D_DESC</span>の<span class="keyward">SampleDesc</span>を使用します。
+<span class="keyward">SampleDesc</span>はメンバに<span class="keyward">Count(サンプリング数)</span>と<span class="keyward">Quality(品質)</span>の２つ持っています。
+<span class="important"><span class="keyward">Quality</span>はGPUによっては使用できる値が異なりますので、必ず<span class="keyward">ID3D11Device::CheckMultisampleQualityLevels</span>で使えるか確認してください。</span>
 
-ドキュメント：<l>ID3D11Device::CheckMultisampleQualityLevels</l>
+ドキュメント：<span class="keyward">ID3D11Device::CheckMultisampleQualityLevels</span>
 [(日本語)][CheckMultisampleQualityLevels_JP]
 [(英語)][CheckMultisampleQualityLevels_EN]
 
@@ -510,9 +510,9 @@ if (FAILED(hr)) {
 }
 {% endhighlight %}
 
-<b>作成後、アンチエイリアスを適応するには<l>ID3D11DeviceContext::ResolveSubresource</l>を使用し他のマルチサンプリングではないテクスチャへコピーを行います。</b>
+<span class="important">作成後、アンチエイリアスを適応するには<span class="keyward">ID3D11DeviceContext::ResolveSubresource</span>を使用し他のマルチサンプリングではないテクスチャへコピーを行います。</span>
 
-ドキュメント：<l>ID3D11DeviceContext::ResolveSubresource</l>
+ドキュメント：<span class="keyward">ID3D11DeviceContext::ResolveSubresource</span>
 [(日本語)][ResolveSubresource_JP]
 [(英語)][ResolveSubresource_EN]
 
@@ -538,9 +538,9 @@ this->mpImmediateContext->ResolveSubresource(this->mpBackBuffer.Get(), 0, this->
 <div class="supplemental">
   <h3>サブリソースの添字について</h3>
   <p>
-    <l>ID3D11DeviceContext</l>のコピー関数のいくつかやマップ関数にサブリソースを指定する引数がありました。
+    <span class="keyward">ID3D11DeviceContext</span>のコピー関数のいくつかやマップ関数にサブリソースを指定する引数がありました。
     サブリソースはメインのリソースと今回見てきたミップマップや配列の各要素を指します。
-    <b>サブリソースも添字でアクセスし、その並び順はミップマップを優先したものとなりますので使うときは注意してください。</b>
+    <span class="important">サブリソースも添字でアクセスし、その並び順はミップマップを優先したものとなりますので使うときは注意してください。</span>
     {% highlight c++ %}
 //ミップレベル3,要素数が2の配列を持つテクスチャのサブリソースの添字一覧
 int miplevel0_array0 = 0;
@@ -558,7 +558,7 @@ int miplevel2_array1 = 5;
     <tr>
       <td class="left"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/initialize">＜前</a></td>
       <td class="center"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}">トップ</a></td>
-      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/texture2">次＞</a></td>
+      <td class="right"><a href="{% if site.github.url %}{{ site.github.url }}{% else %}{{ "/" | prepend: site.url }}{% endif %}part/tile-resource">次＞</a></td>
     </tr>
   </tbody>
 </table>
