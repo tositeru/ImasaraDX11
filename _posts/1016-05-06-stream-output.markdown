@@ -7,7 +7,7 @@ description: "今回のパートではストリームアウトプットステー
 <h1 class="under-bar">ストリームアウトプット</h1>
 
 今回のパートではストリームアウトプットステージ(英訳:Stream-Output Stage)について見ていきます。
-<b>ストリームアウトプットステージはジオメトリシェーダの次に実行されるステージになり、グラフィックスパイプラインで処理したプリミティブをバッファに出力することができます。</b>
+<span class="important">ストリームアウトプットステージはジオメトリシェーダの次に実行されるステージになり、グラフィックスパイプラインで処理したプリミティブをバッファに出力することができます。</span>
 
 ドキュメント：ストリームアウトプットステージ
 [(日本語)][StreamOutput_JP]
@@ -18,10 +18,10 @@ description: "今回のパートではストリームアウトプットステー
 
 <h1 class="under-bar">概要</h1>
 それではストリームアウトプットステージの使い方、設定について見ていきましょう。
-対応するプロジェクトは<b>Part11_StreamOutput</b>になります。
+対応するプロジェクトは<span class="important">Part11_StreamOutput</span>になります。
 <div class="summary">
   <ol>
-    <li><a href="#CONFIG">設定</a></li>
+    <li><a href="#CONFIG">シェーダの生成</a></li>
     <li><a href="#CREATE_SHADER">シェーダの生成</a></li>
     <li><a href="#DRAW_AUTO">ID3D11DeviceContext::DrawAuto</a></li>
     <li><a href="#SUMMARY">まとめ</a></li>
@@ -57,11 +57,11 @@ this->mpImmediateContext->SOSetTargets(static_cast<UINT>(ppSOBufs.size()), ppSOB
 ppSOBufs[0] = this->mpStreamOutputBuffer.Get();
 {% endhighlight %}
 
-<l>ID3D11DeviceContext::SOSetTargets</l>でストリームアウトプットの出力先バッファを設定します。
-<b>出力先となるバッファは複数設定できます。</b>
-<b>生成したバッファを別のところで使う際はストリームアウトプットステージから外さないと使えないので注意してください。</b>
+<span class="keyward">ID3D11DeviceContext::SOSetTargets</span>でストリームアウトプットの出力先バッファを設定します。
+<span class="important">出力先となるバッファは複数設定できます。</span>
+<span class="important">生成したバッファを別のところで使う際はストリームアウトプットステージから外さないと使えないので注意してください。</span>
 
-ドキュメント：<l>ID3D11DeviceContext::SOSetTargets</l>
+ドキュメント：<span class="keyward">ID3D11DeviceContext::SOSetTargets</span>
 [(日本語)][SOSetTargets_JP]
 [(英語)][SOSetTargets_EN]
 
@@ -82,18 +82,18 @@ if (FAILED(hr)) {
 }
 {% endhighlight %}
 
-<b>ストリームアウトプットの出力先のバッファを作る際はBindFlagsにD3D11_BIND_STREAM_OUTPUTを指定する必要があります。</b>
-<b>また、生成するプリミティブの上限もバッファ生成時に決めないといけません。</b>
+<span class="important">ストリームアウトプットの出力先のバッファを作る際はBindFlagsにD3D11_BIND_STREAM_OUTPUTを指定する必要があります。</span>
+<span class="important">また、生成するプリミティブの上限もバッファ生成時に決めないといけません。</span>
 
 <a name="CREATE_SHADER"></a>
 <h1 class="under-bar">シェーダの生成</h1>
 さて、ストリームアウトプットステージは出力先を設定すると自動的に有効となり、ジオメトリシェーダの出力を設定したバッファに書き込んでくれます。
-<b>サンプルではピクセルシェーダを使用していませんが、もちろんストリームアウトプットステージを使用しながら画面描画を行うこともできます。</b>
+<span class="important">サンプルではピクセルシェーダを使用していませんが、もちろんストリームアウトプットステージを使用しながら画面描画を行うこともできます。</span>
 
-<b>出力にジオメトリシェーダを使用しますのでそれを用意する必要があるのですが、その時<l>ID3D11GeometryShader</l>を作成するには専用の関数を使用する必要があります。</b>
-その関数は<l>ID3D11Device::CreateGeometryShaderWithStreamOutput </l>になります。
+<span class="important">出力にジオメトリシェーダを使用しますのでそれを用意する必要があるのですが、その時<span class="keyward">ID3D11GeometryShader</span>を作成するには専用の関数を使用する必要があります。</span>
+その関数は<span class="keyward">ID3D11Device::CreateGeometryShaderWithStreamOutput </span>になります。
 
-ドキュメント：<l>ID3D11Device::CreateGeometryShaderWithStreamOutput </l>
+ドキュメント：<span class="keyward">ID3D11Device::CreateGeometryShaderWithStreamOutput </span>
 [(日本語)][CreateGeometryShader_JP]
 [(英語)][CreateGeometryShader_EN]
 
@@ -129,19 +129,19 @@ if (FAILED(hr)) {
 <div class="argument">
   <h3>ID3D11Device::CreateGeometryShaderWithStreamOutputの引数一部</h3>
   <ol>
-    <li><l>RasterizedStream</l>
+    <li><span class="keyward">RasterizedStream</span>
       <p>
         画面描画を行う際、出力した頂点の中で使用するものの添字になります。
-        画面描画を行わない場合は<l>D3D11_SO_NO_RASTERIZED_STREAM</l>を指定してください。
+        画面描画を行わない場合は<span class="keyward">D3D11_SO_NO_RASTERIZED_STREAM</span>を指定してください。
       </p>
     </li>
   </ol>
 </div>
 
-出力する頂点のレイアウトは<l>D3D11_SO_DECLARATION_ENTRY</l>で設定します。
+出力する頂点のレイアウトは<span class="keyward">D3D11_SO_DECLARATION_ENTRY</span>で設定します。
 その内容は頂点レイアウトに似たものとなります。
 
-ドキュメント：<l>D3D11_SO_DECLARATION_ENTRY</l>
+ドキュメント：<span class="keyward">D3D11_SO_DECLARATION_ENTRY</span>
 [(日本語)][D3D11_SO_DECLARATION_ENTRY_JP]
 [(英語)][D3D11_SO_DECLARATION_ENTRY_EN]
 
@@ -151,30 +151,30 @@ if (FAILED(hr)) {
 <div class="argument">
   <h3>D3D11_SO_DECLARATION_ENTRY</h3>
   <ol>
-    <li><l>Stream</l>
+    <li><span class="keyward">Stream</span>
       <p>
         ０から始まるストリーム番号になります。
       </p>
     </li>
-    <li><l>SemanticName</l>
+    <li><span class="keyward">SemanticName</span>
       <p>
         要素のセマンティクスになります。
-        指定できるものは<l>"POSITION"</l>、<l>"NORMAL"</l>、または <l>"TEXCOORD0"</l>になります。
-        これにnullptrを設定した場合は、この要素はデータが書き込まれていない隙間とみなされ<l>ComponentCount</l>に５以上の値を設定できるようになります。
+        指定できるものは<span class="keyward">"POSITION"</span>、<span class="keyward">"NORMAL"</span>、または <span class="keyward">"TEXCOORD0"</span>になります。
+        これにnullptrを設定した場合は、この要素はデータが書き込まれていない隙間とみなされ<span class="keyward">ComponentCount</span>に５以上の値を設定できるようになります。
       </p>
     </li>
-    <li><l>SemanticIndex</l>
+    <li><span class="keyward">SemanticIndex</span>
       <p>
         セマンティクスの0から始まる番号になります。
       </p>
     </li>
-    <li><l>StartComponent, ComponentCount</l>
+    <li><span class="keyward">StartComponent, ComponentCount</span>
       <p>
         使用する要素の範囲を指定します。
-        <l>StartComponent</l>が2で<l>ComponentCount</l>が3なら、yzw成分を使用します。
+        <span class="keyward">StartComponent</span>が2で<span class="keyward">ComponentCount</span>が3なら、yzw成分を使用します。
       </p>
     </li>
-    <li><l>OutputSlot</l>
+    <li><span class="keyward">OutputSlot</span>
       <p>
         出力するストリームアウトプットステージに設定したバッファへの添字になります。
       </p>
@@ -189,9 +189,9 @@ if (FAILED(hr)) {
 
 ストリームアウトプットで生成した頂点データは頂点バッファとして描画に使用できます。
 が、実際に生成された頂点数はそのままだとわかりません。
-<b>頂点数を調べる方法は存在しますが、この場合<l>ID3D11DeviceContext::DrawAuto</l>という特別なドローコールが用意されています。</b>
+<span class="important">頂点数を調べる方法は存在しますが、この場合<span class="keyward">ID3D11DeviceContext::DrawAuto</span>という特別なドローコールが用意されています。</span>
 
-ドキュメント：<l>ID3D11DeviceContext::DrawAuto</l>
+ドキュメント：<span class="keyward">ID3D11DeviceContext::DrawAuto</span>
 [(日本語)][DrawAuto_JP]
 [(英語)][DrawAuto_EN]
 
@@ -217,7 +217,7 @@ this->mpImmediateContext->DrawAuto();
 {% endhighlight %}
 
 使い方については特に説明はありません。
-ストリームアウトプットによって生成された頂点データを入力アセンブラステージに設定し、<l>ID3D11DeviceContext::DrawAuto</l>を呼び出すだけで描画ができます。
+ストリームアウトプットによって生成された頂点データを入力アセンブラステージに設定し、<span class="keyward">ID3D11DeviceContext::DrawAuto</span>を呼び出すだけで描画ができます。
 
 <a name="SUMMARY"></a>
 <h1 class="under-bar">まとめ</h1>
