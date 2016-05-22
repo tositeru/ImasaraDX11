@@ -137,6 +137,7 @@ HS_CONTROL_POINT_OUTPUT main(
 ハルシェーダのエントリポイントには属性が多数用意されています。
 
 <div class="argument">
+  <h3 class="under-bar">指定できる属性</h3>
   <ol>
     <li><span class="keyward">domain</span>
       <p>ハルシェーダで処理を行うパッチを指定します。三角形の<span class="keyward">tri</span>,四角形の<span class="keyward">quad</span>,線分の<span class="keyward">isoline</span>の3つ指定出来ます。</p>
@@ -292,8 +293,8 @@ struct HS_CONTROL_POINT_OUTPUT
 // 出力パッチ定数データ。
 struct HS_CONSTANT_DATA_OUTPUT
 {
-  float EdgeTessFactor[3]　: SV_TessFactor;
-  float InsideTessFactor　: SV_InsideTessFactor;
+  float EdgeTessFactor[3] : SV_TessFactor;
+  float InsideTessFactor : SV_InsideTessFactor;
 };
 #define NUM_CONTROL_POINTS 3
 //エントリポイントの定義
@@ -439,7 +440,7 @@ HS_CONTROL_POINT_OUTPUT main(
 
 三角形の時と同じように分割数の調節を行う組み込み関数が用意されています。
 
-ドキュメント：三角形のテッセレーション係数の修正を行う組み込み関数
+ドキュメント：四角形のテッセレーション係数の修正を行う組み込み関数
 <br>ProcessQuadTessFactorsAvg
 [(日本語)][QUAD_PROCESS_AVE_JP]
 [(英語)][QUAD_PROCESS_AVE_EN]
