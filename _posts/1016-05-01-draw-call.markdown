@@ -32,9 +32,9 @@ description: "このドローコールにはいくつかのバリエーション
 描画したい頂点の数と設定した頂点バッファの先頭オフセットを指定してグラフィックスパイプラインを実行します。
 DX11でのドローコールはこの関数が基本形になりますが、Direct3D12では廃止されているので注意してください。
 
-ドキュメント：
-[ID3D11DeviceContext::Draw(日本語)][Draw_JP]
-[ID3D11DeviceContext::Draw(英語)][Draw_EN]
+ドキュメント：<span class="keyward">ID3D11DeviceContext::Draw</span>
+[(日本語)][Draw_JP]
+[(英語)][Draw_EN]
 
 [Draw_JP]:https://msdn.microsoft.com/ja-jp/library/ee419589(v=vs.85).aspx
 [Draw_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476407(v=vs.85).aspx
@@ -74,9 +74,9 @@ if (FAILED(hr)) {
 
 <h3>設定</h3>
 グラフィックスパイプラインへの設定は<span class="keyward">ID3D11DeviceContext::IASetIndexBuffer関数</span>で行います。
-<br>ドキュメント：
-[ID3D11DeviceContext::IASetIndexBuffer(日本語)][IASetIndexBuffer_JP]
-[ID3D11DeviceContext::IASetIndexBuffer(英語)][IASetIndexBuffer_EN]
+<br>ドキュメント：<span class="keyward">ID3D11DeviceContext::IASetIndexBuffer</span>
+[(日本語)][IASetIndexBuffer_JP]
+[(英語)][IASetIndexBuffer_EN]
 
 [IASetIndexBuffer_JP]:https://msdn.microsoft.com/ja-jp/library/ee419686(v=vs.85).aspx
 [IASetIndexBuffer_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476453(v=vs.85).aspx
@@ -93,9 +93,9 @@ this->mpImmediateContext->IASetIndexBuffer(this->mpIndexBuffer.Get(), DXGI_FORMA
 添字を使ったドローコールは<span class="keyward">ID3D11DeviceContext::DrawIndexed関数</span>になります。
 引数の内容は<span class="keyward">ID3D11DeviceContext::Draw関数</span>と似たものになります。
 
-ドキュメント：
-[ID3D11DeviceContext::DrawIndexed(日本語)][DrawIndexed_JP]
-[ID3D11DeviceContext::DrawIndexed(英語)][DrawIndexed_EN]
+ドキュメント：<span class="keyward">ID3D11DeviceContext::DrawIndexed</span>
+[(日本語)][DrawIndexed_JP]
+[(英語)][DrawIndexed_EN]
 
 [DrawIndexed_JP]:https://msdn.microsoft.com/ja-jp/library/ee419591(v=vs.85).aspx
 [DrawIndexed_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476409(v=vs.85).aspx
@@ -219,15 +219,15 @@ if (FAILED(hr)) {
 {% endhighlight %}
 
 インスタンス描画用のデータを指定するときは<span class="keyward">D3D11_INPUT_ELEMENT_DESC</span>の以下のメンバを使用してください。
-<br>ドキュメント:
-[D3D11_INPUT_ELEMENT_DESC(日本語)][D3D11_INPUT_ELEMENT_DESC_JP]
-[D3D11_INPUT_ELEMENT_DESC(英語)][D3D11_INPUT_ELEMENT_DESC_EN]
+<br>ドキュメント:<span class="keyward">D3D11_INPUT_ELEMENT_DESC</span>
+[(日本語)][D3D11_INPUT_ELEMENT_DESC_JP]
+[(英語)][D3D11_INPUT_ELEMENT_DESC_EN]
 
 [D3D11_INPUT_ELEMENT_DESC_JP]:https://msdn.microsoft.com/ja-jp/library/ee416244(v=vs.85).aspx
 [D3D11_INPUT_ELEMENT_DESC_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476180(v=vs.85).aspx
 
 <div class="argument">
-  <h4 class="under-bar">D3D11_INPUT_ELEMENT_DESC</h4>
+  <h4 class="under-bar">D3D11_INPUT_ELEMENT_DESCのメンバ一部</h4>
   <ol>
     <li><span class="keyward">InputSlotClass</span>
       <p>入力データの種類を設定。頂点単位のデータなら<span class="keyward">D3D11_INPUT_PER_VERTEX_DATA</span>を、インスタンス単位のデータなら<span class="keyward">D3D11_INPUT_PER_INSTANCE_DATA</span>を指定してください。</p>
@@ -251,7 +251,7 @@ if (FAILED(hr)) {
 
 最後にインダイレクト(英訳:Indirect)描画を見ていきます。
 これは今まで出てきたドローコールの引数をバッファで指定するものになります。
-言い換えるバッファの内容が引数となります。
+<span class="important">つまりバッファの内容が引数の値となります。</span>
 
 {% highlight c++ %}
 // Scene::onInit関数の一部
@@ -281,7 +281,7 @@ if (FAILED(hr)) {
 }
 {% endhighlight %}
 
-<span class="important">インダイレクト用のバッファを作成するときは<l>MiscFlags</l>に<l>D3D11_RESOURCE_MISC_DRAWINDIRECT_ARGS</l>を指定してください。</span>
+<span class="important">インダイレクト用のバッファを作成するときは<span class="keyward">MiscFlags</span>に<span class="keyward">D3D11_RESOURCE_MISC_DRAWINDIRECT_ARGS</span>を指定してください。</span>
 
 <span class="important">サンプルでは回りくどいだけで使用する利点がわかりづらいですが、GPUで描画数の調節ができるためCPUとGPUの同期待ちを減らせることが可能になります。</span>
 このドローコールはインスタンス描画のみ対応しています。
