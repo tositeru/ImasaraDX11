@@ -99,9 +99,9 @@ if (FAILED(hr)) {
 <h3>設定</h3>
 
 設定は前回レンダーターゲットの設定した時に使った<span class="keyward">ID3D11DeviceContext::OMSetRenderTargets</span>で行います。
-<br>ドキュメント：
-[ID3D11DeviceContext::OMSetRenderTargets(日本語)][OMSetRenderTargets_JP]
-[ID3D11DeviceContext::OMSetRenderTargets(英語)][OMSetRenderTargets_EN]
+<br>ドキュメント：<span class="keyward">ID3D11DeviceContext::OMSetRenderTargets</span>
+[(日本語)][OMSetRenderTargets_JP]
+[(英語)][OMSetRenderTargets_EN]
 
 [OMSetRenderTargets_JP]:https://msdn.microsoft.com/ja-jp/library/ee419706(v=vs.85).aspx
 [OMSetRenderTargets_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476464(v=vs.85).aspx
@@ -192,7 +192,7 @@ if (FAILED(hr)) {
 
 まず、深度テストの設定は以下のメンバで行います。
 <div class="argument">
-  <h4>D3D11_DEPTH_STENCIL_DESC</h4>
+  <h4 class="under-bar">D3D11_DEPTH_STENCIL_DESC 深度テストに関係するメンバ</h4>
   <ul>
     <li><span class="keyward">DepthEnable</span>
       <p>
@@ -204,14 +204,17 @@ if (FAILED(hr)) {
       <p>
         <span class="keyward">D3D11_COMPARISON_FUNC</span>を使い、深度テストを行う際の元データと上書きするデータ同士での比較方法を指定します。
         <br>ドキュメント:<span class="keyward">D3D11_COMPARISON_FUNC</span>
-        <a href="https://msdn.microsoft.com/ja-jp/library/ee416063(v=vs.85).aspx">D3D11_DEPTH_WRITE_MASK(日本語)</a>
-        <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476101(v=vs.85).aspx">D3D11_DEPTH_WRITE_MASK(英語)</a>
+        <a href="https://msdn.microsoft.com/ja-jp/library/ee416063(v=vs.85).aspx">(日本語)</a>
+        <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476101(v=vs.85).aspx">(英語)</a>
       </p>
     </li>
     <li><span class="keyward">DepthWriteMask</span>
       <p>
         <span class="keyward">D3D11_DEPTH_WRITE_MASK</span>を使用して深度データを書き込む際のマスクを設定します。
         <span class="keyward">D3D11_DEPTH_WRITE_MASK</span>は今のところ書き込むか書き込まないかの2種類用意されています。
+        <br>ドキュメント:<span class="keyward">D3D11_DEPTH_WRITE_MASK</span>
+        <a href="https://msdn.microsoft.com/ja-jp/library/ee416087(v=vs.85).aspx">(日本語)</a>
+        <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476113(v=vs.85).aspx">(英語)</a>
       </p>
     </li>
   </ul>
@@ -221,7 +224,7 @@ if (FAILED(hr)) {
 次に、ステンシルテストの設定は以下のメンバで行います。
 
 <div class="argument">
-  <h4>D3D11_DEPTH_STENCIL_DESC</h4>
+  <h4 class="under-bar">D3D11_DEPTH_STENCIL_DESC　ステンシルテストに関係するメンバ</h4>
   <ul>
     <li><span class="keyward">StencilEnable </span>
       <p>
@@ -239,8 +242,9 @@ if (FAILED(hr)) {
         深度テストとステンシルテストの結果でどのような処理を行うかを設定するものになります。
         <span class="important">表面と裏面別で設定でき、<span class="keyward">D3D11_DEPTH_STENCILOP_DESC</span>で指定します。</span>
         <br>ドキュメント:<span class="keyward">D3D11_DEPTH_STENCILOP_DESC</span>
-        <a href="https://msdn.microsoft.com/ja-jp/library/ee416080(v=vs.85).aspx">D3D11_DEPTH_WRITE_MASK(日本語)</a>
-        <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476109(v=vs.85).aspx">D3D11_DEPTH_WRITE_MASK(英語)</a>
+        <a href="https://msdn.microsoft.com/ja-jp/library/ee416080(v=vs.85).aspx">(日本語)</a>
+        <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476109(v=vs.85).aspx">(英語)</a>
+        <h3 class="under-bar">D3D11_DEPTH_STENCILOP_DESCのメンバ</h3>
         <ul>
           <li><span class="keyward">StencilFunc</span>
             <p>深度テストと同じく<span class="keyward">D3D11_COMPARISON_FUNC</span>を使ってステンシルテストの元データと上書きするデータの比較方法を指定します。</p>
