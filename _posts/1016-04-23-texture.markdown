@@ -48,6 +48,8 @@ description: "このパートではテクスチャ(英訳:Texture)を使って�
 <h1 class="under-bar">シェーダ内での使い方</h1>
 
 <h3><span class="keyward">Texture2D</span>キーワード</h3>
+<span class="keyward">Texture2D</span>を使ったコードは下のようなものになります。
+
 {% highlight c++ %}
 //ClearScreenWithTexture.hlsl
 Texture2D<float4> image : register(t0);
@@ -76,9 +78,9 @@ void main(uint2 DTid : SV_DispatchThreadID) {
 サンプラステートについては次の項目で見ていきます。
 
 ドキュメント:
-[テクスチャー オブジェクト(日本語)][TEXTURE_OBJECT_JP]
-[Texture2D(日本語)][TEXTURE2D_JP]
-[Texture2D(英語)][TEXTURE2D_EN]
+<br>[テクスチャー オブジェクト(日本語)][TEXTURE_OBJECT_JP]
+<br>Texture2D[(日本語)][TEXTURE2D_JP]
+[(英語)][TEXTURE2D_EN]
 
 [TEXTURE_OBJECT_JP]: https://msdn.microsoft.com/ja-jp/library/ee418522(v=vs.85).aspx
 [TEXTURE2D_JP]: https://msdn.microsoft.com/ja-jp/library/ee422395(v=vs.85).aspx
@@ -91,7 +93,7 @@ Texture2D<float4> image : register(t0);
 SamplerState point_sampler : register(s0);
 RWTexture2D<float4> screen : register(u0);
 [numthreads(1, 1, 1)]
-void main(uint2 DTid : SV_DispatchThreadID)　{
+void main(uint2 DTid : SV_DispatchThreadID) {
   uint2 screen_size;
   screen.GetDimensions(screen_size.x, screen_size.y);
   float2 uv = (float2)DTid / (float2)screen_size;
@@ -109,22 +111,25 @@ screen[DTid] = image.SampleLevel(point_sampler, uv, 0);
 {% endhighlight %}
 
 <span class="keyward">Texture2D::SampleLevel関数</span>でテクセルを読み込んでいます。
-<br>ドキュメント：
-[SampleLeve(日本語)][SAMPLE_LEVEL_JP]
-[Texture2D::SampleLevel(英語)][SAMPLE_LEVEL_EN]
+<br>ドキュメント：<span class="keyward">SampleLevel</span>
+[(日本語)][SAMPLE_LEVEL_JP]
+[(英語)][SAMPLE_LEVEL_EN]
 
 [SAMPLE_LEVEL_JP]: https://msdn.microsoft.com/ja-jp/library/ee418521(v=vs.85).aspx
 [SAMPLE_LEVEL_EN]: https://msdn.microsoft.com/en-us/library/windows/desktop/dn367016(v=vs.85).aspx
 
-<ul>
-  <li>第1引数:使用する<span class="keyward">サンプラステート</span></li>
-  <li>第2引数:サンプリングする場所を表すUV値</li>
-  <li>第3引数:サンプリングする<span class="keyward">ミップマップ</span>のレベル
-    <p><span class="keyward">ミップマップ</span>についてはあとのパートで説明します。</p>
-  </li>
-</ul>
+<div class="argument">
+  <h3 class="under-bar">SampleLevelの引数</h3>
+  <ul>
+    <li>第1引数:使用する<span class="keyward">サンプラステート</span></li>
+    <li>第2引数:サンプリングする場所を表すUV値</li>
+    <li>第3引数:サンプリングする<span class="keyward">ミップマップ</span>のレベル
+      <p><span class="keyward">ミップマップ</span>についてはあとのパートで説明します。</p>
+    </li>
+  </ul>
+</div>
 
-<span class="keyward">サンプラステート</span>を使ってテクスチャの要素を読み込むときは<span class="important">UV座標</span>と呼ばれる座標系を使って読み込みます。
+<span class="important"><span class="keyward">サンプラステート</span>を使ってテクスチャの要素を読み込むときはUV座標と呼ばれる座標系を使って読み込みます。</span>
 <span class="important">UV座標系はテクスチャのサイズを0～1の範囲で表したものになります。</span>
 
 例えば、横幅が200で縦幅が100のテクスチャの中央にあるテクセル(100,50)にアクセスしたい場合、
@@ -141,7 +146,7 @@ float2 uv = texel / textureSize;
 UV座標系を使う際の利点はテクスチャのサイズが変わっても同じUVで同じテクセルの場所を指定できる点でしょうか。
 これは<span class="keyward">Texture2D</span>キーワードのコードと上のコードを比較してもらえばお分かりいただけるかと思います。
 
-<span class="keyward">Texture2D</span>キーワードのコードの場合はテクスチャの範囲外にアクセスしないように条件分岐しています。
+始めに登場した添字を使ったコードの場合はテクスチャの範囲外にアクセスしないように条件分岐しています。
 <span class="important">シェーダでは条件分岐はコストがCPUと比べてコストが高い処理になります。</span>
 現在ではそこまで問題にはなりませんが、昔だとシェーダ内では条件分岐自体が出来ないことが当たり前でした。
 また、特に工夫をしない限り画面に合うようにテクスチャでクリアすることはできません。
@@ -154,8 +159,8 @@ UV座標系を使う際の利点はテクスチャのサイズが変わっても
 これは実際に見てもらった方がわかりやすいと思いますので、サンプルコードを書き換えてみてください。
 
 後、<span class="keyward">Texture2D</span>と<span class="keyward">SamplerState</span>のスロットの設定は定数バッファ、アンオーダードアクセスビューと同じです。
-<span class="keyward">Texture2D</span>では"register(t0)"と"t"を使い、
-<span class="keyward">SamplerState</span>では"register(s0)"と"s"を使ってください。
+<span class="important"><span class="keyward">Texture2D</span>では"register(t0)"と"t"を使い、
+<span class="keyward">SamplerState</span>では"register(s0)"と"s"を使ってください。</span>
 
 シェーダ側でのテクスチャの使い方は以上になります。
 テクスチャを使うときはサンプラも一緒に使うことが多いで、セットで覚えていきましょう。
@@ -193,7 +198,7 @@ this->mpImmediateContext->CSSetSamplers(0, static_cast<UINT>(ppSamplers.size()),
 [CSSETSAPLER_EN]: https://msdn.microsoft.com/en-us/library/windows/desktop/ff476401(v=vs.85).aspx
 
 <div class="topic">
-  <h4>シェーダへ設定できるものまとめ</h4>
+  <h3 class="under-bar">シェーダへ設定できるものまとめ</h3>
   <span class="important">シェーダへ設定できるものは今回出たもので一通り出てきました。</span>
   <p>
     <ul>
@@ -204,10 +209,10 @@ this->mpImmediateContext->CSSetSamplers(0, static_cast<UINT>(ppSamplers.size()),
     </ul>
 
     この内、シェーダリソースビューとアンオーダードアクセスビューを表す<span class="keyward">ID3D11ShaderResourceView</span>と<span class="keyward">ID3D11UnorderedAccessView</span>は
-    <span class="keyward">ID3D11View</span>という<span class="keyward">ビュー</span>を表す派生したものになります。
+    <span class="keyward">ID3D11View</span>というクラスから派生したものになります。
     <span class="important">DX11ではリソースをGPUで使う場合、ビューと呼ばれるGPUがリソースにどのようにアクセスするかを表しているものを介して設定します。</span>
     <span class="important">1つのリソースに複数のビューを作ることが可能で、例えばあるシェーダでデータを書き込んで別のシェーダでそのデータを使いたいといった場合は
-    ID3D11ShaderResourceViewとID3D11UnorderedAccessViewを作る必要があります。</span>
+    ID3D11ShaderResourceViewとID3D11UnorderedAccessViewを1個ずつ作る必要があります。</span>
     あるリソースがどのビューを作ることが出来るかは作成時に<span class="keyward">D3D11_BIND_FLAG</span>を使って指定します。
     <span class="important">リソースの作り方によっては同時に作ることが出来ないビューも出てきます。</span>
     その時は作成に失敗しますのでエラーメッセージを読んで対応してください。
@@ -224,8 +229,8 @@ this->mpImmediateContext->CSSetSamplers(0, static_cast<UINT>(ppSamplers.size()),
 
 <a name="DX11_Texture"></a>
 <h1 class="under-bar">ID3D11Texture2D</h1>
-
-<span class="keyward">Texture2D</span>を表す<span class="keyward">ID3D11Texture2D</span>と<span class="keyward">ID3D11ShaderResourceView</span>の作成は以下のコードになります。
+ここまでの内容でシェーダ内での使い方と設定の仕方がわかりました。
+最後に<span class="keyward">Texture2D</span>を表す<span class="keyward">ID3D11Texture2D</span>と<span class="keyward">ID3D11ShaderResourceView</span>の作成は以下のコードになります。
 {% highlight c++ %}
 //生成するID3D11Texture2Dの情報
 D3D11_TEXTURE2D_DESC desc = {};
@@ -277,14 +282,15 @@ if (FAILED(hr)) {
 {% highlight C++%}
 auto hr = this->mpDevice->CreateTexture2D(&desc, &initData, this->mpTex2D.GetAddressOf());
 {% endhighlight %}
-ドキュメント:
-[ID3D11Device::CreateTexture2D(日本語)][CreateTexture2D_JP]
-[ID3D11Device::CreateTexture2D(英語)][CreateTexture2D_EN]
+ドキュメント:<span class="keyward">ID3D11Device::CreateTexture2D</span>
+[(日本語)][CreateTexture2D_JP]
+[(英語)][CreateTexture2D_EN]
 
 [CreateTexture2D_JP]:https://msdn.microsoft.com/ja-jp/library/ee419804(v=vs.85).aspx
 [CreateTexture2D_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476521(v=vs.85).aspx
 
 <div class="argument">
+  <h3 class="under-bar">ID3D11Device::CreateTexture2D</h3>
   <ul>
     <li>第1引数:<span class="keyward">D3D11_TEXTURE2D_DESC</span>
       <p>
@@ -293,6 +299,7 @@ auto hr = this->mpDevice->CreateTexture2D(&desc, &initData, this->mpTex2D.GetAdd
         <br>ドキュメント:
         <a href="https://msdn.microsoft.com/ja-jp/library/ee416341(v=vs.85).aspx">D3D11_TEXTURE2D_DESC(日本語)</a>
         <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476253(v=vs.85).aspx">D3D11_TEXTURE2D_DESC(英語)</a>
+        <h3 class="under-bar">D3D11_TEXTURE2D_DESCのメンバ一部</h3>
         <ul>
           <li><span class="keyward">Width</span>
             <p>
@@ -363,14 +370,15 @@ auto hr = this->mpDevice->CreateTexture2D(&desc, &initData, this->mpTex2D.GetAdd
 hr = this->mpDevice->CreateShaderResourceView(this->mpTex2D.Get(), &viewDesc, this->mpTex2DSRV.GetAddressOf());
 {% endhighlight %}
 
-ドキュメント：
-[ID3D11Device::CreateShaderResourceView(日本語)][CREATE_SRV_JP]
-[ID3D11Device::CreateShaderResourceView(英語)][CREATE_SRV_EN]
+ドキュメント：<span class="keyward">ID3D11Device::CreateShaderResourceView</span>
+[(日本語)][CREATE_SRV_JP]
+[(英語)][CREATE_SRV_EN]
 
 [CREATE_SRV_JP]:https://msdn.microsoft.com/ja-jp/library/ee419802(v=vs.85).aspx
 [CREATE_SRV_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476519(v=vs.85).aspx
 
 <div class="argument">
+  <h3 class="under-bar">ID3D11Device::CreateShaderResourceView</h3>
   <ul>
     <li>第1引数:<span class="keyward">ID3D11Resource</span>
       <p>
@@ -385,6 +393,7 @@ hr = this->mpDevice->CreateShaderResourceView(this->mpTex2D.Get(), &viewDesc, th
         <br>ドキュメント：
         <a href="https://msdn.microsoft.com/ja-jp/library/ee416275(v=vs.85).aspx">D3D11_SHADER_RESOURCE_VIEW_DESC(日本語)</a>
         <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476211(v=vs.85).aspx">D3D11_SHADER_RESOURCE_VIEW_DESC(英語)</a>      
+        <h3 class="under-bar">D3D11_SHADER_RESOURCE_VIEW_DESCのメンバ一部</h3>
         <ol>
           <li>Format: GPU上のデータのフォーマット
             <p>
@@ -429,14 +438,15 @@ if (FAILED(hr)) {
 
 上のコードの<span class="keyward">ID3D11Device::CreateSamplerState関数</span>でID3D11SamplerStateを作成しています。
 
-ドキュメント：
-[ID3D11Device::CreateSamplerState(日本語)][CREATE_SAMPLER_JP]
-[ID3D11Device::CreateSamplerState(英語)][CREATE_SAMPLER_EN]
+ドキュメント：<span class="keyward">ID3D11Device::CreateSamplerState</span>
+[(日本語)][CREATE_SAMPLER_JP]
+[(英語)][CREATE_SAMPLER_EN]
 
 [CREATE_SAMPLER_JP]:https://msdn.microsoft.com/ja-jp/library/ee419801(v=vs.85).aspx
 [CREATE_SAMPLER_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476518(v=vs.85).aspx
 
 <div class="argument">
+  <h3 class="under-bar">ID3D11Device::CreateSamplerState</h3>
   <ul>
     <li>第1引数：<span class="keyward">D3D11_SAMPLER_DESC</span>
       <p>
@@ -445,7 +455,8 @@ if (FAILED(hr)) {
         <br>ドキュメント：
         <a href="https://msdn.microsoft.com/ja-jp/library/ee416271(v=vs.85).aspx">D3D11_SAMPLER_DESC(日本語)</a>
         <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476207(v=vs.85).aspx">D3D11_SAMPLER_DESC(英語)</a>
-        <ol>
+        <h3 class="under-bar">D3D11_SAMPLER_DESCのメンバ一部</h3>
+        <ul>
           <li>Filter: <span class="keyward">D3D11_FILTER</span>
             <p>
               サンプリングするときの補間の仕方を決めるためのものです。
@@ -459,7 +470,7 @@ if (FAILED(hr)) {
               <span class="important">画像の横方向は繰り返すけど、縦方向は範囲外になったら指定した色で塗りつぶすといった設定が可能です。</span>
             </p>
           </li>
-        </ol>
+        </ul>
       </p>
     </li>
     <li>第2引数：<span class="keyward">ID3D11SamplerState</span>
