@@ -24,7 +24,7 @@ description: "まず初めに画面全体をGPUを使って単色で塗りつぶ
     CPUはDX11のAPIを、GPUはシェーダを使ってコーディングしていく形になります。
   </p>
   <p>
-    DX11では<span class="important">HLSL</span>と呼ばれるシェーダ言語を使います。
+    <span class="important">DX11ではHLSLと呼ばれるシェーダ言語を使います。</span>
     HLSLもc言語の文法をベースにしていますので、すぐに慣れることでしょう。
     ただ、様々なお約束を覚える必要はありますが。
   </p>
@@ -40,13 +40,13 @@ description: "まず初めに画面全体をGPUを使って単色で塗りつぶ
 
     <ol>
       <li>
-        シェーダの作成
+        <a href="#CREATE_SHADER">シェーダの作成</a>
         <ul>
           <li>コンピュートシェーダ</li>
         </ul>
       </li>
       <li>
-        シェーダの実行
+        <a href="#EXE_SHADER">シェーダの実行</a>
         <ul>
           <li>
             実行命令<br>
@@ -59,7 +59,7 @@ description: "まず初めに画面全体をGPUを使って単色で塗りつぶ
         </ul>
       </li>
       <li>
-        シェーダのコンパイル
+        <a href="#COMPILE_SHADER">シェーダのコンパイル</a>
         <ul>
           <li>
             実行時でのコンパイル<br>
@@ -71,17 +71,20 @@ description: "まず初めに画面全体をGPUを使って単色で塗りつぶ
           </li>
         </ul>
       </li>
-      <li>まとめ</li>
-      <li>補足
+      <li><a href="#SUMMARY">まとめ</a></li>
+
+      <li><a href="#SUPPLEMENTAL">補足</a>
         <ul>
           <li>画面クリアの便利関数</li>
           <li><span class="keyward">RWTexture2D</span>のデータ読み込みの制限</li>
+          <li>HLSLの解析</li>
         </ul>
       </li>
     </ol>
   </div>
 </section>
 <section>
+  <a name="CREATE_SHADER"></a>
   <h1 class="under-bar">1.シェーダの作成</h1>
   {% highlight hlsl %}
 //ClearScreen.hlsl
@@ -96,8 +99,8 @@ void main( uint2 DTid : SV_DispatchThreadID )
     今回のサンプルでは<span class="important">コンピュートシェーダ(英訳:Compute Shader)</span>を使用して画面を単色で塗りつぶしています。
   </p>
   <p>
-    一口にシェーダといってもいくつかの種類があり、
-    大きく分けて<span class="important">グラフィックスパイプライン用のシェーダ</span>と<span class="important">GPGPU用のシェーダ</span>があります。
+    <span class="important">一口にシェーダといってもいくつかの種類があり、
+    大きく分けてグラフィックスパイプライン用のシェーダとGPGPU用のシェーダがあります。</span>
     (グラフィックスパイプラインについては後のパートで説明します。)
   </p>
   <p>
@@ -114,12 +117,12 @@ screen[DTid] = float4(1, 1, 0, 1);
   </p>
   <p>
     screenが画面を表す<span class="important">リソース(英訳:Resource)</span>になり、サンプルでは全画面を黄色を表す"float4(1, 1, 0, 1)"で塗りつぶしています。
-    シェーダ上では<span class="important">基本的に色を光の3原色である赤緑青とアルファ(不透明度)の4色で表現しており、0～1の範囲で調節します。</span>
-    float4(赤, 緑, 青, アルファ)となっています。
+    <span class="important">シェーダ上では基本的に色を光の3原色である赤緑青とアルファ(不透明度)の4色で表現しており、0～1の範囲で調節します。</span>
+    データの並びはfloat4(赤, 緑, 青, アルファ)となっています。
   </p>
   <p>
     screenは<span class="keyward">RWTexture2D&lt;float4&gt;オブジェクト</span>になります。
-    <span class="keyward">RWTexture2D</span>は<span class="important">読み書き可能<a href="#A1" class="attension">[補足]</a>な2次元テクスチャ</span>で、
+    <span class="important">RWTexture2Dは読み書き可能<a href="#A1" class="attension">[補足]</a>な2次元テクスチャ</span>で、
     C++のテンプレートみたいに"<...>"で要素の型を指定しています。
     サンプルでは<span class="keyward">float4</span>を指定しているので、screenはシェーダ内で<span class="keyward">float4型</span>を読み書きできる2次元テクスチャとなります。
     2次元テクスチャの詳細はあとのパートで詳しく説明しますが、C++でいうところの2次元配列のようなもので、実際screenの各要素には配列のようにアクセスできます。
@@ -137,7 +140,7 @@ screen[pos] = ...;
   </p>
   <p>
     さて、ここまで当たり前のように<span class="keyward">float4</span>や<span class="keyward">uint2</span>といった型を使っていましたが、どのようなものか想像できるでしょうか？
-    <span class="important">float4はfloatを4つもつ型</span>で、<span class="important">uint2はuintを2つもつ型</span>になります。
+    <span class="important">float4はfloatを4つもつ型で、uint2はuintを2つもつ型になります。</span>
     <span class="keyward">float3</span>だとfloatを3つ、<span class="keyward">uint4</span>だとuintを4つもち、型名そのままの意味になります。
     当然、<span class="keyward">float型とuint型も単体</span>であり、ほかには<span class="keyward">int型</span>と<span class="keyward">bool型</span>も同じように使えます。
   </p>
@@ -181,6 +184,7 @@ float4 b = float4(a, 4);//bはfloat4(1, 2, 3, 4)になる。
   </p>
 </section>
 
+<a name="EXE_SHADER"></a>
 <section>
   <h1 class="under-bar">2.シェーダの実行</h1>
   <p>
@@ -214,19 +218,21 @@ this->mpImmediateContext->Dispatch(this->mWidth, this->mHeight, 1);
     でシェーダを実行しています。
   </p>
   <p>
-    <span class="important">Dispatch関数の引数は、ClearScreen.hlslのDTid引数とmain関数の呼び出し回数に影響を与えます。</span>
+    <span class="important">Dispatch関数の引数は、ClearScreen.hlslのDTid引数の値とmain関数の呼び出し回数に影響を与えます。</span>
     <br>ドキュメント
     <a href="https://msdn.microsoft.com/ja-jp/library/ee419587(v=vs.85).aspx">ID3D11DeviceContext::Dispatch(日本語)</a>
     <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476405(v=vs.85).aspx">ID3D11DeviceContext::Dispatch(英語)</a>
     {% highlight c++ %}
-//ClearScreen.hlsl
-void main( uint2 DTid : SV_DispatchThreadID )
+// ClearScreen.hlslの一部
+void main( uint2 DTid : SV_DispatchThreadID ) {
+  // ... Dispatch関数の引数は、DTidの値とmain関数の呼び出し回数に影響を与える。
+}
     {% endhighlight %}
   </p>
   <p>
     <br>
     Dispatch(2,2,1)にすると、ClearScreen.hlslのmain関数が2x2x1=4回呼び出され、
-    DTidにはそれぞれuint2(0, 0), uint2(0, 1), uint2(1, 0), uint2(1, 1)の値が渡されます。
+    DTidにはそれぞれuint2(0, 0), uint2(0, 1), uint2(1, 0), uint2(1, 1)の値がそれぞれ渡されます。
   </p>
   <p>
     Dispatch(100, 200, 1)にすると、main関数は100x200x1=20000回呼び出され、
@@ -235,27 +241,30 @@ void main( uint2 DTid : SV_DispatchThreadID )
     uint2(0, 1)～uint2(99, 1)<br>
     ...<br>
     uint2(0, 199)～uint2(99, 199)<br>
-    の値が渡されます。
+    の値がそれぞれ渡されます。
   </p>
   <p>
     今回は画面を塗りつぶすので、画面の横幅と縦幅を指定しています。
-    なので、サンプルの画面サイズはデフォルトでは1280x720なので、main関数は1280x720x1=921600回呼び出され、
+    なので、サンプルの画面サイズはデフォルトでは1280x720から、main関数は1280x720x1=921600回呼び出され、
     各々のDTidはuint2(0, 0)～uint2(1279, 719)の値が渡されます。
   </p>
   <p>
-    実のところ、ClearScreen.hlslの次の部分もDTidの値に影響があります。
+    <b>実のところ、ClearScreen.hlslの<span class="keyward">numthreads属性</span>もDTidの値に影響があります。</b>
     {% highlight hlsl %}
-//ClearScreen.hlsl
+//　ClearScreen.hlslの一部
 [numthreads(1,1,1)]
+void main( uint2 DTid : SV_DispatchThreadID ) {
+　// ...
     {% endhighlight %}
     <span class="keyward">numthreads属性</span>はコンピュートシェーダを使う上で非常に重要な意味を持つのですが、今回は説明しません。
-    詳しく知りたいという方は、MSDNのドキュメントをご覧ください。<br>
-    <a href="https://msdn.microsoft.com/ja-jp/library/ee422317(v=vs.85).aspx">numthreads(日本語)</a>
-    <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff471442(v=vs.85).aspx">numthreads(英語)</a>
+    詳しく知りたいという方は、MSDNのドキュメントをご覧ください。
+    <br>ドキュメント：<span class="keyward">numthreads属性</span>
+    <a href="https://msdn.microsoft.com/ja-jp/library/ee422317(v=vs.85).aspx">(日本語)</a>
+    <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff471442(v=vs.85).aspx">(英語)</a>
   </p>
   <p>
     ここまでシェーダの実行の仕方について見てきました。<span class="important">コンピュートシェーダではDispatch関数を使うことでシェーダを実行します。</span>
-    C++の関数呼び出しと比べるとかなり特殊な性質をもっていますが、これは<span class="important">GPUの大量のスレッドを同時に実行可能</span>という特徴を生かすためこうなってます。
+    <span class="important">C++の関数呼び出しと比べるとかなり特殊な性質をもっていますが、これはGPUの大量のスレッドを同時に実行可能という特徴を生かすためこうなってます。</span>
     サンプルではClearScreen.hlslにはmain関数とは別にclearByOneThread関数というfor文を使ったC++で画面クリアをする場合と同じコードになるよう書いたものも用意していますので、一度目を通してみてください。
     このシェーダとClearScreen.hlslは同じことをしていますが、処理速度はGPUの性質を生かしているClearScreen.hlslの方が速くなります。
     {% highlight hlsl %}
@@ -291,9 +300,9 @@ this->mpImmediateContext->CSSetShader(this->mpCSClearScreen.Get(), nullptr, 0);
     {% endhighlight %}
   </p>
   <p>
-    <span class="keyward">CSSetShader関数</span>はコンピュートシェーダの設定を行う関数で、
-    第一引数にコンピュートシェーダを表す<span class="keyward">ID3D11ComputeShader</span>を渡します。
-    <span class="keyward">ID3D11ComputeShader</span>の生成は次のシェーダのコンパイルの項目で説明します。
+    <span class="important">CSSetShader関数はコンピュートシェーダの設定を行う関数で、
+    第一引数にコンピュートシェーダを表すID3D11ComputeShaderを渡します。</span>
+    <span class="keyward">ID3D11ComputeShader</span>の生成は次の項目で説明します。
     残りの引数は<span class="keyward">動的シェーダリンク(英訳:Dynamic Shader Linkage)</span>というシェーダでオブジェクト指向言語でのインターフェイスとクラスを扱うときに使いますが、
     Direct3D12では廃止になるようなので無視します。
   </p>
@@ -332,48 +341,51 @@ this->mpImmediateContext->CSSetUnorderedAccessViews(
     <br>ドキュメント：
     <a href="https://msdn.microsoft.com/ja-jp/library/ee419586(v=vs.85).aspx">ID3D11DeviceContext::CSSetUnorderedAccessViews(日本語)</a>
     <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476404(v=vs.85).aspx">ID3D11DeviceContext::CSSetUnorderedAccessViews(英語)</a>
-    <ul>
-      <li>第1引数：GPUに設定する開始スロット番号
-        <p>
-          スロットとは識別番号のようなもので、C++でいうところの配列の添え字みたいなものです。
-          {% highlight hlsl %}
+    <div class="argument">
+      <h4 class="under-bar">CSSetUnorderedAccessViews関数</h4>
+      <ul>
+        <li>第1引数：GPUに設定する開始スロット番号
+          <p>
+            スロットとは識別番号のようなもので、C++でいうところの配列の添え字みたいなものです。
+            {% highlight hlsl %}
 //ClearScreen.hlsl
 RWTexture2D<float4> screen : register(u0);
-          {% endhighlight %}
-          上のコードの<span class="important">register(u0)</span>がスロット番号にあたります。
-          CPUからGPUにリソースを設定するときは各リソースに関連付けられているスロット番号を使って設定します。
-        </p>
-        <p>
-          <span class="important">"u0"はUAVの0番目のスロットを表しています</span>。
-          リソースの後ろに": register(u0)"と書くと、そのリソースはUAVの0番目のスロットと関連付けられます。
-          "u4"とするとUAVの4番目のスロット、"u10"とすると10番目のスロットになります。
-        </p>
-        <p>
-          <span class="important">1度リソースに設定したスロットは当然ながら他のリソースには使用できません。</span>
-          また、スロットの設定を省略することもできます。
-          その際は、コンパイラがほかのリソースで<span class="important">使われているスロットと被らないよう自動的に割り当ててくれます。</span>
-        </p>
-      </li>
-      <li>第2引数：一度に設定するUAVの個数</li>
-      <li>第3引数：<span class="keyward">ID3D11UnorderedAccessView</span>* の配列
-        <p>
-          <span class="important">ID3D11UnorderedAccessViewはUAVを表すものになります。</span>
-          この引数に渡す配列の要素数は必ず、第2引数に渡した値より大きくしてください。
-        </p>
-      </li>
-    </ul>
+            {% endhighlight %}
+            <span class="important">上のコードのregister(u0)がスロット番号にあたります。</span>
+            CPUからGPUにリソースを設定するときは各リソースに関連付けられているスロット番号を使って設定します。
+          </p>
+          <p>
+            <span class="important">"u0"はUAVの0番目のスロットを表しています</span>。
+            リソースの後ろに": register(u0)"と書くと、そのリソースはUAVの0番目のスロットと関連付けられます。
+            "u4"とするとUAVの4番目のスロット、"u10"とすると10番目のスロットになります。
+          </p>
+          <p>
+            <span class="important">1度リソースに設定したスロットは当然ながら他のリソースには使用できません。</span>
+            また、スロットの設定を省略することもできます。
+            <span class="important">その際は、コンパイラがほかのリソースで使われているスロットと被らないよう自動的に割り当ててくれます。</span>
+          </p>
+        </li>
+        <li>第2引数：一度に設定するUAVの個数</li>
+        <li>第3引数：<span class="keyward">ID3D11UnorderedAccessView</span>* の配列
+          <p>
+            <span class="important">ID3D11UnorderedAccessViewはUAVを表すものになります。</span>
+            この引数に渡す配列の要素数は必ず、第2引数に渡した値より大きくしてください。
+          </p>
+        </li>
+      </ul>
+    </div>
   </p>
   <p>
     第4引数は今回は意味を持たないので、省略します。
   </p>
   <div class="topic">
-    <h4>ID3D11DeviceContext</h4>
+    <h4 class="under-bar">ID3D11DeviceContext</h4>
     <p>
       ところで、ここまで度々出てきたmpImmediateContextについて触れていませんでした。
       mpImmediateContextは<span class="keyward">ID3D11DeviceContext</span>* になります。
-      <span class="keyward">ID3D11DeviceContext</span>は<span class="important">GPUにシェーダやリソースの設定を行ったり、シェーダの実行、リソースのコピーなどを行うときに使用</span>するものです。
-      DX11ではこれと後々出てくる<span class="keyward">ID3D11Device</span>の2つを使って処理を行っていきますので、
-      <span class="important">この2つを理解できればDX11を理解したといってもいいくらい重要なもの</span>になります。
+      <span class="important"><span class="keyward">ID3D11DeviceContext</span>はGPUにシェーダやリソースの設定を行ったり、シェーダの実行、リソースのコピーなどを行うときに使用</span>するものです。
+      <span class="important">DX11ではこれと後々出てくる<span class="keyward">ID3D11Device</span>の2つを使って処理を行っていきますので、
+      この2つを理解できればDX11を理解したといってもいいくらい重要なものになります。</span>
     </p>
   </div>
   <p>
@@ -382,6 +394,7 @@ RWTexture2D<float4> screen : register(u0);
   </p>
 </section>
 
+<a name="COMPILE_SHADER"></a>
 <section>
   <h1 class="under-bar">3.シェーダのコンパイル</h1>
   <p>
@@ -424,52 +437,55 @@ RWTexture2D<float4> screen : register(u0);
     引数がたくさんありますが、必ず必要となるものは以下のものになります。
     <br>ドキュメント：
     <a href="https://msdn.microsoft.com/ja-jp/library/windows/desktop/hh446872(v=vs.85).aspx">D3DCompileFromFile(英語)</a><br>
-    <ul>
-    	<li>
-        第1引数 : ファイルパス
-        <p>コンパイルしたいシェーダの<span class="keyward">ファイルパス</span>になります。</p>
-      </li>
-    	<li>
-        第4引数 : エントリポイント
-        <p>
-          GPUでシェーダを実行する際、<span class="important">一番初めに呼び出される関数の名前</span>を指定します。
-          ClearScreen.hlslなら"main"を指定します。
-          シェーダファイルには複数のエントリポイントとなる関数を定義することができますが、
-          それらの関数を使うためにはエントリポイントに<span class="keyward">各々の関数名を指定して個別にコンパイルする必要</span>があります。
-        </p>
-      </li>
-    	<li>
-        第5引数 : シェーダターゲット
-        <p>
-          シェーダの種類とその<span class="important">シェーダモデル(英訳:Shader Model)</span>を表す文字列を指定します。
-          例えば、コンピュートシェーダのシェーダモデル5.0でコンパイルしたい場合は以下の文字列を渡してください。
-        </p>
-        {% highlight hlsl %}
-const char* shaderTarget = "cs_5_0";
-        {% endhighlight %}
-        <p>
-          上のshaderTargetの"cs"がコンピュートシェーダを表し、"5_0"がシェーダモデル5.0を表しています。
-          シェーダモデルは<span class="important">シェーダのバージョン</span>のようなもので、
-          現在シェーダモデル5.1が一番新しいものになります。(2016年度ぐらいには6.0が出てきそうですが)
-          シェーダモデル5.1はDirect3D11.3とDirect3D12に対応したGPU上で実行できるシェーダのバージョンになります。
-          シェーダモデルの詳細はMSDNの方を参照してください。
-          <br>ドキュメント：
-          <a href="https://msdn.microsoft.com/ja-jp/library/ee418332(v=vs.85).aspx">シェーダー モデルとシェーダー プロファイル(日本語)</a>
-          <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/jj215820(v=vs.85).aspx">Specifying Compiler Targets(英語)</a>
-        </p>
-      </li>
-    	<li>
-        第8引数 : コンパイルした結果を受け取るID3DBlob*
-        <p>
-          コンパイルされたシェーダバイナリを受け取る<span class="keyward">ID3DBlob</span>を指定してください。
-          <span class="important">ここで指定した変数を使って、ID3D11ComputeShaderを作成します。</span>
-          ID3DBlobはシェーダのコンパイルの結果を受け取るときに使われるもので、メンバに受け取ったデータへのポインタとそのサイズを取得する関数が用意されています。
-        </p>
-      </li>
-    </ul>
+    <div class="argument">
+      <h4 class="under-bar">D3DCompileFromFile 必須となる引数</h4>
+      <ul>
+      	<li>
+          第1引数 : ファイルパス
+          <p>コンパイルしたいシェーダの<span class="keyward">ファイルパス</span>になります。</p>
+        </li>
+      	<li>
+          第4引数 : エントリポイント
+          <p>
+            GPUでシェーダを実行する際、<span class="important">一番初めに呼び出される関数の名前</span>を指定します。
+            ClearScreen.hlslなら"main"を指定します。
+            シェーダファイルには複数のエントリポイントとなる関数を定義することができますが、
+            それらの関数を使うためにはエントリポイントに<span class="keyward">各々の関数名を指定して個別にコンパイルする必要</span>があります。
+          </p>
+        </li>
+      	<li>
+          第5引数 : シェーダターゲット
+          <p>
+            シェーダの種類とその<span class="important">シェーダモデル(英訳:Shader Model)</span>を表す文字列を指定します。
+            例えば、コンピュートシェーダのシェーダモデル5.0でコンパイルしたい場合は以下の文字列を渡してください。
+          </p>
+          {% highlight hlsl %}
+  const char* shaderTarget = "cs_5_0";
+          {% endhighlight %}
+          <p>
+            上のshaderTargetの"cs"がコンピュートシェーダを表し、"5_0"がシェーダモデル5.0を表しています。
+            シェーダモデルは<span class="important">シェーダのバージョン</span>のようなもので、
+            現在シェーダモデル5.1が一番新しいものになります。(2016年度ぐらいには6.0が出てきそうですが)
+            シェーダモデル5.1はDirect3D11.3とDirect3D12に対応したGPU上で実行できるシェーダのバージョンになります。
+            シェーダモデルの詳細はMSDNの方を参照してください。
+            <br>ドキュメント：
+            <a href="https://msdn.microsoft.com/ja-jp/library/ee418332(v=vs.85).aspx">シェーダー モデルとシェーダー プロファイル(日本語)</a>
+            <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/jj215820(v=vs.85).aspx">Specifying Compiler Targets(英語)</a>
+          </p>
+        </li>
+      	<li>
+          第8引数 : コンパイルした結果を受け取るID3DBlob*
+          <p>
+            コンパイルされたシェーダバイナリを受け取る<span class="keyward">ID3DBlob</span>を指定してください。
+            <span class="important">ここで指定した変数を使って、ID3D11ComputeShaderを作成します。</span>
+            ID3DBlobはシェーダのコンパイルの結果を受け取るときに使われるもので、メンバに受け取ったデータへのポインタとそのサイズを取得する関数が用意されています。
+          </p>
+        </li>
+      </ul>
+    </div>
   </p>
   <div class="topic">
-    <h4>機能レベル</h4>
+    <h4 class="under-bar">機能レベル</h4>
     <p>
       第5引数のシェーダターゲットと関連するものとして<span class="important">機能レベル(英訳:Feature Levels)</span>というものがあります。
       GPUは世代によってハードウェアの構造が異なるため、
@@ -496,30 +512,31 @@ hr = this->mpDevice->CreateComputeShader(
   &this->mpCSClearScreenWithConstantBuffer);
   {% endhighlight %}
   <p>
-    <span class="keyward">ID3D11Device::CreateComputeShader関数</span>には単純にコンパイルされたシェーダと作成したい<span class="keyward">ID3D11ComputeShader</span>を渡すだけです。
+    <b><span class="keyward">ID3D11Device::CreateComputeShader関数</span>には単純にコンパイルされたシェーダと作成したい<span class="keyward">ID3D11ComputeShader</span>を渡すだけです。</b>
     第3引数のnullptrは動的シェーダリンクに関係するものなので無視します。
   </p>
   <div class="topic">
     <h4>ID3D11Device</h4>
     <p>
       ID3D11Deviceは<span class="important">シェーダやリソース、そのほかGPUに関係するものの作成</span>や<span class="important">使っているGPUの機能レベルや対応している機能の取得</span>などができます。
-      DX11では<span class="important">ID3D11Deviceが作成したものを使ってGPUを操作する</span>ので最も重要なものと言えるでしょう。 当然、DX11を使う際は一番最初に作成しなければいけませんが、そのやり方は別パートで説明します。
+      <span class="important">DX11ではID3D11Deviceが作成したものを使ってGPUを操作するので最も重要なものと言えるでしょう。</span> 当然、DX11を使う際は一番最初に作成しなければいけませんが、そのやり方は別パートで説明します。
     </p>
   </div>
   <p>
-    <br>
     実行時のシェーダのコンパイルで最低限必要となる引数とGPUに設定する際に使う<span class="keyward">ID3D11ComputeShader</span>の生成方法についてはこれで以上になります。
     この後は<span class="keyward">D3DCompileFromFile</span>の残りの引数について説明していきます。
   </p>
   <p>
-    <ul>
-      <li>
-        第9引数:エラーメッセージを受け取る<span class="keyward">ID3DBlob</span>
-        <p>
-          これは<span class="important">コンパイルエラーが発生した時のエラーメッセージを受け取るID3DBlob</span>になります。
-          コンパイルエラーが発生したときは第9引数に渡した<span class="keyward">ID3DBlob</span>には、文字列が設定されます。
-          使い方は、以下のコードになります。
-        {% highlight c++ %}
+    <div class="argument">
+      <h4 class="under-bar">D3DCompileFromFile 残りの引数</h4>
+      <ul>
+        <li>
+          第9引数:エラーメッセージを受け取る<span class="keyward">ID3DBlob</span>
+          <p>
+            <span class="important">これはコンパイルエラーが発生した時のエラーメッセージを受け取るID3DBlobになります。</span>
+            コンパイルエラーが発生したときは第9引数に渡した<span class="keyward">ID3DBlob</span>に文字列が設定されます。
+            使い方は、以下のコードになります。
+          {% highlight c++ %}
 HRESULT hr = D3DCompileFromFile(
   L"ClearScreen.hlsl",
   macros.data(),
@@ -536,30 +553,30 @@ if (FAILED(hr)) {//コンパイルエラー起きたかチェック
   }
   throw std::runtime_error("ClearScreen.hlslのコンパイルに失敗");
 }
-        {% endhighlight %}
-        </p>
-      </li>
-      <li>
-        第6、7引数：コンパイルフラグ
-        <p>
-          第6引数はシェーダのコンパイルフラグになり、
-          コンパイルしたシェーダに<span class="important">デバッグ情報</span>をつけるか、<span class="important">最適化レベルの設定</span>などのフラグがあります。
-          詳細はMSDNを参考にしてください。<br>
-          ドキュメント:
-          <a href="https://msdn.microsoft.com/ja-jp/library/ee415892(v=vs.85).aspx">D3D10_SHADER 定数(日本語)</a>
-          <a href="https://msdn.microsoft.com/ja-jp/library/windows/desktop/gg615083(v=vs.85).aspx">D3DCOMPILE Constants(英語)</a>
-        </p>
-        <p>
-          第7引数はエフェクト(Effect)というグラフィックスパイプラインのシェーダをまとめたものをコンパイルするとき使うものですが、DX11以降、<span class="important">エフェクトは廃止予定</span>になっていますので、説明を省きます。
-        </p>
-      </li>
-      <li>
-        第2引数：マクロの定義
-        <p>
-          C言語と同じようにシェーダも<span class="important">マクロに対応</span>しており、使い方も同じです。
-          <span class="keyward">D3DCompileFromFile関数</span>に渡す際は<span class="keyward">D3D_SHADER_MACRO</span>の配列として渡し、
-          <span class="important">末尾にはメンバをnullptrで埋めたものを設定します。</span>
-          {% highlight c++ %}
+          {% endhighlight %}
+          </p>
+        </li>
+        <li>
+          第6、7引数：コンパイルフラグ
+          <p>
+            第6引数はシェーダのコンパイルフラグになります。
+            コンパイルしたシェーダに<span class="important">デバッグ情報</span>をつけるか、<span class="important">最適化レベルの設定</span>などのフラグがあります。
+            詳細はMSDNを参考にしてください。<br>
+            ドキュメント:
+            <a href="https://msdn.microsoft.com/ja-jp/library/ee415892(v=vs.85).aspx">D3D10_SHADER 定数(日本語)</a>
+            <a href="https://msdn.microsoft.com/ja-jp/library/windows/desktop/gg615083(v=vs.85).aspx">D3DCOMPILE Constants(英語)</a>
+          </p>
+          <p>
+            第7引数はエフェクト(Effect)というグラフィックスパイプラインのシェーダをまとめたものをコンパイルするとき使うものですが、<span class="important">DX11以降、エフェクトは廃止予定になっていますので、説明を省きます。</span>
+          </p>
+        </li>
+        <li>
+          第2引数：マクロの定義
+          <p>
+            <span class="important">C言語と同じようにシェーダもマクロに対応しており、使い方も同じです。</span>
+            <span class="keyward">D3DCompileFromFile関数</span>に渡す際は<span class="keyward">D3D_SHADER_MACRO</span>の配列として渡し、
+            <span class="important">末尾にはメンバをnullptrで埋めたものを設定します。</span>
+            {% highlight c++ %}
 std::array<D3D_SHADER_MACRO, 2> macros = { {
     {"DEFINE_MACRO", "float4(0, 1, 1, 1)"},
     {nullptr, nullptr},//末尾はnullptrで埋める
@@ -574,21 +591,22 @@ hr = D3DCompileFromFile(
    0,
    pShaderBlob.GetAddressOf(),
    pErrorMsg.GetAddressOf());
-          {% endhighlight %}
-        </p>
-      </li>
-      <li>
-        第3引数：#includeキーワードが行う処理を定義した<span class="important">ID3DIncludeの派生クラス</span>
-        <p>
-          これはシェーダ内に#includeキーワードがあったとき、ファイルを検索する方法や読み込みを制御するためのものです。
-          <span class="keyward">D3DCompileFromFile</span>を使ってHLSLをコンパイルする際は<span class="important">自前でファイルを読み込む処理を作る必要があります。</span>
-          引数には<span class="keyward">ID3DInclude</span>を継承したクラスを渡します。
-          <span class="important">この引数がnullptrだと、シェーダ内で#includeを使うとエラー</span>になってしまいますので注意してください。
-          詳細は以下のサイトを参照してください。使っているのは<span class="keyward">ID3D10Include</span>ですが使い方は同じです。<br>
-          <a href="http://wlog.flatlib.jp/?blogid=1&query=preprocess">http://wlog.flatlib.jp/?blogid=1&query=preprocess</a><br>
-        </p>
-      </li>
-    </ul>
+            {% endhighlight %}
+          </p>
+        </li>
+        <li>
+          第3引数：<span class="important">#includeキーワードが行う処理を定義したID3DIncludeの派生クラス</span>
+          <p>
+            これはシェーダ内に#includeキーワードがあったとき、ファイルを検索する方法や読み込みを制御するためのものです。
+            <span class="important"><span class="keyward">D3DCompileFromFile</span>を使ってHLSLをコンパイルする際は自前でファイルを読み込む処理を作る必要があります。</span>
+            引数には<span class="keyward">ID3DInclude</span>を継承したクラスを渡します。
+            <span class="important">この引数がnullptrだと、シェーダ内で#includeを使うとエラーになってしまいますので注意してください。</span>
+            詳細は以下のサイトを参照してください。使っているのは<span class="keyward">ID3D10Include</span>ですが使い方は同じです。<br>
+            <a href="http://wlog.flatlib.jp/?blogid=1&query=preprocess">http://wlog.flatlib.jp/?blogid=1&query=preprocess</a><br>
+          </p>
+        </li>
+      </ul>
+    </div>
   </p>
   <p>
     <span class="keyward">D3DCompileFromFile関数</span>については以上になります。
@@ -600,7 +618,7 @@ hr = D3DCompileFromFile(
   </p>
   <h3 class="under-bar">オフラインでのコンパイル</h3>
   <p>
-    DX11のシェーダ言語であるHLSLではMicrosoftが用意している<span class="important">fxc.exeで事前にコンパイルすることが可能</span>です。
+    <span class="important">HLSLはMicrosoftが用意しているfxc.exeで事前にコンパイルすることが可能です。</span>
     <span class="keyward">fxc.exe</span>の場所は<span class="important">"Program Files (x86)\Windows Kits\10\bin\"以下のフォルダー</span>にあります。
     <span class="important">VisualStudioの開発者用コマンドプロンプト</span>を使用すれば環境変数などの設定をしなくとも使用できますし、
     サンプルプロジェクトにsetupFXCPath.batを用意しているので、コマンドプロンプトからそれを起動していただければ使えるようになります。
@@ -616,17 +634,19 @@ fxc /T cs_5_0 /Fo binary.cso ClearScreen.hlsl
     後は実行時に出力ファイルを読み込んで、<span class="keyward">ID3D11Device::CreateComputeShader関数</span>に渡せば<span class="keyward">ID3D11ComputeShader</span>が作成できます。
   </p>
   <p>
-    ちなみにサンプルのClearScreen.hlslは<span class="important">プロジェクトのビルド時にコンパイルを行うようプロパティから設定</span>しています。
+    <span class="important">ちなみにサンプルのClearScreen.hlslはプロジェクトのビルド時にコンパイルを行うようプロパティから設定しています。</span>
     その際、出力されるファイルはClearScreen.csoと拡張子がデフォルトで".cso"になりますので、この機能を使うときは覚えておいてください。
   </p>
 </section>
 
+<a name="SUMMARY"></a>
 <section>
   <h1 class="under-bar">まとめ</h1>
   <p>かなり長くなりましたが、DX11でのシェーダの使い方の説明は以上になります。</p>
   <p>
     今回の内容を踏まえたシェーダを実行したいときの流れは
     <div class="summary">
+      <h4 class="under-bar">シェーダを実行する時の流れ</h4>
       <ol>
       	<li>実行したいシェーダを作る</li>
       	<li>
@@ -641,10 +661,11 @@ fxc /T cs_5_0 /Fo binary.cso ClearScreen.hlsl
       </ol>
     </div>
     になります。
-    <span class="important">今回説明した内容は以降のパートで共通して使う</span>ものなので、一度に覚えようとせずDX11を使ったいろいろなシェーダやソースを見て慣れていけばいいでしょう。
+    <span class="important">今回説明した内容は以降のパートで共通して使うものなので、一度に覚えようとせずDX11を使ったいろいろなシェーダやソースを見て慣れていけばいいでしょう。</span>
   </p>
 </section>
 
+<a name="SUPPLEMENTAL"></a>
 <section>
   <h2 class="under-bar">補足</h2>
   <div class="supplemental">
@@ -671,6 +692,29 @@ this->mpImmediateContext->ClearUnorderedAccessViewFloat(this->mpScreenUAV.Get(),
     	この制限は<span class="important">DX12とDX11.3以降、Typed Unordered Access View Loads</span>として幾分か緩和されています。
     	<br><a href="https://msdn.microsoft.com/ja-jp/library/windows/desktop/dn903947(v=vs.85).aspx">Typed Unordered Access View (UAV) Loads(英語)</a><br>
     	データをuint型に変換するなど回避策はありますが、直接リソースから読み込むことはできないので、DX11.2以前のGPUを使うときは注意してください。
+    </p>
+  </div>
+  <div class="supplemental">
+    <h4>HLSLの解析</h4>
+    <p>
+      <l>D3DReflect</l>を使用することでコンパイル済みのシェーダの情報を調べることが可能です。
+      <b>調べられるものは命令数やレジスタ数、使用しているリソースなどあります。</b>
+      サンプルではGPUに設定するコードはすべて手打ちになっていますが、これを利用することでリソースをどのスロットに設定したらいいかわかるため、シェーダを変更しても設定を行うコードを変更する必要がないといったことが出来ます。
+      {% highlight c++ %}
+// Scene::analysisの一部
+Microsoft::WRL::ComPtr<ID3D11ShaderReflection> pReflector = NULL;
+HRESULT hr = D3DReflect(pBinary, binarySize, IID_ID3D11ShaderReflection, (void**)pReflector.GetAddressOf());
+if( FAILED(hr) ) {
+  throw std::runtimer_error("ID3D11ShaderReflectionの作成に失敗");
+}
+D3D11_SHADER_DESC desc;
+pReflector->GetDesc(&desc);
+for( auto i = 0u; i < desc.BoundResources; ++i ) {
+  D3D11_SHADER_INPUT_BIND_DESC bindDesc;
+  pReflector->GetResourceBindingDesc(i, &bindDesc);
+  /// .. リソースについて知りたい情報を調べていく
+}
+      {% endhighlight %}
     </p>
   </div>
 </section>
