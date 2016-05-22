@@ -19,11 +19,11 @@ void clearRed(uint2 DTid : SV_DispatchThreadID) {
 void clearGreen(uint2 DTid : SV_DispatchThreadID) {
   screen[DTid] = float4(0, 1, 0, 1);//緑色でクリアする
 }
-  ... 以下、必要な色分エントリポイントを用意する
+//以下、必要な色分エントリポイントを用意する
 {% endhighlight %}
 
 誰の目が見ても上のやり方は非効率的でしょう。
-C++の関数の引数のようにシェーダのエントリポイントに任意の値を渡すようにしたいですが、シェーダではできません。
+<span class="important">C++の関数の引数のようにシェーダのエントリポイントに任意の値を渡すようにしたいですが、シェーダではできません。</span>
 
 {% highlight c++ %}
 //c++の引数みたいにエントリポイントに値を渡したいが、シェーダではこの書き方はできない
@@ -105,9 +105,9 @@ void main( uint2 DTid : SV_DispatchThreadID ) {
 
 上のコードでは"Param"と名付けた定数バッファを宣言し、クリアしたい色(clearColor)と画面サイズ(screenSize)の2つの変数を中で宣言しています。
 
-定数バッファとして宣言された変数は<span class="important">シェーダ内のどこからでも使うことが出来ます。</span>
+<span class="important">定数バッファとして宣言された変数はシェーダ内のどこからでも使うことが出来ます。</span>
 いわば、c++のグローバル変数のようなものです。
-グローバル変数との違いは代入ができないというだけなので、<span class="important">const宣言されたグローバル変数</span>だという認識でいいでしょう。
+<span class="important">グローバル変数との違いは代入ができないというだけなので、const宣言されたグローバル変数だという認識でいいでしょう。</span>
 
 使い方は以上です。
 次はCPU側の説明になります。
@@ -127,7 +127,7 @@ this->mpImmediateContext->CSSetConstantBuffers(0, static_cast<UINT>(ppCBs.size()
 
 CPU側での定数バッファは<span class="keyward">ID3D11Buffer</span>として扱います。
 <span class="keyward">ID3D11Buffer</span>とはGPUのメモリを表すものになります。
-CPUからGPU上のメモリにアクセスするにはこれかまたは<span class="keyward">テクスチャ(英訳:Texture)</span>を介して行います。
+GPU上のメモリにアクセスするにはこれかまたは<span class="keyward">テクスチャ(英訳:Texture)</span>を介して行います。
 
 <span class="keyward">ID3D11DeviceContext::CSSetConstantBuffers関数</span>で定数バッファの設定を行っています。
 引数の数が異なるだけで、各引数は前パートで使った<span class="keyward">ID3D11DeviceContext::CSSetUnorderedAccessViews関数</span>と同じ意味合いになります。
@@ -169,72 +169,76 @@ if (FAILED(hr)) {
 [MSDN_CREATE_BUFFER_JP]: https://msdn.microsoft.com/ja-jp/library/ee419781(v=vs.85).aspx
 [MSDN_CREATE_BUFFER_EN]: https://msdn.microsoft.com/en-us/library/ff476501(v=vs.85).aspx
 
-<ol>
-  <li>第1引数：<span class="keyward">D3D11_BUFFER_DESC</span>
-    <p>
-      作成する<span class="keyward">ID3D11Buffer</span>の情報を表す<span class="keyward">D3D11_BUFFER_DESC</span>を渡します。
-      メンバ変数の数が多いですが、定数バッファを作成する上で必要となるものは上のコードで使っているものです。
-      <br>ドキュメント:
-      <a href="https://msdn.microsoft.com/ja-jp/library/ee416048(v=vs.85).aspx">D3D11_BUFFER_DESC(日本語)</a>
-      <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476092(v=vs.85).aspx">D3D11_BUFFER_DESC(英語)</a>      
-      <ul>
-        <li><span class="keyward">ByteWidth</span>
-          <p>
-            <span class="keyward">ByteWidth</span>は<span class="keyward">ID3D11Buffer</span>が確保するGPU上のメモリサイズになります。
-            <span class="important">単位はbyteになり、定数バッファとして扱う場合は必ず、値を16の倍数</span>でなければなりません。
-            16の倍数でない場合は作成に失敗しますので注意してください。
-          </p>
-        </li>
-        <li><span class="keyward">BindFlag</span>
-          <p>
-            <span class="keyward">BindFlag</span>はGPU上で<span class="important">どういった用途でID3D11Bufferを使うか指定する</span>ものです。
-            <span class="keyward">ID3D11Buffer</span>は定数バッファ以外の目的でも使いますが、それについてはその都度説明していきます。
-            今回は定数バッファとして使うので、<span class="keyward">D3D11_BIND_CONSTANT_BUFFER</span>を指定しています。<br>
-            ドキュメント:
-            <a href="https://msdn.microsoft.com/ja-jp/library/ee416041(v=vs.85).aspx">D3D11_BIND_FLAG(日本語)</a>
-            <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476085(v=vs.85).aspx">D3D11_BIND_FLAG(英語)</a>
-          </p>
-        </li>
-        <li><span class="keyward">Usage</span>
-          <p>
-            <span class="keyward">Usage</span>は<span class="important">どのようにメモリの読み書きを行うかを指定します。</span>
-            今回は定数バッファはGPU上でしか読み書きしないので、<span class="keyward">D3D11_USAGE_DEFAULT</span>を指定しています。
-            メモリ読み書きの種類は以下のリンクを参照してください<br>
-            ドキュメント:
-            <a href="https://msdn.microsoft.com/ja-jp/library/ee416352(v=vs.85).aspx">D3D11_USAGE(日本語)</a>
-            <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476259(v=vs.85).aspx">D3D11_USAGE(英語)</a>
-          </p>
-        </li>
-        <li><span class="keyward">CPUAccessFlags</span>
-          <p>
-            <span class="keyward">CPUAccessFlags</span>は<span class="keyward">CPUからアクセスするときどのようなアクセスを行うかを指定します。</span>
-            <span class="keyward">Usage</span>に設定したものによって<span class="important">使えるフラグが変わりますので注意してください。</span><br>
-            ドキュメント:
-            <a href="https://msdn.microsoft.com/ja-jp/library/ee416074(v=vs.85).aspx">D3D11_CPU_ACCESS_FLAG(日本語)</a>
-            <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476106(v=vs.85).aspx">D3D11_CPU_ACCESS_FLAG(英語)</a>
-          </p>
-        </li>
-      </ul>
-    </p>
-  </li>
-  <li>第2引数：<span class="keyward">D3D11_SUBRESOURCE_DATA</span>
-    <p>
-      <span class="keyward">D3D11_SUBRESOURCE_DATA</span>は初期データを表します。
-      使い方はコードを見てもらえれば十分でしょう。
-      初期データとして渡すCPU上のデータのアドレスとそのデータ長を設定するだけです。
-      この構造体は<span class="keyward">テクスチャ</span>の作成時にも使用します。
-      また後述する<span class="keyward">ID3D11DeviceContext::Map関数</span>でもこれと似た内容の<span class="keyward">D3D11_MAPPED_SUBRESOURCE</span>を使います。
-      <br>ドキュメント:
-      <a href="https://msdn.microsoft.com/ja-jp/library/ee416284(v=vs.85).aspx">D3D11_SUBRESOURCE_DATA(日本語)</a>
-      <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476220(v=vs.85).aspx">D3D11_SUBRESOURCE_DATA(英語)</a>
-    </p>
-  </li>
-  <li>第3引数：<span class="keyward">ID3D11Buffer**</span>
-    <p>
-      作成した<span class="keyward">ID3D11Buffer</span>を受け取る変数を渡します。
-    </p>
-  </li>
-</ol>
+<div class="argument">
+  <h4 class="under-bar">ID3D11Device::CreateBuffer</h4>
+  <ol>
+    <li>第1引数：<span class="keyward">D3D11_BUFFER_DESC</span>
+      <p>
+        作成する<span class="keyward">ID3D11Buffer</span>の情報を表す<span class="keyward">D3D11_BUFFER_DESC</span>を渡します。
+        メンバ変数の数が多いですが、定数バッファを作成する上で必要となるものは上のコードで使っているものです。
+        <br>ドキュメント:
+        <a href="https://msdn.microsoft.com/ja-jp/library/ee416048(v=vs.85).aspx">D3D11_BUFFER_DESC(日本語)</a>
+        <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476092(v=vs.85).aspx">D3D11_BUFFER_DESC(英語)</a>      
+        <h4 class="under-bar">重要となるD3D11_BUFFER_DESCのメンバ</h4>
+        <ul>
+          <li><span class="keyward">ByteWidth</span>
+            <p>
+              <span class="keyward">ByteWidth</span>は<span class="keyward">ID3D11Buffer</span>が確保するGPU上のメモリサイズになります。
+              <span class="important">単位はbyteになり、定数バッファとして扱う場合は必ず、値を16の倍数でなければなりません。</span>
+              16の倍数でない場合は作成に失敗しますので注意してください。
+            </p>
+          </li>
+          <li><span class="keyward">BindFlag</span>
+            <p>
+              <span class="important"><span class="keyward">BindFlag</span>はGPU上でどういった用途でID3D11Bufferを使うか指定するものです。</span>
+              <span class="keyward">ID3D11Buffer</span>は定数バッファ以外の目的でも使いますが、それについてはその都度説明していきます。
+              今回は定数バッファとして使うので、<span class="keyward">D3D11_BIND_CONSTANT_BUFFER</span>を指定しています。<br>
+              ドキュメント:
+              <a href="https://msdn.microsoft.com/ja-jp/library/ee416041(v=vs.85).aspx">D3D11_BIND_FLAG(日本語)</a>
+              <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476085(v=vs.85).aspx">D3D11_BIND_FLAG(英語)</a>
+            </p>
+          </li>
+          <li><span class="keyward">Usage</span>
+            <p>
+              <span class="keyward">Usage</span>は<span class="important">どのようにメモリの読み書きを行うかを指定します。</span>
+              今回は定数バッファはGPU上でしか読み書きしないので、<span class="keyward">D3D11_USAGE_DEFAULT</span>を指定しています。
+              メモリ読み書きの種類は以下のリンクを参照してください<br>
+              ドキュメント:
+              <a href="https://msdn.microsoft.com/ja-jp/library/ee416352(v=vs.85).aspx">D3D11_USAGE(日本語)</a>
+              <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476259(v=vs.85).aspx">D3D11_USAGE(英語)</a>
+            </p>
+          </li>
+          <li><span class="keyward">CPUAccessFlags</span>
+            <p>
+              <span class="keyward">CPUAccessFlags</span>は<span class="keyward">CPUからアクセスするときどのようなアクセスを行うかを指定します。</span>
+              <span class="keyward">Usage</span>に設定したものによって<span class="important">使えるフラグが変わりますので注意してください。</span><br>
+              ドキュメント:
+              <a href="https://msdn.microsoft.com/ja-jp/library/ee416074(v=vs.85).aspx">D3D11_CPU_ACCESS_FLAG(日本語)</a>
+              <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476106(v=vs.85).aspx">D3D11_CPU_ACCESS_FLAG(英語)</a>
+            </p>
+          </li>
+        </ul>
+      </p>
+    </li>
+    <li>第2引数：<span class="keyward">D3D11_SUBRESOURCE_DATA</span>
+      <p>
+        <span class="keyward">D3D11_SUBRESOURCE_DATA</span>は初期データを表します。
+        使い方はコードを見てもらえれば十分でしょう。
+        初期データとして渡すCPU上のデータのアドレスとそのデータ長を設定するだけです。
+        この構造体は<span class="keyward">テクスチャ</span>の作成時にも使用します。
+        また後述する<span class="keyward">ID3D11DeviceContext::Map関数</span>でもこれと似た内容の<span class="keyward">D3D11_MAPPED_SUBRESOURCE</span>を使います。
+        <br>ドキュメント:
+        <a href="https://msdn.microsoft.com/ja-jp/library/ee416284(v=vs.85).aspx">D3D11_SUBRESOURCE_DATA(日本語)</a>
+        <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476220(v=vs.85).aspx">D3D11_SUBRESOURCE_DATA(英語)</a>
+      </p>
+    </li>
+    <li>第3引数：<span class="keyward">ID3D11Buffer**</span>
+      <p>
+        作成した<span class="keyward">ID3D11Buffer</span>を受け取る変数を渡します。
+      </p>
+    </li>
+  </ol>
+</div>
 
 作成については以上です。
 これで自由な値をシェーダ側で使えるようになりました。
@@ -244,7 +248,7 @@ DX11では<span class="keyward">ID3D11Buffer</span>の値を更新する方法�
 <h3>更新処理</h3>
 <span class="keyward">ID3D11Buffer</span>の値を更新する方法は2通りあります。
 <h4>ID3D11DeviceContext::UpdateSubresource関数</h4>
-ドキュメント: [ID3D11DeviceContext::UpdateSubresource(日本語)][MSDN_UPDATE_SUBRES_JP] [ID3D11DeviceContext::UpdateSubresource(英語)][MSDN_UPDATE_SUBRES_EN]
+ドキュメント: <span class="keyward">ID3D11DeviceContext::UpdateSubresource</span> [(日本語)][MSDN_UPDATE_SUBRES_JP] [(英語)][MSDN_UPDATE_SUBRES_EN]
 <br>
 ※<span class="keyward">ID3D11DeviceContext::UpdateSubresource</span>の日本語訳の内容は翻訳ミスにより一部誤ったものになっていますので注意してください<br>
 [参考サイト][ATTENSION_MISS]
@@ -264,11 +268,11 @@ param.screenSize.y = static_cast<float>(this->height());
 this->mpImmediateContext->UpdateSubresource(this->mpCB.Get(), 0, nullptr, &param, 0, 0);
 {% endhighlight %}
 
-<span class="keyward">ID3D11DeviceContext::UpdateSubresource関数</span>は<span class="keyward">D3D11_BUFFER_DESC::Usage</span>に<span class="keyward">D3D11_USAGE_DEFAULT</span>か<span class="keyward">D3D11_USAGE_STAGING</span>を指定した<span class="keyward">ID3D11Buffer</span>の内容を変更することができます。
+<span class="important"><span class="keyward">ID3D11DeviceContext::UpdateSubresource関数</span>は<span class="keyward">D3D11_BUFFER_DESC::Usage</span>に<span class="keyward">D3D11_USAGE_DEFAULT</span>か<span class="keyward">D3D11_USAGE_STAGING</span>を指定した<span class="keyward">ID3D11Buffer</span>の内容を変更することができます。</span>
 引数がいくつかありますが、定数バッファの内容を更新したいときは第1引数に変更したい定数バッファと第4引数に変更内容だけを指定してください。
 
 <div class="topic">
-  <h4>データが更新されるタイミング</h4>
+  <h4 class="under-bar">データが更新されるタイミング</h4>
   <p>
     細かな話になりますが、<span class="keyward">ID3D11DeviceContext::UpdateSubresource関数</span>を使った場合、データが更新されるタイミングは決まっていません。
     DX11ではシェーダの設定やDispatch関数などの実行命令、<span class="keyward">ID3D11DeviceContext::UpdateSubresource関数</span>など<span class="keyward">ID3D11DeviceContext</span>の関数を使うと全て
@@ -302,51 +306,54 @@ if (SUCCEEDED(hr)) {
   this->mpImmediateContext->Unmap(this->mpCBMappable.Get(), subresourceIndex);
 }
 {% endhighlight %}
-<span class="keyward">ID3D11DeviceContext::Map関数</span>は<span class="keyward">D3D11_BUFFER_DESC::Usage</span>に
+<span class="important"><span class="keyward">ID3D11DeviceContext::Map関数</span>は<span class="keyward">D3D11_BUFFER_DESC::Usage</span>に
 <span class="keyward">D3D11_USAGE_DYNAMIC</span>を、<span class="keyward">D3D11_BUFFER_DESC::CPUAccessFlags</span>に
-<span class="keyward">D3D11_CPU_ACCESS_WRITE</span>を指定した<span class="keyward">ID3D11Buffer</span>の内容を変更することができます。
+<span class="keyward">D3D11_CPU_ACCESS_WRITE</span>を指定した<span class="keyward">ID3D11Buffer</span>の内容を変更することができます。</span>
 データの読み書きは<span class="keyward">D3D11_MAPPED_SUBRESOURCE</span>を介して行います。
 <span class="important">Map関数を使った後は、必ずID3D11DeviceContext::Unmap関数を呼び出してください。</span>
 これはGPUで使用中の定数バッファを内容を書き換えてしまうことを防ぐために必要になります。
 
-ドキュメント: [ID3D11DeviceContext::Map(日本語)][MSDN_MAP_JP] [ID3D11DeviceContext::Map(英語)][MSDN_MAP_EN]
+ドキュメント: <span class="keyward">ID3D11DeviceContext::Map</span> [(日本語)][MSDN_MAP_JP] [(英語)][MSDN_MAP_EN]
 
 [MSDN_MAP_JP]: https://msdn.microsoft.com/ja-jp/library/ee419694(v=vs.85).aspx
 [MSDN_MAP_EN]: https://msdn.microsoft.com/en-us/library/ff476457(v=vs.85).aspx
 
-<ul>
-  <li>第1引数：マップする<span class="keyward">ID3D11Buffer</span></li>
-  <li>第2引数：サブリソースのインデックス
-    <p>定数バッファの場合は必ず0を指定してください。</p>
-  </li>
-  <li>第3引数：行うマップの種類
-    <p>
-      定数バッファの場合は<span class="keyward">D3D11_MAP_WRITE_DISCARD</span>を指定する必要があります。
-      <span class="keyward">D3D11_MAP_WRITE_DISCARD</span>はマップ対象の以前の内容を無効にしてデータを書き込むことを表していますので、
-      定数バッファのすべての内容を設定する必要があります。
-    </p>
-  </li>
-  <li>第4引数：GPUで使用中だった場合のCPU側の対応
-    <p>
-      第1引数に渡したリソースがGPUで使用中だった場合のCPU側の対応を指定します。
-      <span class="keyward">D3D11_MAP_FLAG_DO_NOT_WAIT</span>を渡すと使用中だった場合は戻り値に<span class="keyward">DXGI_ERROR_WAS_STILL_DRAWING</span>を返すようになります。
-      <span class="important">このフラグは第3引数にMAP_READかMAP_WRITE、MAP_READ_WRITEを指定したときにしか使うことが出来ません。</span>
-    </p>
-  </li>
-  <li>第5引数：<span class="keyward">D3D11_MAPPED_SUBRESOURCE</span>
-    <p>
-      マップに成功した場合、渡した<span class="keyward">D3D11_MAPPED_SUBRESOURCE</span>にマップしたデータの先頭ポインタとデータの長さ等の情報が入ります。
-      <br>ドキュメント:
-      <a href="https://msdn.microsoft.com/ja-jp/library/ee416246(v=vs.85).aspx">D3D11_MAPPED_SUBRESOURCE(日本語)</a>
-      <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476182(v=vs.85).aspx">D3D11_MAPPED_SUBRESOURCE(英語)</a>
-    </p>
-  </li>
-</ul>
+<div class="argument">
+  <h3>ID3D11DeviceContext::Map</h3>
+  <ul>
+    <li>第1引数：マップする<span class="keyward">ID3D11Buffer</span></li>
+    <li>第2引数：サブリソースのインデックス
+      <p>定数バッファの場合は必ず0を指定してください。</p>
+    </li>
+    <li>第3引数：行うマップの種類
+      <p>
+        定数バッファの場合は<span class="keyward">D3D11_MAP_WRITE_DISCARD</span>を指定する必要があります。
+        <span class="keyward">D3D11_MAP_WRITE_DISCARD</span>はマップ対象の以前の内容を無効にしてデータを書き込むことを表していますので、
+        定数バッファのすべての内容を設定する必要があります。
+      </p>
+    </li>
+    <li>第4引数：GPUで使用中だった場合のCPU側の対応
+      <p>
+        第1引数に渡したリソースがGPUで使用中だった場合のCPU側の対応を指定します。
+        <span class="keyward">D3D11_MAP_FLAG_DO_NOT_WAIT</span>を渡すと使用中だった場合は戻り値に<span class="keyward">DXGI_ERROR_WAS_STILL_DRAWING</span>を返すようになります。
+        <span class="important">このフラグは第3引数にMAP_READかMAP_WRITE、MAP_READ_WRITEを指定したときにしか使うことが出来ません。</span>
+      </p>
+    </li>
+    <li>第5引数：<span class="keyward">D3D11_MAPPED_SUBRESOURCE</span>
+      <p>
+        マップに成功した場合、渡した<span class="keyward">D3D11_MAPPED_SUBRESOURCE</span>にマップしたデータの先頭ポインタとデータの長さ等の情報が入ります。
+        <br>ドキュメント:<span class="keyward">D3D11_MAPPED_SUBRESOURCE</span>
+        <a href="https://msdn.microsoft.com/ja-jp/library/ee416246(v=vs.85).aspx">(日本語)</a>
+        <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476182(v=vs.85).aspx">(英語)</a>
+      </p>
+    </li>
+  </ul>
+</div>
 
 <a name="SUMMARY"></a>
 <h1 class="under-bar">まとめ</h1>
 この記事ではシェーダから自由に使うことが出来る定数バッファについて見ていきました。
-読み込みしかできませんが、これで汎用的にシェーダを作成することが出来ます。
+読み込みしかできませんが、これで汎用的なシェーダを作成することが出来ます。
 
 <span class="keyward">ID3D11Buffer</span>に関しては定数バッファ以外の目的でも使います。
 DX11ではGPUメモリを<span class="keyward">ID3D11Buffer</span>と次のパートで説明するテクスチャを使って表現しています。
