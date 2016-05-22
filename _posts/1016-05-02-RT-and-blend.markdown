@@ -73,9 +73,9 @@ this->mpImmediateContext->OMSetRenderTargets(static_cast<UINT>(ppRTVs.size()), p
 {% endhighlight %}
 
 上の<span class="keyward">ID3D11DeviceContext::OMSetRenderTargets関数</span>でレンダーターゲットを行っています。
-<br>ドキュメント：
-[ID3D11DeviceContext::OMSetRenderTargets(日本語)][OMSetRenderTargets_JP]
-[ID3D11DeviceContext::OMSetRenderTargets(英語)][OMSetRenderTargets_EN]
+<br>ドキュメント：<span class="keyward">ID3D11DeviceContext::OMSetRenderTargets</span>
+[(日本語)][OMSetRenderTargets_JP]
+[(英語)][OMSetRenderTargets_EN]
 
 [OMSetRenderTargets_JP]:https://msdn.microsoft.com/ja-jp/library/ee419706(v=vs.85).aspx
 [OMSetRenderTargets_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476464(v=vs.85).aspx
@@ -115,11 +115,12 @@ if (FAILED(hr)) {
 <span class="keyward">ID3D11Device::CreateRenderTargetView関数</span>で作成します。
 引数に渡している<span class="keyward">D3D11_RENDER_TARGET_VIEW_DESC</span>の内容も他のビューの作成に使用した構造体と似ていますので説明を省略します。
 
-ドキュメント：<br>
-[ID3D11Device::CreateRenderTargetView(日本語)][CreateRenderTargetView_JP]
-[ID3D11Device::CreateRenderTargetView(英語)][CreateRenderTargetView_EN]
-[D3D11_RENDER_TARGET_VIEW_DESC(日本語)][D3D11_RENDER_TARGET_VIEW_DESC_JP]
-[D3D11_RENDER_TARGET_VIEW_DESC(英語)][D3D11_RENDER_TARGET_VIEW_DESC_EN]
+ドキュメント：<br><span class="keyward">ID3D11Device::CreateRenderTargetView</span>
+[(日本語)][CreateRenderTargetView_JP]
+[(英語)][CreateRenderTargetView_EN]
+<br><span class="keyward">D3D11_RENDER_TARGET_VIEW_DESC</span>
+[(日本語)][D3D11_RENDER_TARGET_VIEW_DESC_JP]
+[(英語)][D3D11_RENDER_TARGET_VIEW_DESC_EN]
 
 [CreateRenderTargetView_JP]:https://msdn.microsoft.com/ja-jp/library/ee419800(v=vs.85).aspx
 [CreateRenderTargetView_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476517(v=vs.85).aspx
@@ -169,7 +170,7 @@ return float4(rgbResult, alphaResult);
 {% endhighlight %}
 
 ブレンディングの式を変えることで透けた表現や明るさの表現など様々な画面効果を出すことができます。
-[こちら][glblendfunc]のサイトでブレンドステートの設定を変えることができますので簡単に確認することができます。
+[こちらのサイト][glblendfunc]でブレンドステートの設定を変えることができますので簡単に確認することができます。
 OpenGLを使用していますが、DX11も同じパラメータを使用できますのでそこまで問題にならないでしょう。
 
 [glblendfunc]:http://www.andersriggelsen.dk/glblendfunc.php
@@ -215,7 +216,7 @@ if (FAILED(hr)) {
 
 各レンダーターゲットに異なるブレンディングを設定することが可能です。
 <div class="argument">
-  <h4 class="under-bar">D3D11_BLEND_DESC</h4>
+  <h4 class="under-bar">D3D11_BLEND_DESCのメンバ</h4>
   <ol>
     <li><span class="keyward">AlphaToCoverageEnable</span>
       <p>
@@ -236,45 +237,50 @@ if (FAILED(hr)) {
     <li><span class="keyward">RenderTarget[8]</span>
       <p>
         各レンダーターゲットのブレンディングを設定するためのものです。
-          <ul>
-            <li><span class="keyward">BlendEnable</span>
-              <p>ブレンディングを有効にするかのフラグ。</p>
-            </li>
-            <li><span class="keyward">SrcBlend, DestBlend</span>
-              <p>
-                ピクセルシェーダからの出力と出力先のもともとあった値のそれぞれのRGBに掛ける値を指定するためのものになります。
-                Srcがもともとあった値に、Destがピクセルシェーダからの出力を表します。
-                どのように使われるかは上の擬似コードを参考にしてください。
-                指定できるものは以下のリンクを参考にしてください。
-                <br>ドキュメント
-                <a href="https://msdn.microsoft.com/ja-jp/library/ee416042(v=vs.85).aspx">D3D11_BLEND(日本語)</a>
-                <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476086(v=vs.85).aspx">D3D11_BLEND(英語)</a>
-              </p>
-            </li>
-            <li><span class="keyward">BlendOp</span>
-              <p>
-                ピクセルシェーダからの出力と出力先のもともとあった値のRGBをどのように組み合わせるかを指定するものになります。
-                どのように使われるかは上の擬似コードを参考にしてください。
-                指定できるものは以下のリンクを参考にしてください。
-                <br>ドキュメント
-                <a href="https://msdn.microsoft.com/ja-jp/library/ee416044(v=vs.85).aspx">D3D11_BLEND_OP(日本語)</a>
-                <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476088(v=vs.85).aspx">D3D11_BLEND_OP(英語)</a>
-              </p>
-            </li>
-            <li><span class="keyward">SrcBlendAlpha, DestBlendAlpha, BlendOpAlpha</span>
-              <p>
-                <span class="keyward">SrcBlend,DestBlend,BlendOp</span>のアルファ成分版になります。
-              </p>
-            </li>
-            <li><span class="keyward">RenderTargetWriteMask</span>
-              <p>
-                書き込みマスクです。
-                RGBA内、書き込みたい部分のビットを立てることで書き込む値を制御できます。
-                値が0なら書き込みが無効になり、
-                <span class="keyward">D3D11_COLOR_WRITE_ENABLE_ALL</span>を指定すればすべての成分が書き込まれます。
-              </p>
-            </li>
-          </ul>
+        型は<span class="keyward">D3D11_RENDER_TARGET_BLEND_DESC</span>になります。
+        <br>ドキュメント:<span class="keyward">D3D11_RENDER_TARGET_BLEND_DESC</span>
+        <a href="https://msdn.microsoft.com/ja-jp/library/ee416264(v=vs.85).aspx">(日本語)</a>
+        <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476200(v=vs.85).aspx">(英語)</a>
+        <h3 class="under-bar">D3D11_RENDER_TARGET_BLEND_DESCのメンバ</h3>
+        <ul>
+          <li><span class="keyward">BlendEnable</span>
+            <p>ブレンディングを有効にするかのフラグ。</p>
+          </li>
+          <li><span class="keyward">SrcBlend, DestBlend</span>
+            <p>
+              ピクセルシェーダからの出力と出力先のもともとあった値のそれぞれのRGBに掛ける値を指定するためのものになります。
+              Srcがもともとあった値に、Destがピクセルシェーダからの出力を表します。
+              どのように使われるかは上の擬似コードを参考にしてください。
+              指定できるものは以下のリンクを参考にしてください。
+              <br>ドキュメント
+              <a href="https://msdn.microsoft.com/ja-jp/library/ee416042(v=vs.85).aspx">D3D11_BLEND(日本語)</a>
+              <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476086(v=vs.85).aspx">D3D11_BLEND(英語)</a>
+            </p>
+          </li>
+          <li><span class="keyward">BlendOp</span>
+            <p>
+              ピクセルシェーダからの出力と出力先のもともとあった値のRGBをどのように組み合わせるかを指定するものになります。
+              どのように使われるかは上の擬似コードを参考にしてください。
+              指定できるものは以下のリンクを参考にしてください。
+              <br>ドキュメント
+              <a href="https://msdn.microsoft.com/ja-jp/library/ee416044(v=vs.85).aspx">D3D11_BLEND_OP(日本語)</a>
+              <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476088(v=vs.85).aspx">D3D11_BLEND_OP(英語)</a>
+            </p>
+          </li>
+          <li><span class="keyward">SrcBlendAlpha, DestBlendAlpha, BlendOpAlpha</span>
+            <p>
+              <span class="keyward">SrcBlend,DestBlend,BlendOp</span>のアルファ成分版になります。
+            </p>
+          </li>
+          <li><span class="keyward">RenderTargetWriteMask</span>
+            <p>
+              書き込みマスクです。
+              RGBA内、書き込みたい部分のビットを立てることで書き込む値を制御できます。
+              値が0なら書き込みが無効になり、
+              <span class="keyward">D3D11_COLOR_WRITE_ENABLE_ALL</span>を指定すればすべての成分が書き込まれます。
+            </p>
+          </li>
+        </ul>
       </p>
     </li>
   </ol>
@@ -292,15 +298,15 @@ std::array<float, 4> factor = { {
 this->mpImmediateContext->OMSetBlendState(this->mpBlendState.Get(), factor.data(), 0xffffffff);
 {% endhighlight %}
 
-ドキュメント：
-[ID3D11DeviceContext::OMSetBlendState(日本語)][OMSetBlendState_JP]
-[ID3D11DeviceContext::OMSetBlendState(英語)][OMSetBlendState_EN]
+ドキュメント：<span class="keyward">ID3D11DeviceContext::OMSetBlendState</span>
+[(日本語)][OMSetBlendState_JP]
+[(英語)][OMSetBlendState_EN]
 
 [OMSetBlendState_JP]:https://msdn.microsoft.com/ja-jp/library/ee419702(v=vs.85).aspx
 [OMSetBlendState_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476462(v=vs.85).aspx
 
 <div class="argument">
-  <h4 class="under-bar">D3D11_BLEND_DESC</h4>
+  <h4 class="under-bar">ID3D11DeviceContext::OMSetBlendStateの引数一部</h4>
   <ol>
     <li><span class="keyward">第２引数：BlendFactor</span>
       <p>
