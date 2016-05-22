@@ -33,8 +33,8 @@ description: "今パートでは球体を表示するシェーダと単純なデ
   </ol>
 </div>
 
-<h1 class="under-bar">1.球体を描画するシェーダ</h1>
 <a name="CONSTANT_BUFFER"></a>
+<h1 class="under-bar">1.球体を描画するシェーダ</h1>
 
 まず、比較するために定数バッファを使った球体描画シェーダのソースを見てみます。
 
@@ -70,8 +70,8 @@ void main(uint2 DTid : SV_DispatchThreadID)
 このパートの<span class="keyward">StructuredBuffer</span>と<span class="keyward">ByteAddressBuffer</span>はこのコードをベースにしています。
 <span class="important">注目して見てもらいたい部分は定数バッファのParamの部分がどのように変わり、どのようにデータにアクセスしているかです。</span>
 
-<h1 class="under-bar">2.StructuredBuffer</h1>
 <a name="STRUCTURED_BUFFER"></a>
+<h1 class="under-bar">2.StructuredBuffer</h1>
 それでは<span class="keyward">StructuredBuffer</span>について見ていきましょう。
 <span class="important"><span class="keyward">StructuredBuffer</span>は名前の通りCPU側の構造体をシェーダ内で直接読み込むことができるものになります。</span>
 
@@ -209,8 +209,8 @@ if (FAILED(hr)) {
 [NVIDIA_STRUCTURED_PART2]:https://developer.nvidia.com/content/redundancy-and-latency-structured-buffer-use
 [NVIDIA_STRUCTURED_PART3]:https://developer.nvidia.com/content/how-about-constant-buffers
 
-<h1 class="under-bar">3.ByteAddressBuffer</h1>
 <a name="BYTE_ADDRESS_BUFFER"></a>
+<h1 class="under-bar">3.ByteAddressBuffer</h1>
 <h3>シェーダ側</h3>
 次に、<span class="keyward">ByteAddressBuffer</span>について見ていきます。<span class="important"><span class="keyward">ByteAddressBuffer</span>は4バイト単位でデータを読み込むことが出来るものになります。</span>
 
@@ -305,8 +305,8 @@ if (FAILED(hr)) {
 <span class="important">また、シェーダリソースビューを生成する場合、<span class="keyward">Format</span>には<span class="keyward">DXGI_FORMAT_R32_TYPELESS</span>を設定する必要があります。</span>
 <span class="important"><span class="keyward">ViewDimension</span>には<span class="keyward">D3D11_SRV_DIMENSION_BUFFEREX</span>を指定し、<span class="keyward">BufferEx.Flags</span>に<span class="keyward">D3D11_BUFFEREX_SRV_FLAG_RAW</span>を設定してください。</span>
 
-<h1 class="under-bar">4.スタック操作を行うバッファ</h1>
 <a name="STACK_BUFFER"></a>
+<h1 class="under-bar">4.スタック操作を行うバッファ</h1>
 
 DX11からシェーダ内でスタック操作を行うために<span class="keyward">AppendStructuredBuffer</span>と<span class="keyward">ConsumeStructuredBuffer</span>が追加されました。
 ここではそれらについて見ていきます。
@@ -411,8 +411,8 @@ if (FAILED(hr)) {
 スタック操作については以上になります。
 サンプルコードのScene::runStackBuffer関数ではGPUからCPUへのデータの転送を行うコードもあるので一度目を通してください。
 
-<h1 class="under-bar">まとめ</h1>
 <a name="SUMMARY"></a>
+<h1 class="under-bar">まとめ</h1>
 
 今回はバッファのバリエーションについて見てきました。
 ここで上げたもの以外にもまだありますが、似たような内容になるので省略します。
@@ -421,8 +421,8 @@ if (FAILED(hr)) {
 グラフィックスパイプラインを使うとモデルなど三角形で表現されたものを自由に画面に描画できるようになりますが、
 いろいろな決まりごとや裏で行っていることがあるので少しずつ説明していきたいと思います。
 
-<h1 class="under-bar">補足</h1>
 <a name="SUPPLEMENTAL"></a>
+<h1 class="under-bar">補足</h1>
 
 <div class="supplemental">
   <h4>レイトレースとラスタライズ法</h4>

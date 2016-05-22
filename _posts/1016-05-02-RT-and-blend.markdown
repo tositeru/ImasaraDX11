@@ -34,8 +34,8 @@ description: "今回のパートでは出力結合ステージのレンダータ
   </ol>
 </div>
 
-<h1 class="under-bar">レンダーターゲット</h1>
 <a name="RT"></a>
+<h1 class="under-bar">レンダーターゲット</h1>
 
 レンダーターゲットはグラフィックスパイプラインの出力先となり、同時に複数設定できます。
 基本的に画面を表すものなので２次元テクスチャを設定します。
@@ -130,8 +130,8 @@ if (FAILED(hr)) {
 <span class="important">説明はあっさりしていますが、現在ハイエンドゲームにおいてよく使われている遅延レンダリング(英訳: Deferred Rendering)やポストエフェクト(英訳: Post Effect)を使うときはこの機能を使っていますので、欠かすことのできないものとなっています。</span>
 
 
-<h1 class="under-bar">ブレンドステート</h1>
 <a name="BLEND_STATE"></a>
+<h1 class="under-bar">ブレンドステート</h1>
 
 <span class="important">ブレンドステートはピクセルシェーダで出力した値をレンダーターゲットに書き込む際、もともとあった値とどのようにブレンドするかを指定するためのものです。</span>
 <span class="keyward">ID3D11BlendState</span>をグラフィックスパイプラインに設定することでブレンドの方法を指定することができます。
@@ -319,8 +319,8 @@ this->mpImmediateContext->OMSetBlendState(this->mpBlendState.Get(), factor.data(
 ブレンドステートを使う場合はシェーダ側で特別な対応する必要はありません。
 なので、同じシェーダに設定が異なるブレンドステートを設定することが可能です。
 
-<h1 class="under-bar">まとめ</h1>
 <a name="SUMMARY"></a>
+<h1 class="under-bar">まとめ</h1>
 
 今回、出力結合ステージのレンダーターゲットとブレンドステートについて見てきました。
 レンダーターゲットは応用範囲が広い機能になり、ブレンドステートはパーティクルや半透明表現に使われるものになります。
@@ -329,8 +329,8 @@ this->mpImmediateContext->OMSetBlendState(this->mpBlendState.Get(), factor.data(
 グラフィックスパイプラインはコンピュートシェーダのように全てこちらで制御することはできませんが、
 ブレンドステートなどの機能がありますので活用していきましょう。
 
-<h1 class="under-bar">補足</h1>
 <a name="SUPPLEMENTAL"></a>
+<h1 class="under-bar">補足</h1>
 
 <div class="supplemental">
   <h4>ID3D11RenderTargetViewのクリア関数</h4>

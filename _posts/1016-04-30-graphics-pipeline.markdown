@@ -60,8 +60,8 @@ description: "今パートではグラフィックスパイプラインの基本
   </ol>
 </div>
 
-<h1 class="under-bar">1.頂点バッファ</h1>
 <a name="VERTEX_BUFFER"></a>
+<h1 class="under-bar">1.頂点バッファ</h1>
 
 <h3>頂点バッファ</h3>
 <span class="important">グラフィックパイプラインを使って画面に描画する際、頂点バッファと呼ばれるデータを入力値として設定する必要があります。</span>
@@ -193,8 +193,8 @@ if (FAILED(hr)) {
 [IA_STAGE_JP]:https://msdn.microsoft.com/ja-jp/library/ee415695(v=vs.85).aspx
 [IA_STAGE_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/bb205116(v=vs.85).aspx
 
-<h1 class="under-bar">2.GPUへの設定</h1>
 <a name="CONFIG"></a>
+<h1 class="under-bar">2.GPUへの設定</h1>
 次に頂点バッファと入力レイアウトをGPUへ設定する方法とそれを使ってグラフィックスパイプラインを実行する方法について見ていきましょう。
 {% highlight c++ %}
 // Scene::onRenderの実装を改変したもの
@@ -267,8 +267,8 @@ this->mpImmediateContext->IASetInputLayout(this->mpInputLayout.Get());
   </p>
 </div>
 
-<h1 class="under-bar">3.頂点シェーダとピクセルシェーダ</h1>
 <a name="SHADER"></a>
+<h1 class="under-bar">3.頂点シェーダとピクセルシェーダ</h1>
 それでは頂点シェーダとピクセルシェーダについて見ていきましょう。
 
 <h3>頂点シェーダ</h3>
@@ -352,8 +352,8 @@ CPU上ではピクセルシェーダは<span class="keyward">ID3D11PixelShader</
 
 頂点シェーダとピクセルシェーダについては以上になります。
 
-<h1 class="under-bar">4.プリミティブトポロジ</h1>
 <a name="PRIMITIVE_TOPOLOGY"></a>
+<h1 class="under-bar">4.プリミティブトポロジ</h1>
 前2つで頂点バッファとシェーダについて見てきました。
 ここで見ていくプリミティブトポロジは頂点バッファの各要素のペアを指定するものと言えます。
 <br>ドキュメント：
@@ -385,13 +385,13 @@ CPU上ではピクセルシェーダは<span class="keyward">ID3D11PixelShader</
 それぞれのプリミティブを指定した時の違いは実際にサンプルを動かして確認してください。
 指定できる要素のペアは点と線分と三角形しかありませんので注意してください。
 
-<h1 class="under-bar">まとめ</h1>
 <a name="SUMMARY"></a>
+<h1 class="under-bar">まとめ</h1>
 今回のパートではグラフィックスパイプラインについて見てきました。
 ここで触った頂点バッファ、入力レイアウト、頂点シェーダ、ピクセルシェーダ、プリミティブトポロジがグラフィックスパイプラインの基本要素となりますので覚えておいてください。
 
-<h1 class="under-bar">補足</h1>
 <a name="SUPPLEMENTAL"></a>
+<h1 class="under-bar">補足</h1>
 
 <div class="supplemental">
   <h4>システムセマンティクス</h4>

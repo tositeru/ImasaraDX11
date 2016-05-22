@@ -44,8 +44,8 @@ description: "このパートではテクスチャ(英訳:Texture)を使って�
   </ol>
 </div>
 
-<h1 class="under-bar">シェーダ内での使い方</h1>
 <a name="USE_IN_SHADER"></a>
+<h1 class="under-bar">シェーダ内での使い方</h1>
 
 <h3><span class="keyward">Texture2D</span>キーワード</h3>
 {% highlight c++ %}
@@ -162,8 +162,8 @@ UV座標系を使う際の利点はテクスチャのサイズが変わっても
 
 次はCPU側でのテクスチャとサンプラの設定の仕方を見ていきます。
 
-<h1 class="under-bar">GPUへの設定</h1>
 <a name="CONFIG"></a>
+<h1 class="under-bar">GPUへの設定</h1>
 
 {% highlight c++ %}
 //Scene::onRender関数の一部
@@ -222,8 +222,9 @@ this->mpImmediateContext->CSSetSamplers(0, static_cast<UINT>(ppSamplers.size()),
 </div>
 
 
-<h1 class="under-bar">ID3D11Texture2D</h1>
 <a name="DX11_Texture"></a>
+<h1 class="under-bar">ID3D11Texture2D</h1>
+
 <span class="keyward">Texture2D</span>を表す<span class="keyward">ID3D11Texture2D</span>と<span class="keyward">ID3D11ShaderResourceView</span>の作成は以下のコードになります。
 {% highlight c++ %}
 //生成するID3D11Texture2Dの情報
@@ -409,8 +410,8 @@ hr = this->mpDevice->CreateShaderResourceView(this->mpTex2D.Get(), &viewDesc, th
 以上、長くなりましたが<span class="keyward">ID3D11Texture2D</span>と<span class="keyward">ID3D11ShaderResourceView</span>の作成は以上になります。
 設定する項目が多いだけで行っていることは簡単ですので、すぐ慣れることでしょう。
 
-<h1 class="under-bar">ID3D11SamplerState</h1>
 <a name="DX11_Sampler"></a>
+<h1 class="under-bar">ID3D11SamplerState</h1>
 <span class="keyward">SamplerState</span>を表すID3D11SamplerStateの作成は以下のコードになります。
 
 {% highlight c++ %}
@@ -469,8 +470,8 @@ if (FAILED(hr)) {
 
 以上でサンプラステートの作成を終わります。
 
-<h1 class="under-bar">まとめ</h1>
 <a name="SUMMARY"></a>
+<h1 class="under-bar">まとめ</h1>
 
 このパートではテクスチャとそれからデータを読み取るためのサンプラについて見てきました。
 
@@ -481,8 +482,8 @@ if (FAILED(hr)) {
 <span class="important">DX11では何か作るときは<span class="keyward">D3D11_XXX_DESC</span>みたいな構造体を使うことが多いです。</span>
 その構造体について調べれば何ができるかが大体わかりますので是非ドキュメントを読んでいってください。
 
-<h1 class="under-bar">補足</h1>
 <a name="SUPPLEMENTAL"></a>
+<h1 class="under-bar">補足</h1>
 
 <div class="supplemental">
   <h4>DirectXTKを使ったテクスチャの読み込み</h4>

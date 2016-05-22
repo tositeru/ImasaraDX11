@@ -26,8 +26,8 @@ description: "このドローコールにはいくつかのバリエーション
   </ol>
 </div>
 
-<h1 class="under-bar">ID3D11DeviceContext::Draw関数</h1>
 <a name="DRAW"></a>
+<h1 class="under-bar">ID3D11DeviceContext::Draw関数</h1>
 <span class="keyward">ID3D11DeviceContext::Draw関数</span>は前回のパートで使用しました。
 描画したい頂点の数と設定した頂点バッファの先頭オフセットを指定してグラフィックスパイプラインを実行します。
 DX11でのドローコールはこの関数が基本形になりますが、Direct3D12では廃止されているので注意してください。
@@ -39,8 +39,8 @@ DX11でのドローコールはこの関数が基本形になりますが、Dire
 [Draw_JP]:https://msdn.microsoft.com/ja-jp/library/ee419589(v=vs.85).aspx
 [Draw_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476407(v=vs.85).aspx
 
-<h1 class="under-bar">添字を使ったドローコール</h1>
 <a name="DRAW_INDEX"></a>
+<h1 class="under-bar">添字を使ったドローコール</h1>
 
 前回プリミティブトポロジで頂点バッファのペアを指定しました。
 その際、頂点バッファの並びを指定したプリミティブに合うようにしなければいけませんでした。
@@ -105,8 +105,8 @@ this->mpImmediateContext->IASetIndexBuffer(this->mpIndexBuffer.Get(), DXGI_FORMA
 this->mpImmediateContext->DrawIndexed(3, 3, 0);
 {% endhighlight %}
 
-<h1 class="under-bar">インスタンス描画</h1>
 <a name="INSTANCE"></a>
+<h1 class="under-bar">インスタンス描画</h1>
 
 次にインスタンス描画について見ていきます。
 インスタンス描画はグラフィックスパイプラインに設定した頂点バッファを指定した個数分、一度に描画するものです。
@@ -246,8 +246,8 @@ if (FAILED(hr)) {
 頂点バッファの設定は今までとそう変わりがないのでサンプルを参照してください。
 頂点データとインスタンスデータを別々で設定していますので注意してください。
 
-<h1 class="under-bar">インダイレクト描画</h1>
 <a name="INDIRECT"></a>
+<h1 class="under-bar">インダイレクト描画</h1>
 
 最後にインダイレクト(英訳:Indirect)描画を見ていきます。
 これは今まで出てきたドローコールの引数をバッファで指定するものになります。
@@ -309,8 +309,8 @@ if (FAILED(hr)) {
 [DispatchIndirect_JP]:https://msdn.microsoft.com/ja-jp/library/ee419588(v=vs.85).aspx
 [DispatchIndirect_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476406(v=vs.85).aspx
 
-<h1 class="under-bar">まとめ</h1>
 <a name="SUMMARY"></a>
+<h1 class="under-bar">まとめ</h1>
 このパートではドローコールのバリエーションを見てきました。
 これらの関数を使ってグラフィックスパイプラインを実行しますので覚えておいてください。
 

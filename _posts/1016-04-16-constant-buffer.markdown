@@ -37,7 +37,7 @@ void clearRed(uint2 DTid : SV_DispatchThreadID, float4 clearColor/*<- コンパ�
 ですが、代わりとなる方法がシェーダでは用意されています。
 このパートではそれについて説明していきます。
 
-<h1>概要</h1>
+<h1 class="under-bar">概要</h1>
 DX11ではシェーダ実行時に自由に使うことができる値として、<span class="important">定数バッファ(英訳:ConstantBuffer)</span>というものが用意されています。
 今パートに対応しているサンプルプロジェクトは<span class="important">Part02_ConstantBuffer</span>になります。
 
@@ -72,8 +72,8 @@ DX11ではシェーダ実行時に自由に使うことができる値として�
   </ol>
 </div>
 
-<h1 class="under-bar">1.シェーダ内での使い方</h1>
 <a name="USE_IN_SHADER"></a>
+<h1 class="under-bar">1.シェーダ内での使い方</h1>
 {% highlight c++ %}
 //定数バッファの定義
 cbuffer Param : register(b0) {
@@ -112,8 +112,8 @@ void main( uint2 DTid : SV_DispatchThreadID ) {
 使い方は以上です。
 次はCPU側の説明になります。
 
-<h1 class="under-bar">2.ID3D11Buffer</h1>
 <a name="DX11_Buffer"></a>
+<h1 class="under-bar">2.ID3D11Buffer</h1>
 
 <h3>設定</h3>
 まず、定数バッファをGPUへ設定する方法について見ていきます。
@@ -343,8 +343,8 @@ if (SUCCEEDED(hr)) {
   </li>
 </ul>
 
-<h1 class="under-bar">まとめ</h1>
 <a name="SUMMARY"></a>
+<h1 class="under-bar">まとめ</h1>
 この記事ではシェーダから自由に使うことが出来る定数バッファについて見ていきました。
 読み込みしかできませんが、これで汎用的にシェーダを作成することが出来ます。
 
