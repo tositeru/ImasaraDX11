@@ -105,23 +105,23 @@ if (FAILED(hr)) {
 
 入力レイアウトは<span class="keyward">ID3D11InputLayout</span>と表し、<span class="keyward">ID3D11InputLayout::CreateInputLayout関数</span>で作成します。
 説明が前後しますが、<span class="important">作成するときは入力レイアウトに合う頂点シェーダのコンパイル済みバイナリを渡す必要があります。</span>
-<br>ドキュメント:
-[ID3D11Device::CreateInputLayout(日本語)][CREATE_INPUT_LAYOUT_JP]
-[ID3D11Device::CreateInputLayout(英語)][CREATE_INPUT_LAYOUT_EN]
+<br>ドキュメント:<span class="keyward">ID3D11Device::CreateInputLayout</span>
+[(日本語)][CREATE_INPUT_LAYOUT_JP]
+[(英語)][CREATE_INPUT_LAYOUT_EN]
 
 [CREATE_INPUT_LAYOUT_JP]:https://msdn.microsoft.com/ja-jp/library/ee419795(v=vs.85).aspx
 [CREATE_INPUT_LAYOUT_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476512(v=vs.85).aspx
 
 データの並びは<span class="keyward">D3D11_INPUT_ELEMENT_DESC</span>の配列を使って指定します。
-<br>ドキュメント:
-[D3D11_INPUT_ELEMENT_DESC(日本語)][D3D11_INPUT_ELEMENT_DESC_JP]
-[D3D11_INPUT_ELEMENT_DESC(英語)][D3D11_INPUT_ELEMENT_DESC_EN]
+<br>ドキュメント:<span class="keyward">D3D11_INPUT_ELEMENT_DESC</span>
+[(日本語)][D3D11_INPUT_ELEMENT_DESC_JP]
+[(英語)][D3D11_INPUT_ELEMENT_DESC_EN]
 
 [D3D11_INPUT_ELEMENT_DESC_JP]:https://msdn.microsoft.com/ja-jp/library/ee416244(v=vs.85).aspx
 [D3D11_INPUT_ELEMENT_DESC_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476180(v=vs.85).aspx
 
 <div class="argument">
-  <h4 class="under-bar">D3D11_INPUT_ELEMENT_DESC</h4>
+  <h4 class="under-bar">D3D11_INPUT_ELEMENT_DESCのメンバ</h4>
   <ol>
     <li><span class="keyward">SemanticName</span>
       <p>セマンティクス名</p>
@@ -223,9 +223,9 @@ this->mpImmediateContext->Draw(vertexCount, 0);
 
 上の<span class="keyward">ID3D11DeviceContext::IASetVertexBuffers関数</span>で頂点バッファを設定しています。
 引数について詳しく見て行きませんが、<span class="important">設定するときは頂点バッファの配列以外に1要素のサイズと開始オフセットも一緒に指定する必要があります。</span>
-<br>ドキュメント：
-[ID3D11DeviceContext::IASetVertexBuffers(日本語)][IASetVertexBuffers_JP]
-[ID3D11DeviceContext::IASetVertexBuffers(英語)][IASetVertexBuffers_EN]
+<br>ドキュメント：<span class="keyward">ID3D11DeviceContext::IASetVertexBuffers</span>
+[(日本語)][IASetVertexBuffers_JP]
+[(英語)][IASetVertexBuffers_EN]
 
 [IASetVertexBuffers_JP]:https://msdn.microsoft.com/ja-jp/library/ee419692(v=vs.85).aspx
 [IASetVertexBuffers_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476456(v=vs.85).aspx
@@ -254,7 +254,7 @@ this->mpImmediateContext->IASetInputLayout(this->mpInputLayout.Get());
 <span class="keyward">ID3D11DeviceContext::Draw関数</span>は<span class="keyward">ドローコール(英訳:Draw Call)</span>と呼ばれ、これ以外にも幾つかの種類があります。
 それらについては別パートで詳しく見ていきます。
 
-あと説明が前後しますが、はじめのコードでは頂点バッファと入力レイアウト以外に<span class="keyward">プリミティブトポロジ</span>と頂点シェーダ、ピクセルシェーダの設定も行っています。
+<span class="important">あと説明が前後しますが、はじめのコードでは頂点バッファと入力レイアウト以外に<span class="keyward">プリミティブトポロジ</span>と頂点シェーダ、ピクセルシェーダの設定も行っています。</span>
 それらの説明は後で行いますが、グラフィックスパイプラインを実行する際はこれらも設定する必要があることを覚えておいてください。
 
 <div class="topic">
@@ -284,8 +284,8 @@ float4 main( float4 pos : POSITION ) : SV_POSITION
 上のコードが頂点シェーダのとても簡単な実装になります。
 行っていることは入力レイアウトで"POSITION"というセマンティクスを持つ頂点バッファの要素を"SV_POSITION"というセマンティクスに変えて次のステージに渡しているだけです。
 
-main関数が呼ばれる回数は<span class="keyward">Draw Call</span>で指定した頂点数で決まります。
-このため頂点シェーダで行う処理は1つの頂点を対象にしたものが適切となるでしょう。
+<span class="important">main関数が呼ばれる回数は<span class="keyward">Draw Call</span>で指定した頂点数で決まります。</span>
+<span class="important">このため頂点シェーダで行う処理は1つの頂点を対象にしたものが適切となるでしょう。</span>
 例えば3Dから2Dへの変換行列をかけたり、スキンメッシュアニメーションを適応したりなどなどです。
 {% highlight c++ %}
 // 頂点シェーダの例
@@ -316,7 +316,7 @@ Output main( Input input )
 
 ちなみにCPU上での頂点シェーダは<span class="keyward">ID3D11VertexShader</span>で表されます。
 生成は<span class="keyward">ID3D11Device::CreateVertexShader関数</span>で行い、コンピュートシェーダと同じように作ります。
-コンパイルの際は必ずシェーダモデルに頂点シェーダのものを指定することを忘れないでください。
+<span class="important">コンパイルの際は必ずシェーダモデルに頂点シェーダのものを指定することを忘れないでください。</span>
 <span class="important">また頂点シェーダのコンパイル済みバイナリは入力レイアウトの生成時に使用しますので、注意してください。</span>
 
 <h3>ピクセルシェーダ</h3>
@@ -338,7 +338,7 @@ float4 main(float4 pos : SV_POSITION) : SV_TARGET
 <span class="keyward">SV_POSITIONセマンティクス</span>を指定した値で画面上の位置がわかるようになっていますのでそのような情報が欲しい場合は活用してください。
 
 ラスタライザーステージは頂点シェーダとピクセルシェーダの間で実行されるステージになります。
-<span class="important">詳しくは後のパートで説明しますが、頂点シェーダで出力されたデータはこのステージで補間されたり、SV_POSITIONを指定されたものはそれのw成分で割られ、画面の位置へと変換されます。</span>
+<span class="important">詳しくは後のパートで説明しますが、頂点シェーダで出力されたデータはこのステージで補間されたり、SV_POSITIONを指定されたものはそれのw成分で割られ、ピクセルシェーダに渡されます。</span>
 
 main関数が呼ばれる回数は頂点バッファと後述するプリミティブトポロジなどで変わってきます。
 <span class="important">これは描画する物によって描画範囲が異なるためです。</span>
@@ -348,7 +348,7 @@ main関数が呼ばれる回数は頂点バッファと後述するプリミテ�
 
 CPU上ではピクセルシェーダは<span class="keyward">ID3D11PixelShader</span>と表されます。
 頂点シェーダと似たように<span class="keyward">ID3D11Device::CreatePixelShader関数</span>を使って生成されます。
-また、コンパイルの際はシェーダモデルにピクセルシェーダのものを指定することを忘れないで下さい。
+<span class="important">また、コンパイルの際はシェーダモデルにピクセルシェーダのものを指定することを忘れないで下さい。</span>
 
 頂点シェーダとピクセルシェーダについては以上になります。
 
