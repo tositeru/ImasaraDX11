@@ -8,7 +8,7 @@ description: "DX11ではシェーダ実行時に自由に使うことができ�
 
 前のパートではシェーダを使った画面クリアを行いました。
 が、あのままだとクリアする色を変えたくなったとき、その色に合わせて同じようなシェーダを作る必要が出てきます。
-{% highlight hlsl %}
+{% highlight c++ %}
 //色ごとに画面をクリアするシェーダの例
 RWTexture2D<float4> screen :register(u0);
 [numthreads(1,1,1)]
@@ -25,7 +25,7 @@ void clearGreen(uint2 DTid : SV_DispatchThreadID) {
 誰の目が見ても上のやり方は非効率的でしょう。
 C++の関数の引数のようにシェーダのエントリポイントに任意の値を渡すようにしたいですが、シェーダではできません。
 
-{% highlight hlsl %}
+{% highlight c++ %}
 //c++の引数みたいにエントリポイントに値を渡したいが、シェーダではこの書き方はできない
 RWTexture2D<float4> screen :register(u0);
 [numthreads(1,1,1)]
@@ -74,7 +74,7 @@ DX11ではシェーダ実行時に自由に使うことができる値として�
 
 <h1 class="under-bar">1.シェーダ内での使い方</h1>
 <a name="USE_IN_SHADER"></a>
-{% highlight hlsl %}
+{% highlight c++ %}
 //定数バッファの定義
 cbuffer Param : register(b0) {
   float4 clearColor;
@@ -359,7 +359,7 @@ DX11ではGPUメモリを<span class="keyward">ID3D11Buffer</span>と次のパ�
 <div class="supplemental">
   <h4>定数バッファのパッキング</h4>
   <span class="important">シェーダ内で定数バッファを宣言するとき、変数の並びによってサイズが変わったりします。</span>
-  {% highlight hlsl %}
+  {% highlight c++ %}
 //この並びだとサイズが60byteになるので、ID3D11Bufferのサイズは64byte必要になる
 //c++側のデータの並びも16byteアライメントになるようすること
 cbuffer Param1 {
@@ -394,7 +394,7 @@ cbuffer Param2 {
   <p>
     以上から定数バッファを宣言するときはParam2のように変数の並びに注意する必要がありますが、
     <span class="important">パッキング指定をすることでParam1の並びでもParam2と同じメモリ配置にすることが出来ます。</span>
-    {% highlight hlsl %}
+    {% highlight c++ %}
 //パッキング指定をしたParam1
 //これでParam2と同じメモリ配置になる
 cbuffer Param1 {

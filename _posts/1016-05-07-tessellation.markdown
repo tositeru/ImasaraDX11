@@ -54,7 +54,7 @@ GPUの固定機能を使用しているためシステムセマンティクス�
 [DESING_HULL_JP]:https://msdn.microsoft.com/ja-jp/library/ee417840(v=vs.85).aspx
 [DESING_HULL_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476339(v=vs.85).aspx
 
-{% highlight hlsl %}
+{% highlight c++ %}
 // HSTriangle.hlsl
 
 cbuffer Param : register(b0)
@@ -116,7 +116,7 @@ HS_CONTROL_POINT_OUTPUT main(
 
 <h4>エントリポイント</h4>
 まず、エントリポイントとなるmain関数についてみていきます。
-{% highlight hlsl %}
+{% highlight c++ %}
 //ハルシェーダのエントリポイント定義
 [domain("tri")]
 [partitioning("fractional_odd")]
@@ -176,7 +176,7 @@ HS_CONTROL_POINT_OUTPUT main(
 パッチ定数関数がパッチ1つごとに1回実行され、分割数の決定やこちらで用意したパラメータを計算します。
 <span class="important">言い換えるとパッチを分割するためのデータを計算する関数となります。</span>
 
-{% highlight hlsl %}
+{% highlight c++ %}
 // HSTriangle.hlsl
 //パッチ定数関数の出力値
 struct HS_CONSTANT_DATA_OUTPUT
@@ -269,7 +269,7 @@ HS_CONSTANT_DATA_OUTPUT CalcHSPatchConstants(
 [DESING_DOMAIN_JP]:https://msdn.microsoft.com/ja-jp/library/ee417838(v=vs.85).aspx
 [DESING_DOMAIN_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff476337(v=vs.85).aspx
 
-{% highlight hlsl %}
+{% highlight c++ %}
 // DSTriangle.hlsl
 uint2 random(uint stream, uint sequence){
   //実装は省略
@@ -311,7 +311,7 @@ DS_OUTPUT main(
 {% endhighlight %}
 
 使用している構造体が多いですが、エントリポイント自体はシンプルな処理になります。
-{% highlight hlsl %}
+{% highlight c++ %}
 //エントリポイントの定義
 [domain("tri")]
 DS_OUTPUT main(
@@ -373,7 +373,7 @@ output.pos = float4(patch[0].pos * domain.x + patch[1].pos * domain.y + patch[2]
 <h3>ハルシェーダ</h3>
 処理自体は三角形の分割とそう変わりはありません。
 分割数の指定の仕方が少し変わったぐらいでしょうか。
-{% highlight hlsl %}
+{% highlight c++ %}
 // HSQuad.hlsl一部
 //パッチ定数関数の出力
 struct HS_CONSTANT_DATA_OUTPUT
@@ -477,7 +477,7 @@ HS_CONTROL_POINT_OUTPUT main(
 ドメインシェーダも行う処理自体に変わりはありません。
 <span class="important">パッチ内の位置を計算する方法が変わるぐらいでしょう。</span>
 
-{% highlight hlsl %}
+{% highlight c++ %}
 // DSQuad.hlsl
 uint2 random(uint stream, uint sequence){
   //実装省略
@@ -549,7 +549,7 @@ output.pos = float4(
 <h3>ハルシェーダ</h3>
 線分も前2つとほぼ同じです。
 <span class="important">ただし、分割数を指定するための<span class="keyward">SV_TessFactor</span>の意味が少々異なり、SV_InsideTessFactorは必要ありません。</span>
-{% highlight hlsl %}
+{% highlight c++ %}
 // HSIsoline.hlslの一部
 //パッチ定数データ
 struct HS_CONSTANT_DATA_OUTPUT
@@ -613,7 +613,7 @@ HS_CONTROL_POINT_OUTPUT main(
 ドメインシェーダもあまり変わりはありません。
 <span class="important">SV_DomainLocationの意味が変わったぐらいです。</span>
 
-{% highlight hlsl %}
+{% highlight c++ %}
 // DSIsoline.hlsl
 uint2 random(uint stream, uint sequence){
   //実装省略
@@ -672,7 +672,7 @@ DS_OUTPUT main(
 テッセレーションステージもジオメトリシェーダと同じく点から三角形を生成することが出来ます。
 <span class="important">その際はパッチの制御点に1を指定する必要があります。</span>
 
-{% highlight hlsl %}
+{% highlight c++ %}
 // HSPointToTriangle.hlslの一部
 //もとは点なので制御点は1つになる
 //InputPatch<>にて使用している

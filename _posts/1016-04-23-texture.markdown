@@ -48,7 +48,7 @@ description: "このパートではテクスチャ(英訳:Texture)を使って�
 <a name="USE_IN_SHADER"></a>
 
 <h3><span class="keyward">Texture2D</span>キーワード</h3>
-{% highlight hlsl %}
+{% highlight c++ %}
 //ClearScreenWithTexture.hlsl
 Texture2D<float4> image : register(t0);
 RWTexture2D<float4> screen : register(u0);
@@ -85,7 +85,7 @@ void main(uint2 DTid : SV_DispatchThreadID) {
 [TEXTURE2D_EN]: https://msdn.microsoft.com/en-us/library/windows/desktop/ff471525(v=vs.85).aspx
 
 <h3><span class="keyward">SamperState</span>キーワード</h3>
-{% highlight hlsl %}
+{% highlight c++ %}
 //ClearScreenWithSampler.hlsl
 Texture2D<float4> image : register(t0);
 SamplerState point_sampler : register(s0);
@@ -102,7 +102,7 @@ void main(uint2 DTid : SV_DispatchThreadID)　{
 <span class="keyward">サンプラステート</span>はテクスチャ読み込みの時に使うものになります。
 上のサンプルの次の部分で実際に読み込んでいます。
 
-{% highlight hlsl %}
+{% highlight c++ %}
 //ClearScreenWithSampler.hlslの一部
 float2 uv = (float2)DTid / (float2)screen_size;
 screen[DTid] = image.SampleLevel(point_sampler, uv, 0);
@@ -130,7 +130,7 @@ screen[DTid] = image.SampleLevel(point_sampler, uv, 0);
 例えば、横幅が200で縦幅が100のテクスチャの中央にあるテクセル(100,50)にアクセスしたい場合、
 UV座標系では(0.5, 0.5)と表します。
 
-{% highlight hlsl %}
+{% highlight c++ %}
 //UV座標の計算の一例
 //この例ではuvの値は{0.5f, 0.5f}になる
 float2 textureSize = {200.f, 100.f};

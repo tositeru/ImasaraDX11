@@ -86,7 +86,7 @@ description: "まず初めに画面全体をGPUを使って単色で塗りつぶ
 <section>
   <a name="CREATE_SHADER"></a>
   <h1 class="under-bar">1.シェーダの作成</h1>
-  {% highlight hlsl %}
+  {% highlight c++ %}
 //ClearScreen.hlsl
 RWTexture2D<float4> screen : register(u0);
 [numthreads(1, 1, 1)]
@@ -110,7 +110,7 @@ void main( uint2 DTid : SV_DispatchThreadID )
   <p>
   話をソースコードに戻しまして、
   ClearScreen.hlslの以下の部分で画面を塗りつぶしています。
-  {% highlight hlsl %}
+  {% highlight c++ %}
 //ClearScreen.hlsl main関数内
 screen[DTid] = float4(1, 1, 0, 1);
   {% endhighlight %}
@@ -129,7 +129,7 @@ screen[DTid] = float4(1, 1, 0, 1);
   </p>
   <p>
     例えば、screenの(100, 200)にアクセスしたい場合は、
-    {% highlight hlsl %}
+    {% highlight c++ %}
 uint2 pos;
 pos.x = 100;
 pos.y = 200;
@@ -153,19 +153,19 @@ screen[pos] = ...;
   </p>
   <p>
     また、以下のようにすると、xとyに１が入り、
-    {% highlight hlsl %}
+    {% highlight c++ %}
 float4 a;
 a.xy = 1;
     {% endhighlight %}
     次のようにすると、w,y,xに２が入ります。
-    {% highlight hlsl %}
+    {% highlight c++ %}
 a.wyx = 2;
     {% endhighlight %}
     これは<span class="important">スウィズル(英訳:Swizzle)</span>と呼ばれる機能でシェーダ言語独特の文法になります。
   </p>
   <p>
   またこのような書き方も可能です。
-  {% highlight hlsl %}
+  {% highlight c++ %}
 float3 a = {1, 2, 3};
 float4 b = float4(a, 4);//bはfloat4(1, 2, 3, 4)になる。
   {% endhighlight %}
@@ -249,8 +249,8 @@ void main( uint2 DTid : SV_DispatchThreadID ) {
     各々のDTidはuint2(0, 0)～uint2(1279, 719)の値が渡されます。
   </p>
   <p>
-    <b>実のところ、ClearScreen.hlslの<span class="keyward">numthreads属性</span>もDTidの値に影響があります。</b>
-    {% highlight hlsl %}
+    <span class="important">実のところ、ClearScreen.hlslの<span class="keyward">numthreads属性</span>もDTidの値に影響があります。</span>
+    {% highlight c++ %}
 //　ClearScreen.hlslの一部
 [numthreads(1,1,1)]
 void main( uint2 DTid : SV_DispatchThreadID ) {
@@ -267,7 +267,7 @@ void main( uint2 DTid : SV_DispatchThreadID ) {
     <span class="important">C++の関数呼び出しと比べるとかなり特殊な性質をもっていますが、これはGPUの大量のスレッドを同時に実行可能という特徴を生かすためこうなってます。</span>
     サンプルではClearScreen.hlslにはmain関数とは別にclearByOneThread関数というfor文を使ったC++で画面クリアをする場合と同じコードになるよう書いたものも用意していますので、一度目を通してみてください。
     このシェーダとClearScreen.hlslは同じことをしていますが、処理速度はGPUの性質を生かしているClearScreen.hlslの方が速くなります。
-    {% highlight hlsl %}
+    {% highlight c++ %}
 //ClearScreen.hlslのclearByOneThread関数を簡略したもの。
 [numthreads(1, 1, 1)]
 void clearByOneThread(uint2 DTid : SV_DispatchThreadID)
@@ -347,7 +347,7 @@ this->mpImmediateContext->CSSetUnorderedAccessViews(
         <li>第1引数：GPUに設定する開始スロット番号
           <p>
             スロットとは識別番号のようなもので、C++でいうところの配列の添え字みたいなものです。
-            {% highlight hlsl %}
+            {% highlight c++ %}
 //ClearScreen.hlsl
 RWTexture2D<float4> screen : register(u0);
             {% endhighlight %}
@@ -459,7 +459,7 @@ RWTexture2D<float4> screen : register(u0);
             シェーダの種類とその<span class="important">シェーダモデル(英訳:Shader Model)</span>を表す文字列を指定します。
             例えば、コンピュートシェーダのシェーダモデル5.0でコンパイルしたい場合は以下の文字列を渡してください。
           </p>
-          {% highlight hlsl %}
+          {% highlight c++ %}
   const char* shaderTarget = "cs_5_0";
           {% endhighlight %}
           <p>
@@ -512,7 +512,7 @@ hr = this->mpDevice->CreateComputeShader(
   &this->mpCSClearScreenWithConstantBuffer);
   {% endhighlight %}
   <p>
-    <b><span class="keyward">ID3D11Device::CreateComputeShader関数</span>には単純にコンパイルされたシェーダと作成したい<span class="keyward">ID3D11ComputeShader</span>を渡すだけです。</b>
+    <span class="important"><span class="keyward">ID3D11Device::CreateComputeShader関数</span>には単純にコンパイルされたシェーダと作成したい<span class="keyward">ID3D11ComputeShader</span>を渡すだけです。</span>
     第3引数のnullptrは動的シェーダリンクに関係するものなので無視します。
   </p>
   <div class="topic">
@@ -697,8 +697,8 @@ this->mpImmediateContext->ClearUnorderedAccessViewFloat(this->mpScreenUAV.Get(),
   <div class="supplemental">
     <h4>HLSLの解析</h4>
     <p>
-      <l>D3DReflect</l>を使用することでコンパイル済みのシェーダの情報を調べることが可能です。
-      <b>調べられるものは命令数やレジスタ数、使用しているリソースなどあります。</b>
+      <span class="keyward">D3DReflect</span>を使用することでコンパイル済みのシェーダの情報を調べることが可能です。
+      <span class="important">調べられるものは命令数やレジスタ数、使用しているリソースなどあります。</span>
       サンプルではGPUに設定するコードはすべて手打ちになっていますが、これを利用することでリソースをどのスロットに設定したらいいかわかるため、シェーダを変更しても設定を行うコードを変更する必要がないといったことが出来ます。
       {% highlight c++ %}
 // Scene::analysisの一部

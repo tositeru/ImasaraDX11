@@ -284,7 +284,7 @@ if (FAILED(hr)) {
   <h4>Early Z</h4>
   <p>
     最近のGPUにはピクセルシェーダを実行する前に深度テストを行う<span class="keyward">Early Z</span>と呼ばれる機能が存在します。
-    {% highlight hlsl %}
+    {% highlight c++ %}
 // PSEarlyZ.hlsl
 [earlydepthstencil]
 void main(float4 pos : SV_POSITION, float4 color : COLOR0, out float4 outColor : SV_Target0)

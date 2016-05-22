@@ -43,7 +43,7 @@ description: "今回のパートでは出力結合ステージのレンダータ
 <h3>シェーダ</h3>
 まず、複数のレンダーターゲットに出力するシェーダを見ていきましょう。
 
-{% highlight hlsl %}
+{% highlight c++ %}
 // PixelShader.hlsl
 void main(
   float4 pos : SV_POSITION,

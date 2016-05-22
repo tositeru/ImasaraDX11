@@ -38,7 +38,7 @@ description: "今パートでは球体を表示するシェーダと単純なデ
 
 まず、比較するために定数バッファを使った球体描画シェーダのソースを見てみます。
 
-{% highlight hlsl%}
+{% highlight c++%}
 // RenderSphereByConstantBuffer.hlsl
 #include "Common.hlsli"
 cbuffer Camera : register(b0)
@@ -76,7 +76,7 @@ void main(uint2 DTid : SV_DispatchThreadID)
 <span class="important"><span class="keyward">StructuredBuffer</span>は名前の通りCPU側の構造体をシェーダ内で直接読み込むことができるものになります。</span>
 
 <h3>シェーダ側</h3>
-{% highlight hlsl%}
+{% highlight c++%}
 // RenderSphereByStructuredBuffer.hlsl
 #include "Common.hlsli"
 cbuffer Camera : register(b0)
@@ -214,7 +214,7 @@ if (FAILED(hr)) {
 <h3>シェーダ側</h3>
 次に、<span class="keyward">ByteAddressBuffer</span>について見ていきます。<span class="important"><span class="keyward">ByteAddressBuffer</span>は4バイト単位でデータを読み込むことが出来るものになります。</span>
 
-{% highlight hlsl %}
+{% highlight c++ %}
 //RenderSphereByByteAddressBuffer.hlsl
 #include "Common.hlsli"
 cbuffer Camera : register(b0)
@@ -313,7 +313,7 @@ DX11からシェーダ内でスタック操作を行うために<span class="key
 <span class="important">なお、スタックへのプッシュとポップは同時にはできませんので、別のシェーダをそれぞれ行ってください。</span>
 
 <h4>プッシュ操作</h4>
-{% highlight hlsl %}
+{% highlight c++ %}
 // PushStack.hlsl
 AppendStructuredBuffer<float4> stack : register(u0);
 #define COLOR_COUNT 10
@@ -338,7 +338,7 @@ void main( uint3 DTid : SV_DispatchThreadID )
 {% endhighlight %}
 
 <h4>ポップ操作</h4>
-{% highlight hlsl %}
+{% highlight c++ %}
 // PopStack.hlsl
 ConsumeStructuredBuffer<float4> stack : register(u0);
 RWStructuredBuffer<float4> buffer : register(u1);

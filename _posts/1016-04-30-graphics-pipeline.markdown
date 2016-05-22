@@ -274,7 +274,7 @@ this->mpImmediateContext->IASetInputLayout(this->mpInputLayout.Get());
 <h3>頂点シェーダ</h3>
 <span class="important">頂点シェーダは入力アセンブラステージに設定された頂点バッファを入力値として取るシェーダになります。</span>
 
-{% highlight hlsl %}
+{% highlight c++ %}
 // VertexShader.hlsl
 float4 main( float4 pos : POSITION ) : SV_POSITION
 {
@@ -287,7 +287,7 @@ float4 main( float4 pos : POSITION ) : SV_POSITION
 main関数が呼ばれる回数は<span class="keyward">Draw Call</span>で指定した頂点数で決まります。
 このため頂点シェーダで行う処理は1つの頂点を対象にしたものが適切となるでしょう。
 例えば3Dから2Dへの変換行列をかけたり、スキンメッシュアニメーションを適応したりなどなどです。
-{% highlight hlsl %}
+{% highlight c++ %}
 // 頂点シェーダの例
 //定数バッファやテクスチャなども使用できる
 cbuffer Param :register(b0){
@@ -321,7 +321,7 @@ Output main( Input input )
 
 <h3>ピクセルシェーダ</h3>
 <span class="important">ピクセルシェーダはラスタライザーステージで処理されたデータを受け取り、画面に表示するピクセルの値を計算して返すシェーダになります。</span>
-{% highlight hlsl %}
+{% highlight c++ %}
 // PixelShader.hlsl
 float4 main(float4 pos : SV_POSITION) : SV_TARGET
 {

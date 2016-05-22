@@ -119,7 +119,7 @@ for (UINT level = 0; level < desc.MipLevels; ++level) {
 <span class="important">と言いましても、今までのRWTexture2Dと変わりません。</span>
 GPUへの設定も変わりません。書き込みたいミップレベルのアンオーダードアクセスビューを設定するのを忘れないようにするだけです。
 
-{% highlight hlsl %}
+{% highlight c++ %}
 /// CSMipmapWrite.hlslの一部
 cbuffer Param :register(b0)
 {
@@ -167,7 +167,7 @@ void main(uint2 DTid : SV_DispatchThreadID)
 [Texture2D_JP]:https://msdn.microsoft.com/ja-jp/library/ee422395(v=vs.85).aspx
 [Texture2D_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff471525(v=vs.85).aspx
 
-{% highlight hlsl %}
+{% highlight c++ %}
 // CSMipmapRead.hlsl
 cbuffer Param :register(b0)
 {
@@ -264,7 +264,7 @@ pUAV->Release();
 例えば<span class="keyward">RWTexture2D</span>の場合なら<span class="keyward">uint3</span>を使ってアクセスします。
 <span class="important"><span class="keyward">uint3.xy</span>でテクスチャの座標を、<span class="keyward">uint3.z</span>で配列の添字を指定します。</span>
 
-{% highlight hlsl %}
+{% highlight c++ %}
 cbuffer Param :register(b0)
 {
   float4 cbBaseColor;
@@ -294,7 +294,7 @@ void main(uint2 DTid : SV_DispatchThreadID)
 <h3>読み込み</h3>
 <span class="important">配列の読み込みも書き込みと同じく、座標と配列の添字を指定することでアクセスできます。</span>
 
-{% highlight hlsl %}
+{% highlight c++ %}
 // CSArrayRead.hlsl
 cbuffer Param :register(b0)
 {
@@ -388,7 +388,7 @@ if (FAILED(hr)) {
 
 どちらにせよ、グラフィックスパイプラインを利用すると楽に周囲の環境を書き込むことが出来ます。
 
-{% highlight hlsl %}
+{% highlight c++ %}
 // GSRenderCubemap.hlslの一部
 struct GSOutput
 {
@@ -434,7 +434,7 @@ void main(
 <span class="important">読み込みはサンプラのみで、UV座標ではなく方向を表す<span class="keyward">float3</span>でサンプリングする場所を指定します。</span>
 このことからキューブマップを環境マッピングを行うのに特化したものといえるでしょう。
 
-{% highlight hlsl %}
+{% highlight c++ %}
 // CSUSeCubemap.hlslの一部
 TextureCube<float4> cubemap : register(t0);
 SamplerState linear_sampler : register(s0);

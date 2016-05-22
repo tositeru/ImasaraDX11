@@ -38,7 +38,7 @@ description: ""
 <h3>シェーダ</h3>
 ジオメトリシェーダは以下のように実装します。
 
-{% highlight hlsl %}
+{% highlight c++ %}
 //GeometryShader.hlsl
 struct GSOutput
 {
@@ -78,7 +78,7 @@ void main(
 
 <h4>プリミティブ型</h4>
 まず、main関数の引数にある<span class="keyward">pointキーワード</span>です。
-{% highlight hlsl %}
+{% highlight c++ %}
 //頂点シェーダから点情報を受け取っている
 //必ず配列にすること
 void main(
@@ -113,7 +113,7 @@ void main(
 
 <h4>ストリーム出力オブジェクト</h4>
 次は新しいプリミティブを生成するとき使うオブジェクトです。
-{% highlight hlsl %}
+{% highlight c++ %}
 //TriangleStreamは三角形を生成するときに使うもの
 void main(
   ...
@@ -153,7 +153,7 @@ CPU側ではジオメトリシェーダは<span class="keyward">ID3D11GeometrySh
 <span class="important">ジオメトリシェーダを使用すると頂点バッファを使わずともプリミティブを描画することが可能です。</span>
 その時は空の構造体をジオメトリシェーダの入力として受け取る必要があります。
 
-{% highlight hlsl %}
+{% highlight c++ %}
 // GeometryShader2.hlsl
 //ダミーの入力値
 //前のステージから何も受け取らない時はダミー構造体を受け取る必要がある
@@ -192,7 +192,7 @@ void main(
 <span class="important">頂点バッファを使用しない時は何もしない頂点シェーダを用意する必要があります。</span>
 <span class="important">このシェーダを使うときは入力レイアウトは必要ありません。</span>
 
-{% highlight hlsl %}
+{% highlight c++ %}
 // VSDummy.hlsl
 //何もしない頂点シェーダ
 void main()

@@ -138,7 +138,7 @@ Direct3D12で1つだけ描画するにはインスタンスの個数を1にし�
 まず、<span class="keyward">StructuredBuffer</span>を使ったインスタンス描画を見ていきます。
 <span class="important">上で専用のシェーダを用意する必要があると書きましたが、それは頂点シェーダのみ必要でピクセルシェーダはどちらでも共通して使用することができます。</span>
 
-{% highlight hlsl %}
+{% highlight c++ %}
 // VertexShaderWithStructuredBuffer.hlsl
 static float4 gColor = float4(1, 1, 1, 1);
 struct InstancedParam {
@@ -184,7 +184,7 @@ Output main(Input input)
 
 次に複数の頂点バッファを使ったインスタンス描画について見ていきます。
 
-{% highlight hlsl %}
+{% highlight c++ %}
 // VertexShaderWithSlot.hlsl
 static float4 gColor = float4(1, 1, 1, 1);
 //書き方がこれまでと異なるが、こうゆう書き方もできる
