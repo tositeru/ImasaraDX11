@@ -110,9 +110,9 @@ void main(uint2 DTid : SV_DispatchThreadID)
 <span class="important">データにアクセスするときは配列のように添え字を使ってアクセスします。</span>
 あとは、C++の構造体と同じように使います。
 
-ドキュメント:
-[StructuredBuffer(日本語)][STRUCTURED_BUFFER_JP]
-[StructuredBuffer(英語)][STRUCTURED_BUFFER_EN]
+ドキュメント:<span class="keyward">StructuredBuffer</span>
+[(日本語)][STRUCTURED_BUFFER_JP]
+[(英語)][STRUCTURED_BUFFER_EN]
 
 [STRUCTURED_BUFFER_JP]: https://msdn.microsoft.com/ja-jp/library/ee422384(v=vs.85).aspx
 [STRUCTURED_BUFFER_EN]: https://msdn.microsoft.com/en-us/library/windows/desktop/ff471514(v=vs.85).aspx
@@ -169,25 +169,28 @@ if (FAILED(hr)) {
 {% endhighlight %}
 
 定数バッファとの作成の違いはいくつか設定する項目が増えただけです。
-<br>ドキュメント: [D3D11_BUFFER_DESC(日本語)][MSDN_BUFFER_DESC_JP] [D3D11_BUFFER_DESC(英語)][MSDN_BUFFER_DESC_EN]
+<br>ドキュメント: <span class="keyward">D3D11_BUFFER_DESC</span>[(日本語)][MSDN_BUFFER_DESC_JP] [(英語)][MSDN_BUFFER_DESC_EN]
 
 [MSDN_BUFFER_DESC_JP]: https://msdn.microsoft.com/ja-jp/library/ee416048(v=vs.85).aspx
 [MSDN_BUFFER_DESC_EN]: https://msdn.microsoft.com/en-us/library/windows/desktop/ff476092(v=vs.85).aspx
 
-<ul>
-  <li><span class="keyward">StructureByteStride</span>
-    <p>構造体1個当たりのサイズを設定します。</p>
-  </li>
-  <li><span class="keyward">MiscFlags</span>
-    <p>
-      様々なフラグを設定するときに使用します。
-      <span class="keyward">StructuredBuffer</span>を使う際は<span class="keyward">D3D11_RESOURCE_MISC_BUFFER_STRUCTURED</span>を指定する必要があります。
-      <br>ドキュメント:
-      <a href="https://msdn.microsoft.com/ja-jp/library/ee416267(v=vs.85).aspx">D3D11_RESOURCE_MISC_FLAG(日本語)</a>
-      <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476203(v=vs.85).aspx">D3D11_RESOURCE_MISC_FLAG(英語)</a>      
-    </p>
-  </li>
-</ul>
+<div class="argument">
+  <h3 class="under-bar">D3D11_BUFFER_DESCのメンバ一部</h3>
+  <ul>
+    <li><span class="keyward">StructureByteStride</span>
+      <p>構造体1個当たりのサイズを設定します。</p>
+    </li>
+    <li><span class="keyward">MiscFlags</span>
+      <p>
+        様々なフラグを設定するときに使用します。
+        <span class="keyward">StructuredBuffer</span>を使う際は<span class="keyward">D3D11_RESOURCE_MISC_BUFFER_STRUCTURED</span>を指定する必要があります。
+        <br>ドキュメント:
+        <a href="https://msdn.microsoft.com/ja-jp/library/ee416267(v=vs.85).aspx">D3D11_RESOURCE_MISC_FLAG(日本語)</a>
+        <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476203(v=vs.85).aspx">D3D11_RESOURCE_MISC_FLAG(英語)</a>      
+      </p>
+    </li>
+  </ul>
+</div>
 
 また、GPUに設定するときはシェーダリソースビューとして扱うため<span class="keyward">BindFlags</span>に<span class="keyward">D3D11_BIND_SHADER_RESOURCE</span>を設定する必要があります。
 
@@ -255,10 +258,12 @@ void main(uint2 DTid : SV_DispatchThreadID)
 [BAB_EXANPLE]:http://sygh.hatenadiary.jp/entry/2014/05/03/010530
 
 ドキュメント:
-[ByteAddressBuffer(日本語)][BYTE_ADDRESS_BUFFER_JP]
-[ByteAddressBuffer(英語)][BYTE_ADDRESS_BUFFER_EN]
-[asfloat(日本語)][ASFLOAT_JP]
-[asfloat(英語)][ASFLOAT_EN]
+<br><span class="keyward">ByteAddressBuffer</span>
+[(日本語)][BYTE_ADDRESS_BUFFER_JP]
+[(英語)][BYTE_ADDRESS_BUFFER_EN]
+<br>asfloat
+[(日本語)][ASFLOAT_JP]
+[(英語)][ASFLOAT_EN]
 
 [BYTE_ADDRESS_BUFFER_JP]: https://msdn.microsoft.com/ja-jp/library/ee422328(v=vs.85).aspx
 [BYTE_ADDRESS_BUFFER_EN]: https://msdn.microsoft.com/en-us/library/windows/desktop/ff471453(v=vs.85).aspx
@@ -358,13 +363,15 @@ GPU上で用意したデータをスタックに積んで、別のバッファ�
 
 スタック操作とは関係ありませんが、ポップ操作で使用してる<span class="keyward">RWStructuredBuffer</span>は書き込みができる<span class="keyward">StructuredBuffer</span>になります。
 
-ドキュメント：<br>
-[AppendStructuredBuffer(日本語)][APPEND_JP]
-[AppendStructuredBuffer(英語)][APPEND_EN]<br>
-[ConsumeStructuredBuffer(日本語)][CONSUME_JP]
-[ConsumeStructuredBuffer(英語)][CONSUME_EN]<br>
-[RWStructuredBuffer(日本語)][RW_STRUTURED_JP]
-[RWStructuredBuffer(英語)][RW_STRUTURED_EN]
+ドキュメント：<br><span class="keyward">AppendStructuredBuffer</span>
+[(日本語)][APPEND_JP]
+[(英語)][APPEND_EN]
+<br><span class="keyward">ConsumeStructuredBuffer</span>
+[(日本語)][CONSUME_JP]
+[(英語)][CONSUME_EN]
+<br><span class="keyward">RWStructuredBuffer</span>
+[(日本語)][RW_STRUTURED_JP]
+[(英語)][RW_STRUTURED_EN]
 
 [APPEND_JP]:https://msdn.microsoft.com/ja-jp/library/ee422322(v=vs.85).aspx
 [APPEND_EN]:https://msdn.microsoft.com/en-us/library/windows/desktop/ff471448(v=vs.85).aspx
@@ -409,7 +416,7 @@ if (FAILED(hr)) {
 <span class="important">作成したときに確保したメモリ量が上限となり、それを超えてプッシュしても追加されませんので注意してください。</span>
 
 スタック操作については以上になります。
-サンプルコードのScene::runStackBuffer関数ではGPUからCPUへのデータの転送を行うコードもあるので一度目を通してください。
+<span class="important">サンプルコードのScene::runStackBuffer関数ではGPUからCPUへのデータの転送を行うコードもあるので一度目を通してください。</span>
 
 <a name="SUMMARY"></a>
 <h1 class="under-bar">まとめ</h1>
@@ -427,13 +434,13 @@ if (FAILED(hr)) {
 <div class="supplemental">
   <h4>レイトレースとラスタライズ法</h4>
   <p>
-    今回、球体を描画するのに各画面のピクセルからカメラの方向に合うようなレイを飛ばして球体と当たっていたら球体を描画するといった手順を踏んでいます。
+    今回のサンプルでは球体を描画するのに各画面のピクセルからカメラの方向に合ったレイを飛ばして球体と当たっていたら球体を描画するといった手順を踏んでいます。
     <span class="important">このレイを飛ばして画面を描画する手法はレイトレースと呼ばれています。</span>
     レイトレースは映画やCGの研究などで使わており非常にリアルな絵を描画することができる手法です。
     ただ、それ相応に重たい処理でもあるので、ゲームなどリアルタイムに描画する必要がある場合はラスタライズ法と呼ばれる手法が使われています。
-    ラスタライズ法では三角形を使って物体を表現しており、複雑な物体を描画しようとするとそれだけ大量の三角形を描画する必要が出てきます。
-    GPUはこのラスタライズ法を高速に処理するためつまり、大量の三角形を高速に処理するために作られたハードウェアといえます。
-    <span class="important">これまで言葉だけが何回か出てきたグラフィックスパイプラインはこのラスタライズ法を行うための工程みたいなもので、ここまでの内容を踏まえますと、三角形を画面に描画するための工程だと言い換えることが出来るでしょう。</span>
+    ラスタライズ法では三角形や線分などのプリミティブ(英訳:Primitive)を使って物体を表現しており、複雑な物体を描画しようとするとそれだけ大量の三角形を描画する必要が出てきます。
+    GPUはこのラスタライズ法を高速に処理するための、つまり大量のプリミティブを高速に処理するために作られたハードウェアといえます。
+    <span class="important">これまで言葉だけが何回か出てきたグラフィックスパイプラインはこのラスタライズ法を行うための工程みたいなもので、ここまでの内容を踏まえますと、プリミティブを画面に描画するための工程だと言い換えることが出来るでしょう。</span>
   </p>
   <p>
     あと、今回のものはかなり粗末なものですが一応レイトレースと呼んでも差し支えないものになっていると思います。
